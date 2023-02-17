@@ -15,7 +15,7 @@ class Design extends BaseModel
             TextField::make('name')->label('Nombre')->rules(['required']),
             NumericField::make('minutes')->label('Minutos')->rules(['required'])
                 ->tooltip('Cantidad de tiempo en minutos que tarda la máquina en bordar este diseño'),
-            FileField::make('media')->setDisk('design/')->label('Archivo')->rules(['required'])->searchable(false),
+            FileField::make('media')->setDisk('design/')->label('Diseño')->rules(['required'])->searchable(false),
         ];
     }
 
