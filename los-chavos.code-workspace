@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../sdk/base"
+		},
+		{
+			"path": "../sdk/core"
+		}
+	],
+	"settings": {}
+}
