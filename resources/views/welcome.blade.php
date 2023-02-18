@@ -63,6 +63,7 @@
                                     <a href="https://github.com/sdkconsultoria/base" class="text-cyan-600 hover:text-cyan-700">
                                         Documentación de SDK Base &rarr; </a>
                                 </p>
+                                <a class="text-cyan-600 hover:text-cyan-700" href="/admin">ENTRAR</a>
                             </div>
                         </div>
                     </div>
