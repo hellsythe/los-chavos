@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Policies;
+
+use Sdkconsultoria\Core\Policies\BasicPolicy;
+
+class OrderDetailPolicy extends BasicPolicy
+{
+
+}
