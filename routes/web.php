@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,4 +31,14 @@ Route::namespace('\App\Http\Controllers\Admin')
     Route::SdkResource('design', DesignController::class);
     Route::get('/', 'DashboardController@index')->name('dashboard');
     Route::get('/sale-point', 'SaleController@salePoint')->name('sale.point');
+});
+
+
+Route::get('whatsapp-recibe', function(Request $request){
+    \Log::debug('log');
+
+    if ($request->hub_verify_token === 'hayase') {
+        return $request->hub_challenge;
+    }
+
 });
