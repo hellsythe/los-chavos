@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('typographies', function (Blueprint $table) {
             $table->commonFields();
             $table->string('name');
-            $table->string('example');
+            $table->string('example')->nullable();
         });
     }
 

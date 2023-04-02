@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('subservices', function (Blueprint $table) {
             $table->commonFields();
             $table->string('name');
-            $table->foreignId('servcice_id');
+            $table->foreignId('service_id');
         });
     }
 
