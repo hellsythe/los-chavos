@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\Typography;
+use App\Models\Garment;
+use App\Models\Subservice;
+use App\Models\Service;
 use App\Models\Sale;
 use App\Models\Employee;
 use App\Models\Payment;
@@ -31,6 +35,7 @@ class MenuServiceProvider extends ServiceProvider
     public function boot()
     {
         $service_menu = app(MenuService::class);
+
         $service_menu->addElement([
             'name' => 'Punto de venta',
             'icon' => Base::icon('computer-desktop', ['class' => 'h-6 w-6']),
@@ -38,11 +43,15 @@ class MenuServiceProvider extends ServiceProvider
             'crud' => '',
             'extra_urls' => [],
         ]);
+        $service_menu->addElement(Design::makeMenu('puzzle-piece'));
+        $service_menu->addElement(Client::makeMenu('user-group'));
+        $service_menu->addElement(Typography::makeMenu('book-open'));
+        $service_menu->addElement(Garment::makeMenu('book-open'));
+        $service_menu->addElement(Service::makeMenu('book-open'));
+        $service_menu->addElement(Subservice::makeMenu('book-open'));
         $service_menu->addElement(Sale::makeMenu('banknotes'));
         $service_menu->addElement(Employee::makeMenu('tag'));
-        $service_menu->addElement(Design::makeMenu('puzzle-piece'));
         // $service_menu->addElement(Payment::makeMenu('book-open'));
-        $service_menu->addElement(Client::makeMenu('user-group'));
         // $service_menu->addElement(Order::makeMenu('book-open'));
     }
 }

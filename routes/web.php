@@ -20,7 +20,11 @@ Route::get('/', function () {
 
 Route::namespace('\App\Http\Controllers\Admin')
 ->middleware('auth')
-->prefix('admin')->group(function () {
+->prefix('admin')->group(function () { 
+    Route::SdkResource('typography', TypographyController::class); 
+    Route::SdkResource('garment', GarmentController::class); 
+    Route::SdkResource('subservice', SubserviceController::class); 
+    Route::SdkResource('service', ServiceController::class);
     Route::SdkResource('sale-detail', SaleDetailController::class);
     Route::SdkResource('sale', SaleController::class);
     Route::SdkResource('employee', EmployeeController::class);

@@ -18,7 +18,7 @@
                 <div class="text-red-500 text-xs font-semibold"></div>
             </div>
             <div class="form-control w-full mb-2 ml-2">
-                <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
+                <label for="" class="label"><span class="label-text">Fecha</span></label>
                 <input readOnly value="{{ date('d-m-Y') }}" type="text" class="input input-bordered w-full">
                 <div class="text-red-500 text-xs font-semibold"></div>
             </div>
@@ -67,7 +67,7 @@
 
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Colores de bordado</span></label>
-            <input name="name" type="email" class="input input-bordered w-full" placeholder="gris o blanco">
+            <input name="name" type="email" class="input input-bordered w-full" placeholder="gris o blanco ">
             <div class="text-red-500 text-xs font-semibold"></div>
         </div>
 
