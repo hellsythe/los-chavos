@@ -1,25 +1,28 @@
 vue
 <template>
-    <ClientComponent />
+    <ClientComponent :client="client" />
+    <ServicesComponent :availableservices="services" :selectedServices="selectedServices"/>
 </template>
 
 <script>
 import ClientComponent from "./Client.vue";
+import ServicesComponent from "./Services.vue";
 
 
 export default {
     name: "SalePoint",
-
     props: {
         csrf: String,
-        services: JSON
+        services: JSON,
     },
     components: {
         ClientComponent,
+        ServicesComponent,
     },
     data() {
         return {
-            selectedServices: [],
+            client: {},
+            selectedServices: [{}],
         };
     },
     mounted() {

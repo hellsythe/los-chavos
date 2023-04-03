@@ -12,7 +12,7 @@ class SaleController extends ResourceController
     public function salePoint()
     {
         return view('back.sale.point', [
-            'services' => Service::all()
+            'available_services' => Service::all()
         ]);
     }
 }

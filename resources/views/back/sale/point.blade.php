@@ -4,6 +4,6 @@
 
 @section('content')
     <div id="sale">
-        <sale-component :services="{{json_encode($services)}}" />
+        <sale-component :services="{{json_encode($available_services)}}" />
     </div>
 @endsection

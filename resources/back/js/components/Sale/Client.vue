@@ -13,20 +13,23 @@
             <div v-if="showClientInfo">
                 <div class="form-control w-full mb-2">
                     <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
-                    <input name="name" type="text" class="input input-bordered w-full" placeholder="John Fulanito">
+                    <input v-model="client.name" name="name" type="text" class="input input-bordered w-full" placeholder="John Fulanito">
                     <div class="text-red-500 text-xs font-semibold"></div>
                 </div>
 
                 <div class="form-control w-full mb-2">
                     <label for="" class="label"><span class="label-text">Teléfono del cliente</span></label>
-                    <input name="name" type="numeric" class="input input-bordered w-full" placeholder="2747430512">
+                    <input v-model="client.phone" name="name" type="numeric" class="input input-bordered w-full" placeholder="2747430512">
                     <div class="text-red-500 text-xs font-semibold"></div>
                 </div>
 
                 <div class="form-control w-full mb-2">
                     <label for="" class="label"><span class="label-text">Correo del cliente</span></label>
-                    <input name="name" type="email" class="input input-bordered w-full" placeholder="cliente@gmail.com">
+                    <input v-model="client.email" name="name" type="email" class="input input-bordered w-full" placeholder="cliente@gmail.com">
                     <div class="text-red-500 text-xs font-semibold"></div>
+                </div>
+                <div class="flex justify-end	">
+                    <button class="btn btn-info">Siguiente</button>
                 </div>
             </div>
         </div>
@@ -42,11 +45,12 @@ import {
 
 export default {
     name: "Client",
-
-
     components: {
         EyeIcon,
         EyeSlashIcon
+    },
+    props: {
+        client: JSON
     },
     data() {
         return {
