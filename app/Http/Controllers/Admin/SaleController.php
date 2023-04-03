@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Service;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 
 class SaleController extends ResourceController
@@ -10,6 +11,8 @@ class SaleController extends ResourceController
 
     public function salePoint()
     {
-        return view('back.sale.point');
+        return view('back.sale.point', [
+            'services' => Service::all()
+        ]);
     }
 }
