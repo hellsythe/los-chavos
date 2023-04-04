@@ -11,6 +11,7 @@ class Subservice extends BaseModel
     {
         return[
             TextField::make('name')->label('Nombre')->rules(['required']),
+            TextField::make('service_id')->label('Servicio')->rules(['required']),
         ];
     }
 

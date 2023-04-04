@@ -12,12 +12,15 @@
             </div>
             <div v-if="showServicesInfo">
                 <ul class="menu menu-vertical lg:menu-horizontal bg-base-100 rounded-box">
-                    <li @click="currentService=index" v-for="(seledtedService, index) in selectedServices">
-                        <a :class="{active: index == currentService}">{{seledtedService.name ?? `Servicio ${index+1}` }}</a>
+                    <li @click="currentServiceIndex=index" v-for="(seledtedService, index) in selectedServices">
+                        <a :class="{active: index == currentServiceIndex}">{{seledtedService.name ?? `Servicio ${index+1}` }}</a>
                     </li>
                     <li @click="addNewService"><a>Añadir Servicio <PlusCircleIcon class="h-4 mr-1" /></a></li>
                 </ul>
-                <ServiceComponent />
+                <div v-for="(seledtedService, index) in selectedServices">
+                    <!-- v-show="index==currentServiceIndex" -->
+                    <ServiceComponent :availableservices="availableservices" :index="index" :currentServiceIndex="currentServiceIndex" :selectedServices="selectedServices"/>
+                </div>
             </div>
         </div>
     </div>
@@ -48,7 +51,7 @@ export default {
         return {
             currentServices: [],
             showServicesInfo: true,
-            currentService: 0,
+            currentServiceIndex: 0,
         };
     },
     mounted() {

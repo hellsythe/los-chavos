@@ -71,14 +71,14 @@ class Start extends Command
             $ponchado_existente->save();
         }
 
-        $perzonalizado = Subservice::where('name', 'Perzonalizado')->first();
-        if(!$perzonalizado)
+        $personalizado = Subservice::where('name', 'Personalizado')->first();
+        if(!$personalizado)
         {
-            $perzonalizado = new Subservice();
-            $perzonalizado->name = 'perzonalizado';
-            $perzonalizado->service_id = $service->id;
-            $perzonalizado->status = Subservice::STATUS_ACTIVE;
-            $perzonalizado->save();
+            $personalizado = new Subservice();
+            $personalizado->name = 'Personalizado';
+            $personalizado->service_id = $service->id;
+            $personalizado->status = Subservice::STATUS_ACTIVE;
+            $personalizado->save();
         }
 
         $ponchado_modificado = Subservice::where('name', 'Ponchado modificado')->first();
