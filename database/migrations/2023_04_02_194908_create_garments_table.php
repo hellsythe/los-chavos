@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('garments', function (Blueprint $table) {
             $table->commonFields();
             $table->string('name');
-            $table->string('back')->nullable();
-            $table->string('front')->nullable();
+            $table->string('preview')->nullable();
         });
     }
 
