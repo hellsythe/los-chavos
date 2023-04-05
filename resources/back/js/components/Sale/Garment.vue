@@ -6,8 +6,8 @@
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold"></div>
-            <div v-show="service.garment?.back">
-                <img :src="service.garment?.back" alt="" class="absolute">
+            <div v-show="service.garment?.preview">
+                <img :src="service.garment?.preview" alt="" class="absolute">
                 <div id="container"></div>
             </div>
         </div>
@@ -49,8 +49,7 @@ export default {
             this.service.garment = {
                 id: value.id,
                 name: value.name,
-                back: value.back,
-                front: value.value,
+                preview: value.preview,
             };
 
             this.initCanva();
