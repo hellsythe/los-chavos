@@ -10,7 +10,7 @@
         <div v-if="getDesignFileFormat() == 'pdf'"  class="flex flex-col justify-end items-end">
             <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
             <button @click="showPreview = true" v-if="!showPreview" class="btn btn-info mt-3 mb-3">Mostrar Preview</button>
-            <embed v-if="showPreview" :src="this.service.design.media" width="90%" height="500px" />
+            <embed v-if="showPreview" :src="this.service.design.media" width="90%" height="300px" />
         </div>
     </div>
 </template>

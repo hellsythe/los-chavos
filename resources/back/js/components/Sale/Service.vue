@@ -17,6 +17,7 @@
             </select>
             <div class="text-red-500 text-xs font-semibold"></div>
             <DesignComponent :service="selectedServices[index]"></DesignComponent>
+            <GarmentComponent :service="selectedServices[index]"></GarmentComponent>
         </div>
     </div>
 </template>
@@ -24,6 +25,7 @@
 <script>
 import { resquestToApi } from '@base/js/request/resquestToApi';
 import DesignComponent from './Design.vue';
+import GarmentComponent from './Garment.vue';
 
 export default {
     name: "Service",
@@ -34,6 +36,7 @@ export default {
         currentServiceIndex: Number,
     },
     components: {
+        GarmentComponent,
         DesignComponent
     },
     data() {
