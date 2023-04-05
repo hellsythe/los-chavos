@@ -12,7 +12,7 @@ class Garment extends BaseModel
     {
         return [
             TextField::make('name')->label('Nombre')->rules(['required']),
-            FileField::make('preview')->setDisk('garment/back/')->label('Preview')->rules(['required,mimes:jpg,pdf,png'])->rulesUpdate(['mimes:jpg,pdf,png'])->searchable(false),
+            FileField::make('preview')->setDisk('garment/')->label('Preview')->rules(['required,mimes:jpg,pdf,png'])->rulesUpdate(['mimes:jpg,pdf,png'])->searchable(false),
         ];
     }
 
