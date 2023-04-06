@@ -35,13 +35,13 @@
         </div>
     </div>
 
-    <DesignComponent v-if="service.subservice_id == 1" :service="service"></DesignComponent>
+    <DesignComponent v-if="service.subservice_id == 1" :service="service" text="Diseño Existente"  />
 
     <CustomComponent v-if="service.subservice_id == 2" :service="service" />
 
-    <NewComponent v-if="service.subservice_id == 4" />
+    <UpdateComponent v-if="service.subservice_id == 3" :service="service" />
 
-
+    <NewComponent v-if="service.subservice_id == 4" :service="service"  />
 
     <div v-if="service.design" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Comentarios</span></label>
@@ -55,6 +55,7 @@ import { resquestToApi } from '@base/js/request/resquestToApi';
 import DesignComponent from './../Design.vue';
 import CustomComponent from './EmbroideryForms/Custom.vue';
 import NewComponent from './EmbroideryForms/New.vue';
+import UpdateComponent from './EmbroideryForms/Update.vue';
 
 export default {
     name: "Embroidery",
@@ -66,6 +67,7 @@ export default {
         DesignComponent,
         CustomComponent,
         NewComponent,
+        UpdateComponent,
     },
     data() {
         return {
