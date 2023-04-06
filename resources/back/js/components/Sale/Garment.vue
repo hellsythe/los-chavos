@@ -6,8 +6,8 @@
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold"></div>
-            <div v-show="service.garment?.preview">
-                <img :src="service.garment?.preview" alt="" class="absolute">
+            <div v-show="garment.data?.preview" class="mt-3">
+                <img :src="garment.data?.preview" alt="" class="absolute mt-3">
                 <div id="container"></div>
             </div>
         </div>
@@ -17,14 +17,24 @@
 <script>
 import TypeaheadInput from '@base/js/components/Crud/Form/Fields/TypeaheadInput.vue';
 import Konva from 'konva';
+import colors from './../colors';
 
 export default {
     name: "Garment",
     props: {
-        service: JSON,
+        garment: JSON,
+        selectedServices: JSON,
+    },
+    data() {
+        return {
+            layer: null
+        };
     },
     components: {
         TypeaheadInput,
+    },
+    computed: {
+        get_colors() { return colors }
     },
     data() {
         return {
@@ -46,7 +56,7 @@ export default {
     },
     methods: {
         selectedData(value) {
-            this.service.garment = {
+            this.garment.data = {
                 id: value.id,
                 name: value.name,
                 preview: value.preview,
@@ -55,8 +65,8 @@ export default {
             this.initCanva();
         },
         initCanva() {
-            let layer = this.writeLayer();
-            this.point(layer);
+            this.writeLayer();
+            this.writtePoitsByEachDesign();
         },
         writeLayer() {
             var stage = new Konva.Stage({
@@ -65,23 +75,26 @@ export default {
                 height: 300,
             });
 
-            var layer = new Konva.Layer();
-            stage.add(layer);
-
-            return layer;
+            this.layer = new Konva.Layer();
+            stage.add(this.layer);
         },
-        point(layer) {
-            var circle = new Konva.Circle({
-                x: 200,
-                y: 200,
-                radius: 10,
-                fill: 'red',
+        writtePoitsByEachDesign() {
+            for (let index = 0; index < this.selectedServices.length; index++) {
+                this.point(this.get_colors[index], index);
+            }
+        },
+        point(color, index) {
+            let circle = new Konva.Circle({
+                x: 20 * (index+1),
+                y: 20 ,
+                radius: 8,
+                fill: color,
                 stroke: 'black',
-                strokeWidth: 3,
+                strokeWidth: 1,
                 draggable: true
             });
             circle.zIndex(99);
-            layer.add(circle);
+            this.layer.add(circle);
 
         }
     },

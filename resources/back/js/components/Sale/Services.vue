@@ -12,16 +12,22 @@
             </div>
             <div v-if="showServicesInfo">
                 <ul class="menu menu-vertical lg:menu-horizontal bg-base-100 rounded-box">
-                    <li @click="currentServiceIndex=index" v-for="(seledtedService, index) in selectedServices">
-                        <a :class="{active: index == currentServiceIndex}">{{seledtedService.name ?? `Servicio ${index+1}` }}</a>
+                    <li @click="currentServiceIndex = index" v-for="(seledtedService, index) in selectedServices">
+                        <a :class="{ active: index == currentServiceIndex }">
+                            {{ seledtedService.name ?? `Servicio ${index + 1}` }}
+                            <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
+                        </a>
                     </li>
-                    <li @click="addNewService"><a>Añadir Servicio <PlusCircleIcon class="h-4 mr-1" /></a></li>
+                    <li @click="addNewService"><a>Añadir Servicio
+                            <PlusCircleIcon class="h-4 mr-1" />
+                        </a></li>
                 </ul>
                 <div v-for="(seledtedService, index) in selectedServices">
-                    <!-- v-show="index==currentServiceIndex" -->
-                    <ServiceComponent :availableservices="availableservices" :index="index" :currentServiceIndex="currentServiceIndex" :selectedServices="selectedServices"/>
+                    <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService"
+                        :currentServiceIndex="currentServiceIndex"  />
                 </div>
             </div>
+            <GarmentComponent :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
         </div>
     </div>
 </template>
@@ -34,6 +40,8 @@ import {
 } from "@heroicons/vue/24/solid";
 
 import ServiceComponent from './Service.vue';
+import GarmentComponent from './Garment.vue';
+import colors from './../colors';
 
 export default {
     name: "Services",
@@ -46,19 +54,24 @@ export default {
         EyeSlashIcon,
         PlusCircleIcon,
         ServiceComponent,
+        GarmentComponent,
     },
-    data() {
+    computed: {
+        get_colors() { return colors }
+    },
+     data() {
         return {
             currentServices: [],
             showServicesInfo: true,
             currentServiceIndex: 0,
+            garmentData: {}
         };
     },
     mounted() {
 
     },
     methods: {
-        addNewService(){
+        addNewService() {
             this.selectedServices.push({});
         }
 
