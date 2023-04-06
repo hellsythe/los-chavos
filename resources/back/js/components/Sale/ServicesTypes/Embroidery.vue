@@ -1,16 +1,47 @@
 <template>
-    <div class="form-control w-full mb-2">
-        <label for="" class="label"><span class="label-text">Tipo de Bordado</span></label>
-        <select class="select select-bordered w-full" v-model="service.subservice_id">
-            <option disabled selected>Elije uno</option>
-            <option :value="service.id" v-for="service in availablesubservices">{{ service.name }}</option>
-        </select>
-        <div class="text-red-500 text-xs font-semibold"></div>
+    <div class="flex">
+        <div class="form-control w-full mb-2 mr-2">
+            <label for="" class="label"><span class="label-text">Tipo de Bordado</span></label>
+            <select class="select select-bordered w-full" v-model="service.subservice_id">
+                <option disabled selected>Elije uno</option>
+                <option :value="service.id" v-for="service in availablesubservices">{{ service.name }}</option>
+            </select>
+            <div class="text-red-500 text-xs font-semibold"></div>
+        </div>
+
+        <div class="form-control mb-2 mr-2">
+            <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
+            <label class="input-group">
+                <span>$</span>
+                <input type="text" class="input input-bordered" />
+            </label>
+            <div class="text-red-500 text-xs font-semibold"></div>
+        </div>
+        <div class="form-control mb-2" v-if="service.subservice_id == 3">
+            <label for="" class="label"><span class="label-text">Costo por modificar ponchado</span></label>
+            <label class="input-group">
+                <span>$</span>
+                <input type="text" class="input input-bordered" />
+            </label>
+            <div class="text-red-500 text-xs font-semibold"></div>
+        </div>
+        <div class="form-control mb-2" v-if="service.subservice_id == 4">
+            <label for="" class="label"><span class="label-text">Costo por ponchado nuevo</span></label>
+            <label class="input-group">
+                <span>$</span>
+                <input type="text" class="input input-bordered" />
+            </label>
+            <div class="text-red-500 text-xs font-semibold"></div>
+        </div>
     </div>
 
     <DesignComponent v-if="service.subservice_id == 1" :service="service"></DesignComponent>
 
     <CustomComponent v-if="service.subservice_id == 2" :service="service" />
+
+    <NewComponent v-if="service.subservice_id == 4" />
+
+
 
     <div v-if="service.design" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Comentarios</span></label>
@@ -23,6 +54,7 @@
 import { resquestToApi } from '@base/js/request/resquestToApi';
 import DesignComponent from './../Design.vue';
 import CustomComponent from './EmbroideryForms/Custom.vue';
+import NewComponent from './EmbroideryForms/New.vue';
 
 export default {
     name: "Embroidery",
@@ -32,7 +64,8 @@ export default {
     },
     components: {
         DesignComponent,
-        CustomComponent
+        CustomComponent,
+        NewComponent,
     },
     data() {
         return {

@@ -1,16 +1,21 @@
 <template>
-    <div>
-        <div class="form-control w-full mb-2">
+    <div class="flex">
+        <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de prenda</span></label>
             <TypeaheadInput :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold"></div>
-            <div v-show="garment.data?.preview" class="mt-3">
-                <img :src="garment.data?.preview" alt="" class="absolute mt-3">
-                <div id="container"></div>
-            </div>
         </div>
+        <div class="form-control w-64 mb-2 mr-2">
+            <label for="" class="label"><span class="label-text">Cantidad de prendas</span></label>
+            <input v-model="garment.amount" type="number" class="input input-bordered w-full">
+            <div class="text-red-500 text-xs font-semibold"></div>
+        </div>
+    </div>
+    <div v-show="garment.data?.preview" class="mt-3">
+        <img :src="garment.data?.preview" alt="" class="absolute mt-3">
+        <div id="container"></div>
     </div>
 </template>
 
@@ -71,7 +76,7 @@ export default {
         writeLayer() {
             var stage = new Konva.Stage({
                 container: 'container',
-                width: window.innerWidth,
+                width: 500,
                 height: 300,
             });
 
@@ -85,8 +90,8 @@ export default {
         },
         point(color, index) {
             let circle = new Konva.Circle({
-                x: 20 * (index+1),
-                y: 20 ,
+                x: 20 * (index + 1),
+                y: 20,
                 radius: 8,
                 fill: color,
                 stroke: 'black',

@@ -1,17 +1,19 @@
 <template>
-    <div>
-        <div class="form-control w-full mb-2">
+    <div class="flex">
+        <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Diseño</span></label>
-            <TypeaheadInput :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData" :ignoredList="selectedItemIds"
-                placeholder="Escribe el nombre del diseño">
+            <TypeaheadInput :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
+                :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold"></div>
         </div>
-        <div v-if="getDesignFileFormat() == 'pdf'"  class="flex flex-col justify-end items-end">
+        <div class="mt-6">
             <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
             <button @click="showPreview = true" v-if="!showPreview" class="btn btn-info mt-3 mb-3">Mostrar Preview</button>
-            <embed v-if="showPreview" :src="this.service.design.media" width="90%" height="300px" />
         </div>
+    </div>
+    <div v-if="getDesignFileFormat() == 'pdf'" class="flex flex-col justify-end items-end">
+        <embed v-if="showPreview" :src="this.service.design.media" width="100%" height="300px" />
     </div>
 </template>
 
@@ -43,7 +45,7 @@ export default {
                 media: value.media,
             };
         },
-        getDesignFileFormat(){
+        getDesignFileFormat() {
             return this.service.design?.media.split('.').pop();
         }
     },
