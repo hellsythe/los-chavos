@@ -28,6 +28,16 @@
             <div class="text-red-500 text-xs font-semibold"></div>
         </div>
     </div>
+
+    <div v-if="this.service.typography"  class="form-control w-full mb-2">
+        <label for="" class="label"><span class="label-text">Texto a Bordar</span></label>
+        <input v-model="service.text" type="text" class="input input-bordered w-full" placeholder="John Fulanito">
+        <div class="text-red-500 text-xs font-semibold"></div>
+    </div>
+
+    <div class="form-control w-full mb-2 flex justify-center items-center text-3xl mt-5" v-if="service.text">
+        <p :style="{ 'font-family': fontFamily }">{{ service.text }}</p>
+    </div>
 </template>
 
 <script>
@@ -45,6 +55,7 @@ export default {
         return {
             availabletypography: {},
             selectedItemIds: [],
+            fontFamily: 'sans',
         };
     },
     mounted() {
@@ -54,8 +65,23 @@ export default {
             this.service.typography = {
                 id: value.id,
                 name: value.name,
+                slutname: value.name.replace(/\s+/g, ''),
+                font: value.example,
             };
+
+            this.loadFontFromUrl();
         },
+        loadFontFromUrl() {
+            let newStyle = document.createElement('style');
+            newStyle.appendChild(document.createTextNode(`
+                @font-face {
+                    font-family: '${this.service.typography.slutname}';
+                    src: url('${this.service.typography.font}');
+                }
+          `));
+          document.head.appendChild(newStyle);
+          this.fontFamily = this.service.typography.slutname;
+        }
     },
 };
 </script>

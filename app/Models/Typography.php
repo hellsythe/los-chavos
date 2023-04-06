@@ -12,7 +12,7 @@ class Typography extends BaseModel
     {
         return[
             TextField::make('name')->label('Nombre')->rules(['required']),
-            FileField::make('example')->setDisk('typography/')->label('Ejemplo')->rules(['required,mimes:jpg,pdf,png'])->rulesUpdate(['mimes:jpg,pdf,png'])->searchable(false),
+            FileField::make('example')->setDisk('typography/')->label('Tipografia')->rules(['required,mimetypes:font/ttf,font/sfnt'])->rulesUpdate(['mimetypes:font/ttf,font/sfnt'])->searchable(false),
         ];
     }
 
