@@ -13,6 +13,7 @@ class Design extends BaseModel
     {
         return[
             TextField::make('name')->label('Nombre')->rules(['required']),
+            NumericField::make('price')->rules(['nullable'])->label('Precio'),
             NumericField::make('minutes')->label('Minutos')->rules(['required'])
                 ->tooltip('Cantidad de tiempo en minutos que tarda la máquina en bordar este diseño'),
             FileField::make('media')->setDisk('design/')->label('Diseño')->rules(['required,mimes:jpg,pdf,png'])->rulesUpdate(['mimes:jpg,pdf,png'])->searchable(false),

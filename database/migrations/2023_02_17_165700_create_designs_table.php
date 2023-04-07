@@ -17,6 +17,7 @@ return new class extends Migration
             $table->commonFields();
             $table->string('name');
             $table->integer('minutes');
+            $table->double('price', 8, 2)->nullable();
             $table->string('media');
         });
     }
