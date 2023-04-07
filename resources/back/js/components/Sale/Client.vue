@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="p-4 bg-white mb-5 shadow rounded-lg">
+        <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
             <div class="flex justify-between">
                 <h1 class="font-bold">Información del cliente</h1>
                 <button @click="showClientInfo = true" v-if="!showClientInfo">
