@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->commonFields();
             $table->string('name');
+            $table->double('price', 8, 2)->nullable();
         });
     }
 
