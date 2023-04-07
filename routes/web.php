@@ -20,10 +20,10 @@ Route::get('/', function () {
 
 Route::namespace('\App\Http\Controllers\Admin')
 ->middleware('auth')
-->prefix('admin')->group(function () { 
-    Route::SdkResource('typography', TypographyController::class); 
-    Route::SdkResource('garment', GarmentController::class); 
-    Route::SdkResource('subservice', SubserviceController::class); 
+->prefix('admin')->group(function () {
+    Route::SdkResource('typography', TypographyController::class);
+    Route::SdkResource('garment', GarmentController::class);
+    Route::SdkResource('subservice', SubserviceController::class);
     Route::SdkResource('service', ServiceController::class);
     Route::SdkResource('sale-detail', SaleDetailController::class);
     Route::SdkResource('sale', SaleController::class);
@@ -38,11 +38,7 @@ Route::namespace('\App\Http\Controllers\Admin')
 });
 
 
-Route::get('whatsapp-recibe', function(Request $request){
-    \Log::debug('log');
 
-    if ($request->hub_verify_token === 'hayase') {
-        return $request->hub_challenge;
-    }
-
+Route::get('/', function(){
+    return redirect('admin');
 });
