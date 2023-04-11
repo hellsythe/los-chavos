@@ -5,7 +5,7 @@
         @csrf
         <div class="form-control w-full">
             <label class="input-group">
-                <span>{!! Base::icon('mail', ['class' => 'h-3']) !!}</span>
+                <span>{!! Base::icon('mail', ['class' => 'h-3', 'style' => 'width: 24px;stroke:gray']) !!}</span>
                 <input type="text" name="email" placeholder="Correo Electronico" class="input input-bordered w-full" value="{{old('email')}}" required/>
             </label>
             <label class="label">
@@ -21,7 +21,7 @@
 
         <div class="form-control w-full">
             <label class="input-group">
-                <span>{!! Base::icon('lock-closed', ['class' => 'h-3']) !!}</span>
+                <span>{!! Base::icon('lock-closed', ['class' => 'h-3', 'style' => 'width: 24px;stroke:gray']) !!}</span>
                 <input type="password" name="password" placeholder="Contraseña" class="input input-bordered w-full" required />
             </label>
             <label class="label">
