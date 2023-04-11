@@ -31,17 +31,14 @@
 
     <div v-if="this.service.typography"  class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Texto a Bordar</span></label>
-        <input v-model="service.text" type="text" class="input input-bordered w-full" placeholder="John Fulanito">
+        <TipTap v-model="service.custom.text" :style="{ 'font-family': fontFamily }"></TipTap>
         <div class="text-red-500 text-xs font-semibold"></div>
-    </div>
-
-    <div class="form-control w-full mb-2 flex justify-center items-center text-3xl mt-5" v-if="service.text">
-        <p :style="{ 'font-family': fontFamily }">{{ service.text }}</p>
     </div>
 </template>
 
 <script>
 import TypeaheadInput from '@base/js/components/Crud/Form/Fields/TypeaheadInput.vue';
+import TipTap from '@base/js/components/Crud/Form/Fields/TipTapComponent.vue';
 
 export default {
     name: "CustomEmbroidery",
@@ -49,7 +46,8 @@ export default {
         service: JSON,
     },
     components: {
-        TypeaheadInput
+        TypeaheadInput,
+        TipTap
     },
     data() {
         return {
@@ -58,7 +56,9 @@ export default {
             fontFamily: 'sans',
         };
     },
-    mounted() {
+    created() {
+        this.service.custom = {text:'a'}
+        console.log(this.service.custom.text);
     },
     methods: {
         selectedData(value) {
