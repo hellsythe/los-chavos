@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Sdkconsultoria\Base\Fields\TextField;
+use Sdkconsultoria\Base\Fields\CustomField;
 use Sdkconsultoria\Core\Fields\PasswordField;
 use Sdkconsultoria\Base\Models\Auth\UserSocial;
 use Sdkconsultoria\Core\Models\Traits\BaseModel as TraitBaseModel;
@@ -40,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected function fields()
     {
-        return[
+        return [
             TextField::make('name')
                 ->label('Nombre')
                 ->rules(['required'])
@@ -62,10 +63,13 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->rules(['required', 'email']),
             PasswordField::make('password')
                 ->label('Contraseña')
-                ->rules(['required', 'min:6', 'confirmed'])->hideOnIndex(),
-            PasswordField::make('password_confirmation')
+                ->rules(['required', 'min:6', 'confirmed'])->rulesUpdate(['nullable'])->hideOnIndex(),
+            PasswordField::make('password_confirmation')->rulesUpdate(['nullable'])
                 ->label('Confirmar contraseña')
                 ->rules(['min:6'])->hideOnIndex()->canBeSaved(false),
+            CustomField::make('role_id')
+                ->rules(['required'])
+                ->label('Rol'),
         ];
     }
 
