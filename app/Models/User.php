@@ -167,6 +167,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRoleIdAttribute()
     {
-        return $this->roles()->first()->name;
+        return $this->roles()->first()->name ?? '';
     }
 }

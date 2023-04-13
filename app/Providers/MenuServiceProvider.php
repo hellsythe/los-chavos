@@ -35,6 +35,11 @@ class MenuServiceProvider extends ServiceProvider
     public function boot()
     {
         $service_menu = app(MenuService::class);
+        $service_menu->addElement([
+            'name' => 'Dashboard',
+            'icon' => \Base::icon('home', ['class' => 'h-6 w-6']),
+            'url' => 'dashboard',
+        ], ['super-admin']);
 
         $service_menu->addElement([
             'name' => 'Punto de venta',
@@ -42,15 +47,16 @@ class MenuServiceProvider extends ServiceProvider
             'url' =>  'sale.point',
             'crud' => '',
             'extra_urls' => [],
-        ]);
-        $service_menu->addElement(Design::makeMenu('puzzle-piece'));
-        $service_menu->addElement(Client::makeMenu('user-group'));
-        $service_menu->addElement(Typography::makeMenu('book-open'));
-        $service_menu->addElement(Garment::makeMenu('book-open'));
-        $service_menu->addElement(Service::makeMenu('book-open'));
-        $service_menu->addElement(Subservice::makeMenu('book-open'));
-        $service_menu->addElement(Sale::makeMenu('banknotes'));
-        $service_menu->addElement(Employee::makeMenu('tag'));
+        ], ['Punto de venta']);
+        $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
+        $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);
+        $service_menu->addElement(Typography::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Garment::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Subservice::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Sale::makeMenu('banknotes'), ['super-admin']);
+        $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
+        // $service_menu->addElement(Employee::makeMenu('tag'), ['super-admin']);
         // $service_menu->addElement(Payment::makeMenu('book-open'));
         // $service_menu->addElement(Order::makeMenu('book-open'));
     }
