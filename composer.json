@@ -25,11 +25,11 @@
     },
     "repositories": [
         {
-            "url": "/projects/sdk/base",
+            "url": "./../../projects/sdk/base",
             "type": "path"
         },
         {
-            "url": "/projects/sdk/core",
+            "url": "./../../projects/sdk/core",
             "type": "path"
         }
     ],

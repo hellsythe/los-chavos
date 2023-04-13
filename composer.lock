@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1dd17121afff1b84b7682dba5546a27",
+    "content-hash": "36d7821d8c4d9c0d4799084f7beffb0f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3425,16 +3425,10 @@
         {
             "name": "sdkconsultoria/base",
             "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sdkconsultoria/base.git",
-                "reference": "1b5fb3124d7e7cb51d09701704bd26b449cf7e50"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/1b5fb3124d7e7cb51d09701704bd26b449cf7e50",
-                "reference": "1b5fb3124d7e7cb51d09701704bd26b449cf7e50",
-                "shasum": ""
+                "type": "path",
+                "url": "./../../projects/sdk/base",
+                "reference": "1b5fb3124d7e7cb51d09701704bd26b449cf7e50"
             },
             "require": {
                 "hybridauth/hybridauth": "^3.7",
@@ -3447,7 +3441,6 @@
             "require-dev": {
                 "laravel/pint": "^0.2.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3466,7 +3459,6 @@
                     "Sdkconsultoria\\Base\\Tests\\": "tests/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3484,25 +3476,17 @@
                 "laravel",
                 "package"
             ],
-            "support": {
-                "issues": "https://github.com/sdkconsultoria/base/issues",
-                "source": "https://github.com/sdkconsultoria/base/tree/develop"
-            },
-            "time": "2023-04-13T02:10:51+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "sdkconsultoria/core",
             "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sdkconsultoria/core.git",
-                "reference": "c05d560dd99fbba92356d8d7a8a2ec2fd983af32"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/core/zipball/c05d560dd99fbba92356d8d7a8a2ec2fd983af32",
-                "reference": "c05d560dd99fbba92356d8d7a8a2ec2fd983af32",
-                "shasum": ""
+                "type": "path",
+                "url": "./../../projects/sdk/core",
+                "reference": "c05d560dd99fbba92356d8d7a8a2ec2fd983af32"
             },
             "require": {
                 "intervention/image": "^2.7",
@@ -3516,7 +3500,6 @@
                 "orchestra/testbench": "^7.5",
                 "phpunit/phpunit": "^9.5"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3533,7 +3516,6 @@
                     "Sdkconsultoria\\Core\\Tests\\": "tests/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3551,11 +3533,9 @@
                 "laravel",
                 "package"
             ],
-            "support": {
-                "issues": "https://github.com/sdkconsultoria/core/issues",
-                "source": "https://github.com/sdkconsultoria/core/tree/develop"
-            },
-            "time": "2023-04-13T02:18:34+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-permission",
