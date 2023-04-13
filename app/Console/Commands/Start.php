@@ -7,7 +7,8 @@ use App\Models\Subservice;
 use App\Models\Garment;
 use App\Models\Typography;
 use Illuminate\Console\Command;
-
+use Sdkconsultoria\Core\Models\Role;
+use Spatie\Permission\Models\Permission;
 class Start extends Command
 {
     /**
@@ -32,6 +33,8 @@ class Start extends Command
         $this->createServices();
         $this->createGarment();
         $this->createTypography();
+        $this->createRoles();
+        $this->deleteRoles();
     }
 
     private function createServices(){
@@ -185,5 +188,22 @@ class Start extends Command
             $model->status = $class::STATUS_ACTIVE;
             $model->save();
         }
+    }
+
+    private function deleteRoles()
+    {
+        Role::where('name', 'user')->delete();
+        Role::where('name', 'admin')->delete();
+    }
+
+    private function createRoles()
+    {
+        $role = Role::firstOrCreate(['name' => 'Punto de venta', 'status' => Role::STATUS_ACTIVE]);
+        $role = Role::firstOrCreate(['name' => 'Bordador', 'status' => Role::STATUS_ACTIVE]);
+    }
+
+    private function createPermissions()
+    {
+        $permission = Permission::create(['name' => 'Corte de caja']);
     }
 }
