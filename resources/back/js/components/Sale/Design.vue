@@ -44,7 +44,9 @@ export default {
                 id: value.id,
                 name: value.name,
                 media: value.media,
+
             };
+            this.service.price = value.price;
         },
         getDesignFileFormat() {
             return this.service.design?.media.split('.').pop();

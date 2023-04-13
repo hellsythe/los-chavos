@@ -13,7 +13,7 @@
             <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" />
+                <input type="text" class="input input-bordered" v-model="service.price" />
             </label>
             <div class="text-red-500 text-xs font-semibold"></div>
         </div>
@@ -45,7 +45,7 @@
 
     <div v-if="service.design" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Comentarios</span></label>
-        <textarea class="textarea textarea-bordered" placeholder="Comentarios para este diseño"></textarea>
+        <textarea class="textarea textarea-bordered" placeholder="Comentarios para este diseño" v-model="service.comments"></textarea>
         <div class="text-red-500 text-xs font-semibold"></div>
     </div>
 </template>

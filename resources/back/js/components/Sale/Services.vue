@@ -18,16 +18,21 @@
                             <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
                         </a>
                     </li>
-                    <li @click="addNewService"><a>Añadir Servicio
+                    <li @click="addNewService">
+                        <a>Añadir Servicio
                             <PlusCircleIcon class="h-4 mr-1" />
-                        </a></li>
+                        </a>
+                    </li>
                 </ul>
                 <div v-for="(seledtedService, index) in selectedServices">
                     <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService"
-                        :currentServiceIndex="currentServiceIndex"  />
+                        :currentServiceIndex="currentServiceIndex" />
+                </div>
+                <GarmentComponent :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
+                <div class="flex justify-end	">
+                    <button class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
             </div>
-            <GarmentComponent :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
         </div>
     </div>
 </template>
@@ -59,7 +64,7 @@ export default {
     computed: {
         get_colors() { return colors }
     },
-     data() {
+    data() {
         return {
             currentServices: [],
             showServicesInfo: true,
@@ -73,8 +78,11 @@ export default {
     methods: {
         addNewService() {
             this.selectedServices.push({});
-        }
+        },
+        validate()
+        {
 
+        }
     },
 };
 </script>

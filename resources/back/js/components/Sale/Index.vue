@@ -21,7 +21,11 @@ export default {
     },
     data() {
         return {
-            client: {},
+            client: {
+                name: '',
+                email: '',
+                phone: '',
+            },
             selectedServices: [{}],
         };
     },

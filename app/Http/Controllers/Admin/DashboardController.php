@@ -9,7 +9,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        NewOrder::dispatch('anime');
+        // NewOrder::dispatch('anime');
 
         return view('back.dashboard.index', [
         ]);

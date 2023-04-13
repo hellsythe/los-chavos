@@ -11,25 +11,30 @@
                 </button>
             </div>
             <div v-if="showClientInfo">
-                <div class="form-control w-full mb-2">
-                    <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
-                    <input v-model="client.name" type="text" class="input input-bordered w-full" placeholder="John Fulanito">
-                    <div class="text-red-500 text-xs font-semibold"></div>
-                </div>
+                <div class="flex">
+                    <div class="form-control w-full mb-2 mr-2">
+                        <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
+                        <input v-model="client.name" type="text" class="input input-bordered w-full"
+                            placeholder="John Fulanito">
+                        <div class="text-red-500 text-xs font-semibold">{{ errors.name }}</div>
+                    </div>
 
-                <div class="form-control w-full mb-2">
-                    <label for="" class="label"><span class="label-text">Teléfono del cliente</span></label>
-                    <input v-model="client.phone" type="numeric" class="input input-bordered w-full" placeholder="2747430512">
-                    <div class="text-red-500 text-xs font-semibold"></div>
-                </div>
+                    <div class="form-control w-full mb-2 mr-2">
+                        <label for="" class="label"><span class="label-text">Teléfono del cliente</span></label>
+                        <input v-model="client.phone" type="numeric" class="input input-bordered w-full"
+                            placeholder="2747430512">
+                        <div class="text-red-500 text-xs font-semibold">{{ errors.phone }}</div>
+                    </div>
 
-                <div class="form-control w-full mb-2">
-                    <label for="" class="label"><span class="label-text">Correo del cliente</span></label>
-                    <input v-model="client.email" type="email" class="input input-bordered w-full" placeholder="cliente@gmail.com">
-                    <div class="text-red-500 text-xs font-semibold"></div>
+                    <div class="form-control w-full mb-2">
+                        <label for="" class="label"><span class="label-text">Correo del cliente</span></label>
+                        <input v-model="client.email" type="email" class="input input-bordered w-full"
+                            placeholder="cliente@gmail.com">
+                        <div class="text-red-500 text-xs font-semibold">{{ errors.email }}</div>
+                    </div>
                 </div>
                 <div class="flex justify-end	">
-                    <button class="btn btn-info">Siguiente</button>
+                    <button class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
             </div>
         </div>
@@ -54,14 +59,34 @@ export default {
     },
     data() {
         return {
-            showClientInfo: true
+            showClientInfo: true,
+            errors: {},
         };
     },
     mounted() {
 
     },
     methods: {
+        validate() {
+            let errors = false;
 
+            if (this.client.name.length === 0) {
+                this.errors.name = 'El nombre del cliente no puede estar vacio';
+                errors = true;
+            }
+            if (this.client.email.length === 0) {
+                this.errors.email = 'El nombre del cliente no puede estar vacio';
+                errors = true;
+            }
+            if (this.client.phone.length === 0) {
+                this.errors.phone = 'El nombre del cliente no puede estar vacio';
+                errors = true;
+            }
+
+            if (!errors) {
+                this.showClientInfo = false;
+            }
+        }
     },
 };
 </script>

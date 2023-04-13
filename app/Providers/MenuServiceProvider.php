@@ -47,7 +47,7 @@ class MenuServiceProvider extends ServiceProvider
             'url' =>  'sale.point',
             'crud' => '',
             'extra_urls' => [],
-        ], ['Punto de venta']);
+        ], ['super-admin', 'Punto de venta']);
         $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
         $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);
         $service_menu->addElement(Typography::makeMenu('book-open'), ['super-admin']);

@@ -2,8 +2,7 @@
     <div v-show="index == currentServiceIndex">
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Tipo de servicio</span></label>
-            <select class="select select-bordered w-full" v-model="service.service_id"
-                :onchange="loadSubservicesFromApi">
+            <select class="select select-bordered w-full" v-model="service.service_id" :onchange="loadSubservicesFromApi">
                 <option disabled selected>Elije uno</option>
                 <option :value="service.id" v-for="service in availableservices ">{{ service.name }}</option>
             </select>
@@ -11,7 +10,6 @@
         </div>
 
         <EmbroideryComponent :service="service" v-if="service.service_id == 1" />
-
     </div>
 </template>
 
