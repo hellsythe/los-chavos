@@ -42,3 +42,9 @@ Route::namespace('\App\Http\Controllers\Admin')
 Route::get('/', function(){
     return redirect('admin');
 });
+
+
+Route::namespace('\Sdkconsultoria\Core\Http\Controllers')
+->prefix('admin/v1')->group(function () {
+    Route::SdkApi('role', 'RoleController');
+});

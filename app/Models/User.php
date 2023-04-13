@@ -63,13 +63,18 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->rules(['required', 'email']),
             PasswordField::make('password')
                 ->label('Contraseña')
-                ->rules(['required', 'min:6', 'confirmed'])->rulesUpdate(['nullable'])->hideOnIndex(),
+                ->rules(['required', 'min:6', 'confirmed'])->rulesUpdate(['nullable','min:6', 'confirmed'])->hideOnIndex(),
             PasswordField::make('password_confirmation')->rulesUpdate(['nullable'])
                 ->label('Confirmar contraseña')
                 ->rules(['min:6'])->hideOnIndex()->canBeSaved(false),
             CustomField::make('role_id')
                 ->rules(['required'])
-                ->label('Rol'),
+                ->label('Rol')
+                ->loadOptionsFromUrl('/admin/v1/role')
+                ->setComponent('SelectedField')
+                ->saveAs(function($model, $value) {
+                    $model->assignRole($value);
+                }),
         ];
     }
 
