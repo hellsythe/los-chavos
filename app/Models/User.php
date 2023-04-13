@@ -73,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->loadOptionsFromUrl('/admin/v1/role')
                 ->setComponent('SelectedField')
                 ->saveAs(function($model, $value) {
-                    $model->assignRole($value);
+                    $model->syncRoles([$value]);
                 }),
         ];
     }
@@ -163,5 +163,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         parent::save($options);
+    }
+
+    public function getRoleIdAttribute()
+    {
+        return $this->roles()->first()->name;
     }
 }
