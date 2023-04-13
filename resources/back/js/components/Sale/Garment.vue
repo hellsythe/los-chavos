@@ -77,9 +77,17 @@ export default {
             }
         },
         point(color, index) {
+
+            if (!this.selectedServices[index].point) {
+                this.selectedServices[index].point = {
+                    x: 20 * (index + 1),
+                    y: 20,
+                }
+            }
+
             let circle = new Konva.Circle({
-                x: 20 * (index + 1),
-                y: 20,
+                x: this.selectedServices[index].point.x,
+                y: this.selectedServices[index].point.y,
                 radius: 8,
                 fill: color,
                 stroke: 'black',

@@ -28,7 +28,7 @@
                     <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService"
                         :currentServiceIndex="currentServiceIndex" />
                 </div>
-                <GarmentComponent :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
+                <GarmentComponent ref="garment" :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
                 <div class="flex justify-end	">
                     <button class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
@@ -78,6 +78,7 @@ export default {
     methods: {
         addNewService() {
             this.selectedServices.push({});
+            this.$refs.garment.initCanva();
         },
         validate()
         {
