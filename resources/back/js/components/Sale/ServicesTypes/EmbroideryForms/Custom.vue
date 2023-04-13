@@ -7,16 +7,6 @@
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold"></div>
         </div>
-        <div class="form-control w-full mb-2 mr-2">
-            <label for="" class="label"><span class="label-text">Color</span></label>
-            <select class="select select-bordered w-full ">
-                <option disabled selected>Elije uno</option>
-                <option>Rojo</option>
-                <option>Amarillo</option>
-                <option>Azul</option>
-            </select>
-            <div class="text-red-500 text-xs font-semibold"></div>
-        </div>
 
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Tamaño</span></label>
