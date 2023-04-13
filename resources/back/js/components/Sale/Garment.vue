@@ -45,18 +45,6 @@ export default {
         return {
             selectedItemIds: [],
             showPreview: true,
-            configKonva: {
-                width: 200,
-                height: 200
-            },
-            configCircle: {
-                x: 100,
-                y: 100,
-                radius: 70,
-                fill: "red",
-                stroke: "black",
-                strokeWidth: 4
-            }
         };
     },
     methods: {
@@ -100,8 +88,14 @@ export default {
             });
             circle.zIndex(99);
             this.layer.add(circle);
+            circle.on('dragmove', (t) => {
+                this.selectedServices[index].point = {
+                    x: t.target.x(),
+                    y: t.target.y(),
+                }
+            });
 
-        }
+        },
     },
 };
 </script>
