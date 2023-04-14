@@ -4,7 +4,7 @@
             <label for="" class="label"><span class="label-text">Tipo de Bordado</span></label>
             <select class="select select-bordered w-full" v-model="service.subservice_id">
                 <option disabled selected>Elije uno</option>
-                <option :value="service.id" v-for="service in availablesubservices">{{ service.name }}</option>
+                <option v-for="subservice in availablesubservices" :value="subservice.id" >{{ subservice.name }}</option>
             </select>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.subservice_id }}</div>
         </div>

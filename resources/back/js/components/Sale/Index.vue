@@ -2,11 +2,13 @@ vue
 <template>
     <ClientComponent :client="client" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices"/>
+    <ReportComponent :selectedServices="selectedServices"/>
 </template>
 
 <script>
 import ClientComponent from "./Client.vue";
 import ServicesComponent from "./Services.vue";
+import ReportComponent from "./Report.vue";
 
 
 export default {
@@ -18,6 +20,7 @@ export default {
     components: {
         ClientComponent,
         ServicesComponent,
+        ReportComponent,
     },
     data() {
         return {

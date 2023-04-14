@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
-            <div class="flex justify-between">
+            <div class="flex justify-between mb-1">
                 <h1 class="font-bold">Servicios</h1>
                 <button @click="showServicesInfo = true" v-if="!showServicesInfo">
                     <EyeIcon class="h-4 mr-1" />
