@@ -9,7 +9,7 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service_id }}</div>
         </div>
 
-        <EmbroideryComponent :service="service" v-if="service.service_id == 1" />
+        <EmbroideryComponent :service="service" v-if="service.service_id == 1" :errors="errors" />
     </div>
 </template>
 
@@ -50,6 +50,21 @@ export default {
             this.cleanErrors();
             if (!this.service.hasOwnProperty('service_id') || this.service.service_id.length === 0) {
                 this.errors.service_id = 'El Tipo servicio no puede estar vacio';
+                errors = true;
+            };
+
+            if (!this.service.hasOwnProperty('subservice_id') || this.service.subservice_id.length === 0) {
+                this.errors.subservice_id = 'El Tipo subservicio no puede estar vacio';
+                errors = true;
+            };
+
+            if (!this.service.hasOwnProperty('price') || this.service.price.length === 0) {
+                this.errors.price = 'El Precio por prenda no puede estar vacio';
+                errors = true;
+            };
+
+            if (!this.service.hasOwnProperty('design') || this.service.design.length === 0) {
+                this.errors.design = 'El Diseño no puede estar vacio';
                 errors = true;
             };
         },

@@ -6,7 +6,7 @@
                 <option disabled selected>Elije uno</option>
                 <option :value="service.id" v-for="service in availablesubservices">{{ service.name }}</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.subservice_id }}</div>
         </div>
 
         <div class="form-control mb-2 mr-2">
@@ -15,27 +15,27 @@
                 <span>$</span>
                 <input type="text" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
         </div>
         <div class="form-control mb-2" v-if="service.subservice_id == 3">
             <label for="" class="label"><span class="label-text">Costo por modificar ponchado</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" />
+                <input type="text" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_update }}</div>
         </div>
         <div class="form-control mb-2" v-if="service.subservice_id == 4">
             <label for="" class="label"><span class="label-text">Costo por ponchado nuevo</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" />
+                <input type="text" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_new }}</div>
         </div>
     </div>
 
-    <DesignComponent v-if="service.subservice_id == 1" :service="service" text="Diseño Existente" />
+    <DesignComponent v-if="service.subservice_id == 1" :service="service" text="Diseño Existente" :errors="errors" />
 
     <CustomComponent v-if="service.subservice_id == 2" :service="service" />
 
@@ -63,6 +63,7 @@ export default {
     props: {
         service: JSON,
         availableservices: JSON,
+        errors: JSON,
     },
     components: {
         DesignComponent,
