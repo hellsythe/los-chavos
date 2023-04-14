@@ -6,7 +6,7 @@
                 <option disabled selected>Elije uno</option>
                 <option :value="service.id" v-for="service in availableservices ">{{ service.name }}</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold">{{ errors.service_id }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service_id }}</div>
         </div>
 
         <EmbroideryComponent :service="service" v-if="service.service_id == 1" />

@@ -16,21 +16,21 @@
                         <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
                         <input v-model="client.name" type="text" class="input input-bordered w-full"
                             placeholder="John Fulanito">
-                        <div class="text-red-500 text-xs font-semibold">{{ errors.name }}</div>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.name }}</div>
                     </div>
 
                     <div class="form-control w-full mb-2 mr-2">
                         <label for="" class="label"><span class="label-text">Teléfono del cliente</span></label>
                         <input v-model="client.phone" type="number" class="input input-bordered w-full"
                             placeholder="2747430512">
-                        <div class="text-red-500 text-xs font-semibold">{{ errors.phone }}</div>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.phone }}</div>
                     </div>
 
                     <div class="form-control w-full mb-2">
                         <label for="" class="label"><span class="label-text">Correo del cliente</span></label>
                         <input v-model="client.email" type="email" class="input input-bordered w-full"
                             placeholder="cliente@gmail.com">
-                        <div class="text-red-500 text-xs font-semibold">{{ errors.email }}</div>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.email }}</div>
                     </div>
                 </div>
                 <div class="flex justify-end	">
@@ -85,8 +85,7 @@ export default {
                 this.showClientInfo = false;
             }
         },
-        clearErrors()
-        {
+        clearErrors() {
             this.errors = {};
         }
     },

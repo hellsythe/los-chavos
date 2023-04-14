@@ -5,7 +5,7 @@
             <TypeaheadInput :loadFromApiUrl="'/admin/typography/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1"></div>
         </div>
 
         <div class="form-control w-full mb-2">
@@ -15,14 +15,14 @@
                 <option>Adulto max 10 cm de ancho</option>
                 <option>Niño max 7 cm de ancho</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1"></div>
         </div>
     </div>
 
-    <div v-if="this.service.typography"  class="form-control w-full mb-2">
+    <div v-if="this.service.typography" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Texto a Bordar</span></label>
         <TipTap v-model="service.custom.text" :style="{ 'font-family': fontFamily }"></TipTap>
-        <div class="text-red-500 text-xs font-semibold"></div>
+        <div class="text-red-500 text-xs font-semibold mt-1"></div>
     </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
         };
     },
     created() {
-        this.service.custom = {text:'a'}
+        this.service.custom = { text: 'a' }
         console.log(this.service.custom.text);
     },
     methods: {
@@ -69,8 +69,8 @@ export default {
                     src: url('${this.service.typography.font}');
                 }
           `));
-          document.head.appendChild(newStyle);
-          this.fontFamily = this.service.typography.slutname;
+            document.head.appendChild(newStyle);
+            this.fontFamily = this.service.typography.slutname;
         }
     },
 };
