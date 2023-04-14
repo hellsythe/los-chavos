@@ -55,6 +55,7 @@ export default {
     props: {
         availableservices: JSON,
         selectedServices: JSON,
+        garmentData: JSON,
     },
     components: {
         EyeIcon,
@@ -71,7 +72,6 @@ export default {
             currentServices: [],
             showServicesInfo: true,
             currentServiceIndex: 0,
-            garmentData: {},
             garmentErrors: {}
         };
     },

@@ -1,8 +1,8 @@
 vue
 <template>
     <ClientComponent :client="client" />
-    <ServicesComponent :availableservices="services" :selectedServices="selectedServices"/>
-    <ReportComponent :selectedServices="selectedServices"/>
+    <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" />
+    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" />
 </template>
 
 <script>
@@ -30,6 +30,7 @@ export default {
                 phone: '',
             },
             selectedServices: [{}],
+            garmentData: {},
         };
     },
     mounted() {

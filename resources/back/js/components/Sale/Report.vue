@@ -18,6 +18,8 @@
                             <th></th>
                             <th>Servicio</th>
                             <th>Subservicio</th>
+                            <th>Costo x prenda</th>
+                            <th>Costo Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -25,6 +27,8 @@
                             <th>{{index+1}}</th>
                             <td>{{service.service_id.name}}</td>
                             <td>{{service.subservice_id.name}}</td>
+                            <td>${{service.price?.toFixed(2)}}</td>
+                            <td>${{service.price?.toFixed(2) * garmentData.amount }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -56,7 +60,8 @@ export default {
         EyeSlashIcon
     },
     props: {
-        selectedServices: JSON
+        selectedServices: JSON,
+        garmentData: JSON,
     },
     data() {
         return {

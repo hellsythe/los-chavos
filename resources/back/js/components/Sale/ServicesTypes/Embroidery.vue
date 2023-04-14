@@ -13,7 +13,7 @@
             <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" v-model="service.price" />
+                <input type="number" class="input input-bordered" v-model="service.price" />
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
         </div>
@@ -21,7 +21,7 @@
             <label for="" class="label"><span class="label-text">Costo por modificar ponchado</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" v-model="service.price" />
+                <input type="number" class="input input-bordered" v-model="service.price_update" />
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_update }}</div>
         </div>
@@ -29,7 +29,7 @@
             <label for="" class="label"><span class="label-text">Costo por ponchado nuevo</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="text" class="input input-bordered" v-model="service.price" />
+                <input type="number" class="input input-bordered" v-model="service.price_new" />
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_new }}</div>
         </div>
