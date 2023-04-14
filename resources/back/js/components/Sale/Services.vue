@@ -29,7 +29,7 @@
                         :ref="'services'" :currentServiceIndex="currentServiceIndex" />
                 </div>
                 <GarmentComponent ref="garment" :garment="garmentData" :selectedServices="selectedServices"
-                    :error="garmentError">
+                    :error="garmentErrors">
                 </GarmentComponent>
                 <div class="flex justify-end	">
                     <button class="btn btn-info" @click="validate">Siguiente</button>
@@ -72,7 +72,7 @@ export default {
             showServicesInfo: true,
             currentServiceIndex: 0,
             garmentData: {},
-            garmentError: ''
+            garmentErrors: {}
         };
     },
     mounted() {
@@ -84,14 +84,19 @@ export default {
             this.$refs.garment.initCanva();
         },
         validate() {
-            this.garmentError = '';
+            this.garmentErrors = {};
             let errors = false;
             for (let index = 0; index < this.selectedServices.length; index++) {
                 errors = errors || this.$refs.services[index].validate();
             }
 
             if (!this.garmentData.hasOwnProperty('data')) {
-                this.garmentError = 'La prenda no puede estar vacia';
+                this.garmentErrors.data = 'La prenda no puede estar vacia';
+                errors = true;
+            };
+
+            if (!this.garmentData.hasOwnProperty('amount') || this.garmentData.amount.length === 0 || this.garmentData.amount == 0) {
+                this.garmentErrors.amount = 'La cantidad no puede estar vacia o ser igual a 0';
                 errors = true;
             };
         },
