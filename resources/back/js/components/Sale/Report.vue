@@ -12,39 +12,44 @@
             </div>
             <div v-if="showReportInfo">
                 <div class="overflow-x-auto">
-                <table class="table table-compact w-full">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Servicio</th>
-                            <th>Subservicio</th>
-                            <th>Costo x prenda</th>
-                            <th>Costo Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(service, index) in selectedServices">
-                            <th>{{index+1}}</th>
-                            <td>{{service.service_id.name}}</td>
-                            <td>{{service.subservice_id.name}}</td>
-                            <td>${{service.price?.toFixed(2)}}</td>
-                            <td>${{service.price?.toFixed(2) * garmentData.amount }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="2"></th>
-                            <th>Total $500.00</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="flex justify-end">
-                <button class="btn btn-info" @click="validate">Confirmar Pedido</button>
+                    <table class="table table-compact w-full">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Servicio</th>
+                                <th>Subservicio</th>
+                                <th>Costo x prenda</th>
+                                <th>Costo x {{garmentData.amount}} prendas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(service, index) in selectedServices">
+                                <th>{{ index + 1 }}</th>
+                                <td>{{ service.service_id.name }}</td>
+                                <td>{{ service.subservice_id.name }}</td>
+                                <td>${{ service.price?.toFixed(2) }}</td>
+                                <td>${{ service.price?.toFixed(2) * garmentData.amount }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4"></th>
+                                <th class="text-end">Total Por Prenda: ${{ total.toFixed(2) }}</th>
+                            </tr>
+                            <tr>
+                                <th colspan="4"></th>
+                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: ${{ total.toFixed(2) * garmentData.amount }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="flex justify-end">
+                    <button class="btn btn-info" @click="validate">Confirmar Pedido</button>
+                </div>
             </div>
         </div>
     </div>
-</div></template>
+</template>
 
 <script>
 import {
@@ -58,6 +63,16 @@ export default {
     components: {
         EyeIcon,
         EyeSlashIcon
+    },
+    computed: {
+        total: function () {
+            let sum = 0;
+            this.selectedServices.forEach(function (item) {
+                sum += item.price;
+            });
+
+            return sum;
+        }
     },
     props: {
         selectedServices: JSON,
