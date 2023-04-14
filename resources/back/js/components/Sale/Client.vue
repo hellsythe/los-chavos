@@ -75,12 +75,9 @@ export default {
                 this.errors.name = 'El nombre del cliente no puede estar vacio';
                 errors = true;
             }
-            if (this.client.email.length === 0) {
-                this.errors.email = 'El nombre del cliente no puede estar vacio';
-                errors = true;
-            }
+
             if (this.client.phone.length === 0) {
-                this.errors.phone = 'El nombre del cliente no puede estar vacio';
+                this.errors.phone = 'El Teléfono del cliente no puede estar vacio';
                 errors = true;
             }
 
