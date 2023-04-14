@@ -5,7 +5,7 @@
             <TypeaheadInput :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ error }}</div>
         </div>
         <div class="form-control w-64 mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Cantidad de prendas</span></label>
@@ -29,6 +29,7 @@ export default {
     props: {
         garment: JSON,
         selectedServices: JSON,
+        error: String,
     },
     data() {
         return {

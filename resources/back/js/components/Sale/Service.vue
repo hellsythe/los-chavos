@@ -67,6 +67,7 @@ export default {
                 this.errors.design = 'El Diseño no puede estar vacio';
                 errors = true;
             };
+
         },
         cleanErrors() {
             this.errors = {};

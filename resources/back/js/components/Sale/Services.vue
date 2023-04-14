@@ -25,10 +25,12 @@
                     </li>
                 </ul>
                 <div v-for="(seledtedService, index) in selectedServices">
-                    <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService" :ref="'services'"
-                        :currentServiceIndex="currentServiceIndex" />
+                    <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService"
+                        :ref="'services'" :currentServiceIndex="currentServiceIndex" />
                 </div>
-                <GarmentComponent ref="garment" :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
+                <GarmentComponent ref="garment" :garment="garmentData" :selectedServices="selectedServices"
+                    :error="garmentError">
+                </GarmentComponent>
                 <div class="flex justify-end	">
                     <button class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
@@ -69,7 +71,8 @@ export default {
             currentServices: [],
             showServicesInfo: true,
             currentServiceIndex: 0,
-            garmentData: {}
+            garmentData: {},
+            garmentError: ''
         };
     },
     mounted() {
@@ -80,16 +83,17 @@ export default {
             this.selectedServices.push({});
             this.$refs.garment.initCanva();
         },
-        validate()
-        {
+        validate() {
+            this.garmentError = '';
+            let errors = false;
             for (let index = 0; index < this.selectedServices.length; index++) {
-                this.$refs.services[index].validate();
+                errors = errors || this.$refs.services[index].validate();
             }
-        },
-        validateSingleService(index)
-        {
-            let service = this.selectedServices[index];
-            this.selectedServices[index].errors.service_id = 'Todo mal';
+
+            if (!this.garmentData.hasOwnProperty('data')) {
+                this.garmentError = 'La prenda no puede estar vacia';
+                errors = true;
+            };
         },
     },
 };

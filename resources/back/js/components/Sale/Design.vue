@@ -25,7 +25,7 @@ export default {
     props: {
         service: JSON,
         text: String,
-        errors: String
+        errors: JSON
     },
     components: {
         TypeaheadInput
