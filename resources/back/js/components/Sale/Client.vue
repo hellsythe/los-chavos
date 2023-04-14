@@ -21,7 +21,7 @@
 
                     <div class="form-control w-full mb-2 mr-2">
                         <label for="" class="label"><span class="label-text">Teléfono del cliente</span></label>
-                        <input v-model="client.phone" type="numeric" class="input input-bordered w-full"
+                        <input v-model="client.phone" type="number" class="input input-bordered w-full"
                             placeholder="2747430512">
                         <div class="text-red-500 text-xs font-semibold">{{ errors.phone }}</div>
                     </div>
@@ -68,6 +68,7 @@ export default {
     },
     methods: {
         validate() {
+            this.clearErrors();
             let errors = false;
 
             if (this.client.name.length === 0) {
@@ -86,6 +87,10 @@ export default {
             if (!errors) {
                 this.showClientInfo = false;
             }
+        },
+        clearErrors()
+        {
+            this.errors = {};
         }
     },
 };
