@@ -25,7 +25,7 @@
                     </li>
                 </ul>
                 <div v-for="(seledtedService, index) in selectedServices">
-                    <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService"
+                    <ServiceComponent :availableservices="availableservices" :index="index" :service="seledtedService" :ref="'services'"
                         :currentServiceIndex="currentServiceIndex" />
                 </div>
                 <GarmentComponent ref="garment" :garment="garmentData" :selectedServices="selectedServices"></GarmentComponent>
@@ -82,8 +82,15 @@ export default {
         },
         validate()
         {
-
-        }
+            for (let index = 0; index < this.selectedServices.length; index++) {
+                this.$refs.services[index].validate();
+            }
+        },
+        validateSingleService(index)
+        {
+            let service = this.selectedServices[index];
+            this.selectedServices[index].errors.service_id = 'Todo mal';
+        },
     },
 };
 </script>

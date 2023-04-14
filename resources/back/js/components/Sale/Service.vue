@@ -6,7 +6,7 @@
                 <option disabled selected>Elije uno</option>
                 <option :value="service.id" v-for="service in availableservices ">{{ service.name }}</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold"></div>
+            <div class="text-red-500 text-xs font-semibold">{{ errors.service_id }}</div>
         </div>
 
         <EmbroideryComponent :service="service" v-if="service.service_id == 1" />
@@ -32,17 +32,30 @@ export default {
     },
     data() {
         return {
-            availablesubservices: {}
+            availablesubservices: {},
+            errors: {}
         };
     },
-    mounted() {
-
+    created() {
+        this.cleanErrors();
     },
     methods: {
         async loadSubservicesFromApi() {
             let response = await resquestToApi('/admin/subservice/api?service_id=1&page=1');
             this.availablesubservices = response.data;
-        }
+        },
+        validate() {
+            let errors = false;
+
+            this.cleanErrors();
+            if (!this.service.hasOwnProperty('service_id') || this.service.service_id.length === 0) {
+                this.errors.service_id = 'El Tipo servicio no puede estar vacio';
+                errors = true;
+            };
+        },
+        cleanErrors() {
+            this.errors = {};
+        },
     },
 };
 </script>
