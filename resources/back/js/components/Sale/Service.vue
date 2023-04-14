@@ -4,12 +4,12 @@
             <label for="" class="label"><span class="label-text">Tipo de servicio</span></label>
             <select class="select select-bordered w-full" v-model="service.service_id" :onchange="loadSubservicesFromApi">
                 <option disabled selected>Elije uno</option>
-                <option :value="service.id" v-for="service in availableservices ">{{ service.name }}</option>
+                <option :value="{id: service.id, name:service.name}" v-for="service in availableservices ">{{ service.name }}</option>
             </select>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service_id }}</div>
         </div>
 
-        <EmbroideryComponent :service="service" v-if="service.service_id == 1" :errors="errors" />
+        <EmbroideryComponent :service="service" v-if="service.service_id?.id == 1" :errors="errors" />
     </div>
 </template>
 
@@ -38,10 +38,12 @@ export default {
     },
     created() {
         this.cleanErrors();
+        this.service.service_id = {};
+        this.service.subservice_id = {};
     },
     methods: {
         async loadSubservicesFromApi() {
-            let response = await resquestToApi('/admin/subservice/api?service_id=1&page=1');
+            let response = await resquestToApi(`/admin/subservice/api?service_id=${service.subservice_id.id}&page=1`);
             this.availablesubservices = response.data;
         },
         validate() {

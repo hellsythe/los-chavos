@@ -21,20 +21,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="service in selectedServices">
-                            <th>1</th>
-                            <td>Cy Ganderton</td>
-                            <td>Quality Control Specialist</td>
-                            <td>Littel, Schaden and Vandervort</td>
-                            <td>Canada</td>
-                            <td>12/16/2020</td>
-                            <td>Blue</td>
+                        <tr v-for="(service, index) in selectedServices">
+                            <th>{{index+1}}</th>
+                            <td>{{service.service_id.name}}</td>
+                            <td>{{service.subservice_id.name}}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="4">Total</th>
-                            <th>$500.00</th>
+                            <th colspan="2"></th>
+                            <th>Total $500.00</th>
                         </tr>
                     </tfoot>
                 </table>
