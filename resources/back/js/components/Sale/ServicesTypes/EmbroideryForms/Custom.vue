@@ -10,7 +10,7 @@
 
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Tamaño</span></label>
-            <select class="select select-bordered w-full">
+            <select v-model="this.service.textsize" class="select select-bordered w-full">
                 <option disabled selected>Elije uno</option>
                 <option>Adulto max 10 cm de ancho</option>
                 <option>Niño max 7 cm de ancho</option>
@@ -47,8 +47,7 @@ export default {
         };
     },
     created() {
-        this.service.custom = { text: 'a' }
-        console.log(this.service.custom.text);
+        this.service.custom = { text: '' }
     },
     methods: {
         selectedData(value) {

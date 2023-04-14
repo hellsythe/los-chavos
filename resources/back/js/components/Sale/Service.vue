@@ -50,12 +50,12 @@ export default {
             let errors = false;
 
             this.cleanErrors();
-            if (!this.service.hasOwnProperty('service_id') || this.service.service_id.length === 0) {
+            if (!this.service.service_id.id) {
                 this.errors.service_id = 'El Tipo servicio no puede estar vacio';
                 errors = true;
             };
 
-            if (!this.service.hasOwnProperty('subservice_id') || this.service.subservice_id.length === 0) {
+            if (!this.service.subservice_id.id) {
                 this.errors.subservice_id = 'El Tipo subservicio no puede estar vacio';
                 errors = true;
             };
@@ -74,6 +74,15 @@ export default {
         cleanErrors() {
             this.errors = {};
         },
+        validateNewDesign()
+        {
+
+        },
+        validateUpdatedDesign()
+        {
+
+        }
+
     },
 };
 </script>

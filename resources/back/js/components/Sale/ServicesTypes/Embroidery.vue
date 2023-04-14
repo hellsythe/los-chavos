@@ -37,11 +37,11 @@
 
     <DesignComponent v-if="service.subservice_id.id == 1" :service="service" text="Diseño Existente" :errors="errors" />
 
-    <CustomComponent v-if="service.subservice_id.id == 2" :service="service" />
+    <CustomComponent v-if="service.subservice_id.id == 2" :service="service" :errors="errors" />
 
-    <UpdateComponent v-if="service.subservice_id.id == 3" :service="service" />
+    <UpdateComponent v-if="service.subservice_id.id == 3" :service="service" :errors="errors" />
 
-    <NewComponent v-if="service.subservice_id.id == 4" :service="service" />
+    <NewComponent v-if="service.subservice_id.id == 4" :service="service" :errors="errors" />
 
     <div v-if="service.design" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Comentarios</span></label>

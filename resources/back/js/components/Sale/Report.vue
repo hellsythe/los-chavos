@@ -16,29 +16,52 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Servicio</th>
-                                <th>Subservicio</th>
+                                <th>Concepto</th>
                                 <th>Costo x prenda</th>
-                                <th>Costo x {{garmentData.amount}} prendas</th>
+                                <th v-if="garmentData.amount > 1">Costo x {{ garmentData.amount }} prendas</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(service, index) in selectedServices">
-                                <th>{{ index + 1 }}</th>
-                                <td>{{ service.service_id.name }}</td>
-                                <td>{{ service.subservice_id.name }}</td>
-                                <td>${{ service.price?.toFixed(2) }}</td>
-                                <td>${{ service.price?.toFixed(2) * garmentData.amount }}</td>
-                            </tr>
+                            <template v-for="(service, index) in selectedServices">
+                                <tr>
+                                    <th>{{ index + 1 }}</th>
+                                    <td>{{ service.service_id.name }} - {{ service.subservice_id.name }} - sobre {{ garmentData.data?.name }}</td>
+                                    <td>${{ service.price?.toFixed(2) }}</td>
+                                    <td v-if="garmentData.amount > 1">${{ service.price?.toFixed(2) * garmentData.amount }}
+                                    </td>
+                                </tr>
+                                <tr v-if="service.subservice_id.id == 4">
+                                    <td>-</td>
+                                    <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Diseño
+                                            nuevo</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
+                                            prendas</strong></td>
+                                    <td :class="{ 'line-through': garmentData.amount > 6 }">${{ service.price_new?.toFixed(2) }}
+                                    </td>
+                                    <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
+                                        ${{ service.price_new?.toFixed(2) }}</td>
+                                </tr>
+                                <tr v-if="service.subservice_id.id == 3">
+                                    <td>-</td>
+                                    <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Modificar
+                                            diseño</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
+                                            prendas</strong></td>
+                                    <td :class="{ 'line-through': garmentData.amount > 6 }">
+                                        ${{ service.price_update?.toFixed(2) }}</td>
+                                    <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
+                                        ${{ service.price_update?.toFixed(2) }}</td>
+                                </tr>
+                            </template>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4"></th>
-                                <th class="text-end">Total Por Prenda: ${{ total.toFixed(2) }}</th>
+                                <th colspan="2"></th>
+                                <th v-if="garmentData.amount > 1"></th>
+                                <th class="text-end">Total Por Prenda: ${{ total.sum }}</th>
                             </tr>
-                            <tr>
-                                <th colspan="4"></th>
-                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: ${{ total.toFixed(2) * garmentData.amount }}</th>
+                            <tr v-if="garmentData.amount > 1">
+                                <th colspan="2"></th>
+                                <th v-if="garmentData.amount > 1"></th>
+                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: ${{ total.total }}</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -67,11 +90,24 @@ export default {
     computed: {
         total: function () {
             let sum = 0;
+            let extra = 0;
+            let that = this;
             this.selectedServices.forEach(function (item) {
                 sum += item.price;
+                if (item.subservice_id.id == 4 && that.garmentData.hasOwnProperty('amount') && that.garmentData.amount <= 6) {
+                    extra += item.price_new;
+                }
+                if (item.subservice_id.id == 3 && that.garmentData.hasOwnProperty('amount') && that.garmentData.amount <= 6) {
+                    extra += item.price_update;
+                }
             });
 
-            return sum;
+            return {
+                neto: sum,
+                extra: extra,
+                sum: sum + extra,
+                total: (sum * that.garmentData.amount) + extra,
+            };
         }
     },
     props: {

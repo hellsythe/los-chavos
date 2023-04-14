@@ -14,7 +14,7 @@
         </div>
     </div>
     <div v-show="garment.data?.preview" class="mt-3">
-        <img :src="garment.data?.preview" alt="" class="absolute mt-3">
+        <img :src="garment.data?.preview" alt="" class="absolute mt-3 rounded-md">
         <div id="container"></div>
     </div>
 </template>
