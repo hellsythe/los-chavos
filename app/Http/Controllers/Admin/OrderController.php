@@ -15,4 +15,11 @@ class OrderController extends ResourceController
             'available_services' => Service::all()
         ]);
     }
+
+    public function saveOrder()
+    {
+        return [
+            'holis konichiws'
+        ];
+    }
 }

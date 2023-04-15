@@ -71,12 +71,12 @@ export default {
             this.clearErrors();
             let errors = false;
 
-            if (this.client.name.length === 0) {
+            if (!this.client.hasOwnProperty('name') || this.client.name.length === 0) {
                 this.errors.name = 'El nombre del cliente no puede estar vacio';
                 errors = true;
             }
 
-            if (this.client.phone.length === 0) {
+            if (!this.client.hasOwnProperty('phone') || this.client.phone.length === 0) {
                 this.errors.phone = 'El Teléfono del cliente no puede estar vacio';
                 errors = true;
             }

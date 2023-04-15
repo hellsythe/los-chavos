@@ -124,7 +124,7 @@ export default {
     },
     methods: {
         validate() {
-
+            this.$emit('save-order')
         }
     },
 };
