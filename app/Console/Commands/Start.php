@@ -9,6 +9,7 @@ use App\Models\Typography;
 use Illuminate\Console\Command;
 use Sdkconsultoria\Core\Models\Role;
 use Spatie\Permission\Models\Permission;
+
 class Start extends Command
 {
     /**
@@ -37,11 +38,11 @@ class Start extends Command
         $this->deleteRoles();
     }
 
-    private function createServices(){
+    private function createServices()
+    {
 
         $bordado = Service::where('name', 'Bordado')->first();
-        if(!$bordado)
-        {
+        if (!$bordado) {
             $bordado = new Service();
             $bordado->name = 'Bordado';
             $bordado->status = Service::STATUS_ACTIVE;
@@ -51,8 +52,7 @@ class Start extends Command
         $this->createSubservice($bordado);
 
         $estampado = Service::where('name', 'Estampado')->first();
-        if(!$estampado)
-        {
+        if (!$estampado) {
             $estampado = new Service();
             $estampado->name = 'Estampado';
             $estampado->status = Service::STATUS_ACTIVE;
@@ -65,8 +65,7 @@ class Start extends Command
     private function createSubservice($service)
     {
         $ponchado_existente = Subservice::where('name', 'Ponchado existente')->first();
-        if(!$ponchado_existente)
-        {
+        if (!$ponchado_existente) {
             $ponchado_existente = new Subservice();
             $ponchado_existente->name = 'Ponchado existente';
             $ponchado_existente->service_id = $service->id;
@@ -75,8 +74,7 @@ class Start extends Command
         }
 
         $personalizado = Subservice::where('name', 'Personalizado')->first();
-        if(!$personalizado)
-        {
+        if (!$personalizado) {
             $personalizado = new Subservice();
             $personalizado->name = 'Personalizado';
             $personalizado->service_id = $service->id;
@@ -85,8 +83,7 @@ class Start extends Command
         }
 
         $ponchado_modificado = Subservice::where('name', 'Ponchado modificado')->first();
-        if(!$ponchado_modificado)
-        {
+        if (!$ponchado_modificado) {
             $ponchado_modificado = new Subservice();
             $ponchado_modificado->name = 'Ponchado modificado';
             $ponchado_modificado->service_id = $service->id;
@@ -95,55 +92,44 @@ class Start extends Command
         }
 
         $ponchado_nuevo = Subservice::where('name', 'Ponchado nuevo')->first();
-        if(!$ponchado_nuevo)
-        {
+        if (!$ponchado_nuevo) {
             $ponchado_nuevo = new Subservice();
             $ponchado_nuevo->name = 'Ponchado nuevo';
             $ponchado_nuevo->service_id = $service->id;
             $ponchado_nuevo->status = Subservice::STATUS_ACTIVE;
             $ponchado_nuevo->save();
         }
-
     }
 
     private function createGarment()
     {
-        $model = Garment::where('name', 'Playera')->first();
-        if(!$model)
-        {
+        $this->createGarmentModel('Playera');
+        $this->createGarmentModel('Camisa');
+        $this->createGarmentModel('Gorra/cachucha');
+        $this->createGarmentModel('Tela/Parche');
+        $this->createGarmentModel('Camisa Manga Larga');
+        $this->createGarmentModel('Chaleco');
+        $this->createGarmentModel('Pantalón');
+        $this->createGarmentModel('Playera Polo');
+        $this->createGarmentModel('Sudadera Hombre');
+        $this->createGarmentModel('Short');
+        $this->createGarmentModel('Traje de baño 1 pieza');
+        $this->createGarmentModel('Falda');
+
+    }
+
+    private function createGarmentModel(string $name)
+    {
+        $model = Garment::where('name', $name)->first();
+        if (!$model) {
             $model = new Garment();
-            $model->name = 'Playera';
+            $model->name = $name;
             $model->status = Garment::STATUS_ACTIVE;
             $model->save();
         }
 
-        $model = Garment::where('name', 'Camisa')->first();
-        if(!$model)
-        {
-            $model = new Garment();
-            $model->name = 'Camisa';
-            $model->status = Garment::STATUS_ACTIVE;
-            $model->save();
-        }
-
-        $model = Garment::where('name', 'Gorra/cachucha')->first();
-        if(!$model)
-        {
-            $model = new Garment();
-            $model->name = 'Gorra/cachucha';
-            $model->status = Garment::STATUS_ACTIVE;
-            $model->save();
-        }
-
-
-        $model = Garment::where('name', 'Tela/Parche')->first();
-        if(!$model)
-        {
-            $model = new Garment();
-            $model->name = 'Tela/Parche';
-            $model->status = Garment::STATUS_ACTIVE;
-            $model->save();
-        }
+        $model->preview = url('/').'/storage/garment/'.$model->id.'.jpg';
+        $model->save();
     }
 
     private function createTypography()
@@ -181,8 +167,7 @@ class Start extends Command
     private function createModelByName($class, $name)
     {
         $model = $class::where('name', $name)->first();
-        if(!$model)
-        {
+        if (!$model) {
             $model = new $class();
             $model->name = $name;
             $model->status = $class::STATUS_ACTIVE;
