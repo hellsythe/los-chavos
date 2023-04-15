@@ -26,8 +26,8 @@
                                 <tr>
                                     <th>{{ index + 1 }}</th>
                                     <td>{{ service.service_id.name }} - {{ service.subservice_id.name }} - sobre {{ garmentData.data?.name }}</td>
-                                    <td>${{ service.price?.toFixed(2) }}</td>
-                                    <td v-if="garmentData.amount > 1">${{ service.price?.toFixed(2) * garmentData.amount }}
+                                    <td>{{ formatter(service.price) }}</td>
+                                    <td v-if="garmentData.amount > 1">{{ formatter(service.price) * garmentData.amount }}
                                     </td>
                                 </tr>
                                 <tr v-if="service.subservice_id.id == 4">
@@ -35,10 +35,10 @@
                                     <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Diseño
                                             nuevo</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
                                             prendas</strong></td>
-                                    <td :class="{ 'line-through': garmentData.amount > 6 }">${{ service.price_new?.toFixed(2) }}
+                                    <td :class="{ 'line-through': garmentData.amount > 6 }">{{ formatter(service.price_new) }}
                                     </td>
                                     <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
-                                        ${{ service.price_new?.toFixed(2) }}</td>
+                                        {{ formatter(service.price_new) }}</td>
                                 </tr>
                                 <tr v-if="service.subservice_id.id == 3">
                                     <td>-</td>
@@ -46,9 +46,9 @@
                                             diseño</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
                                             prendas</strong></td>
                                     <td :class="{ 'line-through': garmentData.amount > 6 }">
-                                        ${{ service.price_update?.toFixed(2) }}</td>
+                                        {{ formatter(service.price_update) }}</td>
                                     <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
-                                        ${{ service.price_update?.toFixed(2) }}</td>
+                                        {{ formatter(service.price_update) }}</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -56,18 +56,28 @@
                             <tr>
                                 <th colspan="2"></th>
                                 <th v-if="garmentData.amount > 1"></th>
-                                <th class="text-end">Total Por Prenda: ${{ total.sum }}</th>
+                                <th class="text-end">Total Por Prenda: {{ total.sum }}</th>
                             </tr>
                             <tr v-if="garmentData.amount > 1">
                                 <th colspan="2"></th>
                                 <th v-if="garmentData.amount > 1"></th>
-                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: ${{ total.total }}</th>
+                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: {{ total.total }}</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
                 <div class="flex justify-end">
-                    <button class="btn btn-info" @click="validate">Confirmar Pedido</button>
+                    <label for="confirmpayment" class="btn">Confirmar Pedido</label>
+                    <input type="checkbox" id="confirmpayment" class="modal-toggle" />
+                    <div class="modal">
+                        <div class="modal-box">
+                            <h3 class="font-bold text-lg">Confirmar Pedido</h3>
+                            <p class="py-4">Total a pagar: {{ total.total }}</p>
+                            <div class="modal-action">
+                                <label for="confirmpayment" class="btn">Confirmar e Imprimir ticket</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +89,7 @@ import {
     EyeSlashIcon,
     EyeIcon,
 } from "@heroicons/vue/24/solid";
-
+import money from './../formater';
 
 export default {
     name: "ReportSale",
@@ -103,10 +113,10 @@ export default {
             });
 
             return {
-                neto: sum,
-                extra: extra,
-                sum: sum + extra,
-                total: (sum * that.garmentData.amount) + extra,
+                neto: this.formatter(sum),
+                extra: this.formatter(extra),
+                sum: this.formatter(sum + extra),
+                total: this.formatter((sum * that.garmentData.amount) + extra),
             };
         }
     },
@@ -125,6 +135,9 @@ export default {
     methods: {
         validate() {
             this.$emit('save-order')
+        },
+        formatter(amount){
+            return  money.format(amount);
         }
     },
 };
