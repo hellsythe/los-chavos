@@ -8,9 +8,6 @@ use App\Models\Typography;
 use App\Models\Garment;
 use App\Models\Subservice;
 use App\Models\Service;
-use App\Models\Sale;
-use App\Models\Employee;
-use App\Models\Payment;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Design;
@@ -54,7 +51,6 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Garment::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('book-open'), ['super-admin']);
-        $service_menu->addElement(Sale::makeMenu('banknotes'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
         // $service_menu->addElement(Employee::makeMenu('tag'), ['super-admin']);
         // $service_menu->addElement(Payment::makeMenu('book-open'));
