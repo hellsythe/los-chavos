@@ -25,8 +25,6 @@ Route::namespace('\App\Http\Controllers\Admin')
     Route::SdkResource('garment', GarmentController::class);
     Route::SdkResource('subservice', SubserviceController::class);
     Route::SdkResource('service', ServiceController::class);
-    Route::SdkResource('sale-detail', SaleDetailController::class);
-    Route::SdkResource('sale', SaleController::class);
     Route::SdkResource('employee', EmployeeController::class);
     Route::SdkResource('payment', PaymentController::class);
     Route::SdkResource('order-detail', OrderDetailController::class);
@@ -34,7 +32,7 @@ Route::namespace('\App\Http\Controllers\Admin')
     Route::SdkResource('order', OrderController::class);
     Route::SdkResource('design', DesignController::class);
     Route::get('/', 'DashboardController@index')->name('dashboard');
-    Route::get('/sale-point', 'SaleController@salePoint')->name('sale.point');
+    Route::get('/sale-point', 'OrderController@salePoint')->name('sale.point');
 });
 
 
