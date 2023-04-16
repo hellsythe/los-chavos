@@ -26,9 +26,7 @@ class OrderController extends ResourceController
         $client = $this->saveClient($request->client);
         $order = $this->saveOrder($client, $request);
         $this->saveOrderDetails($order, $request);
-        $this->savePayment($request,  $order['payment']);
-
-        dd($request->all());
+        $this->savePayment($order,  $request['payment']);
 
         return [
             'id' => $order->id
@@ -73,7 +71,9 @@ class OrderController extends ResourceController
             $serviceModel->subservice_id = $service['subservice_id']['id'];
             $serviceModel->point_x = $service['point']['x'];
             $serviceModel->point_y = $service['point']['y'];
-            $serviceModel->comments = $service['comments'];
+            $serviceModel->comments = $service['comments'] ?? null;
+            $serviceModel->price = $service['price'];
+            $serviceModel->total = $service['price'] * $request['garment']['amount'];
             $serviceModel->save();
         }
     }

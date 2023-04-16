@@ -22,7 +22,7 @@ return new class extends Migration
             $table->double('total', 8, 2);
             $table->string('point_x');
             $table->string('point_y');
-            $table->string('comments');
+            $table->text('comments')->nullable();
         });
     }
 

@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         async loadSubservicesFromApi() {
-            let response = await resquestToApi(`/admin/subservice/api?service_id=${this.service.subservice_id.id}&page=1`);
+            let response = await resquestToApi(`/admin/subservice/api?service_id=${this.service.service_id.id}&page=1`);
             this.availablesubservices = response.data;
         },
         validate() {
