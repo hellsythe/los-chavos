@@ -74,6 +74,7 @@
                 </div>
             </div>
         </div>
+        <TicketComponent ref="ticket" :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData" />
     </div>
 </template>
 
@@ -84,6 +85,7 @@ import {
 } from "@heroicons/vue/24/solid";
 import money from './../formater';
 import PaymentComponent from "./Payment.vue";
+import TicketComponent from "./Ticket.vue";
 
 export default {
     name: "ReportSale",
@@ -91,6 +93,7 @@ export default {
         EyeIcon,
         EyeSlashIcon,
         PaymentComponent,
+        TicketComponent,
     },
     computed: {
         total: function () {
@@ -132,6 +135,7 @@ export default {
     },
     methods: {
         saveOrder() {
+            this.$refs.ticket.print();
             this.$emit('save-order')
         },
         formatter(amount){
