@@ -1,5 +1,5 @@
 <template>
-    <div id="ticket" style="display: block;">
+    <div id="ticket" style="display: none;">
             <div style="width: 170px; padding: 2px; font-size: 12px;">
                 <div style="display: flex; justify-content: center;">
                     <img style="width: 130px;" src="/img/logo.svg" alt="">
@@ -49,7 +49,6 @@
 
 <script>
 import money from './../formater';;
-import 'jsbarcode/dist/barcodes/JsBarcode.code128.min.js';
 
 export default {
     name: "Ticket",
@@ -80,12 +79,6 @@ export default {
             a.document.write('<script type="text/javascript">window.onafterprint = window.close; window.print();<\/script>');
             a.document.close();
             a.print();
-            JsBarcode("#barcode", this.order.id, {
-                height: 25,
-                fontSize: 12,
-                displayValue: false
-            });
-
         },
         getDate(){
             var today = new Date();

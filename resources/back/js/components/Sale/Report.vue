@@ -86,6 +86,7 @@ import {
 import money from './../formater';
 import PaymentComponent from "./Payment.vue";
 import TicketComponent from "./Ticket.vue";
+import 'jsbarcode/dist/barcodes/JsBarcode.code128.min.js';
 
 export default {
     name: "ReportSale",
@@ -135,9 +136,11 @@ export default {
 
     },
     methods: {
-        saveOrder() {
+        async saveOrder() {
+            await this.$emit('save-order');
+        },
+        print(){
             this.$refs.ticket.print();
-            this.$emit('save-order')
         },
         formatter(amount){
             return  money.format(amount);

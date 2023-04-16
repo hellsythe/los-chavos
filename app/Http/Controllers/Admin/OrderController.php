@@ -19,7 +19,7 @@ class OrderController extends ResourceController
     public function saveOrder()
     {
         return [
-            'holis konichiws'
+            'id' => 698
         ];
     }
 }
