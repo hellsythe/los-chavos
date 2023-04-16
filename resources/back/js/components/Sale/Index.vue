@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
-    <ReportComponent ref="report" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
+    <ReportComponent ref="report" :printed="printed" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
 </template>
 
 <script>
@@ -31,7 +31,8 @@ export default {
             showReportInfo: {value: false},
             order: {
                 id: 999
-            }
+            },
+            printed: { value:false}
         };
     },
     mounted() {
@@ -48,15 +49,22 @@ export default {
 
             this.order.id = response.id;
 
-            await new Promise(r => setTimeout(r, 300));
+            if (this.order.id) {
+                await new Promise(r => setTimeout(r, 300));
 
-            JsBarcode("#barcode", this.order.id, {
-                height: 25,
-                fontSize: 12,
-                displayValue: false
-            });
+                JsBarcode("#barcode", this.order.id, {
+                    height: 25,
+                    fontSize: 12,
+                    displayValue: false
+                });
 
-            this.$refs.report.print();
+                this.$refs.report.print();
+
+                let that = this;
+                setTimeout(function(){
+                    that.printed.value = true
+                }, 1000);
+            }
         }
     },
 };

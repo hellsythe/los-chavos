@@ -67,7 +67,8 @@
                     </table>
                 </div>
                 <PaymentComponent :payment="payment">
-                    <label @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
+                    <label v-if="!printed.value" @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
+                    <label v-else @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
                 </PaymentComponent>
                 <div class="flex justify-end">
                     <label for="confirmpayment" class="btn">Registrar Pago</label>
@@ -127,6 +128,7 @@ export default {
         showServicesInfo: JSON,
         showReportInfo: JSON,
         order: JSON,
+        printed: JSON,
     },
     data() {
         return {
@@ -144,6 +146,10 @@ export default {
         },
         formatter(amount){
             return  money.format(amount);
+        },
+        goToDashboard()
+        {
+            window.location.href = '/admin';
         }
     },
 };

@@ -7,7 +7,7 @@
                 <h3 class="font-bold text-lg">Confirmar Pedido</h3>
                 <div class="flex py-2">
                     <p>Total a pagar: </p>
-                    <p class=" ml-auto">{{ payment.total }}</p>
+                    <p class=" ml-auto">{{ formatter(payment.total) }}</p>
                 </div>
                 <div class="flex py-2">
                     <p class="flex items-center">Anticipo: </p>
