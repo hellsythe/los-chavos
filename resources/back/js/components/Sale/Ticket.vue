@@ -29,7 +29,7 @@
                     </template>
                     <tr>
                         <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;"><strong>Total</strong></td>
-                        <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;"><strong>${{ total.total }}</strong></td>
+                        <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;"><strong>${{ payment.total }}</strong></td>
                     </tr>
                 </table>
             </div>
@@ -39,15 +39,13 @@
 <script>
 
 export default {
-    name: "SalePoint",
+    name: "Ticket",
     props: {
         selectedServices: JSON,
         garmentData: JSON,
+        payment: JSON,
     },
     components: {
-        ClientComponent,
-        ServicesComponent,
-        ReportComponent,
     },
     data() {
         return {

@@ -36,7 +36,7 @@
                     <p class=" ml-auto">{{ formatter(payment.payment - payment.advance) }}</p>
                 </div>
                 <div class="modal-action">
-                    <label @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
+                    <slot></slot>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
 import money from './../formater';
 
 export default {
-    name: "ReportSale",
+    name: "Payment",
     components: {
 
     },
@@ -62,9 +62,9 @@ export default {
 
     },
     methods: {
-        saveOrder() {
-            this.$emit('save-order')
-        },
+        // saveOrder() {
+        //     this.$emit('save-order')
+        // },
         formatter(amount){
             return  money.format(amount);
         }

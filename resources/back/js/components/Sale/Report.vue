@@ -66,7 +66,9 @@
                         </tfoot>
                     </table>
                 </div>
-                <PaymentComponent :payment="payment" @save-order="saveOrder" />
+                <PaymentComponent :payment="payment">
+                    <label @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
+                </PaymentComponent>
                 <div class="flex justify-end">
                     <label for="confirmpayment" class="btn">Registrar Pago</label>
                 </div>

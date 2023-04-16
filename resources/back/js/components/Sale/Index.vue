@@ -2,12 +2,14 @@
     <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
     <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
+    <TicketComponent :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData" />
 </template>
 
 <script>
 import ClientComponent from "./Client.vue";
 import ServicesComponent from "./Services.vue";
 import ReportComponent from "./Report.vue";
+import TicketComponent from "./Ticket.vue";
 import { postToApi } from '@base/js/request/resquestToApi';
 
 export default {
@@ -19,6 +21,7 @@ export default {
         ClientComponent,
         ServicesComponent,
         ReportComponent,
+        TicketComponent,
     },
     data() {
         return {
