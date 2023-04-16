@@ -57,6 +57,12 @@ class OrderController extends ResourceController
         $order->garment_amount = $request['garment']['amount'];
         $order->client_id = $client->id;
         $order->total = $request['payment']['total'];
+
+        if ($order->total == $request['payment']['advance'] ) {
+            $order->status == Order::STATUS_PENDING;
+        } else {
+            $order->status == Order::STATUS_MISSING_PAYMENT;
+        }
         $order->save();
 
         return $order;

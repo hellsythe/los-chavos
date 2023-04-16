@@ -5,9 +5,24 @@
 @section('content')
 <div class="stats shadow">
   <div class="stat">
-    <div class="stat-title">Minutos disponibles en maquina</div>
-    <div class="stat-value">89,400</div>
-    <div class="stat-desc">21% more than last month</div>
+    <div class="stat-title">Pedidos sin pago al 100%</div>
+    <div class="stat-value">{{number_format($order_missing_payment)}}</div>
   </div>
 </div>
+<div class="stats shadow">
+
+    <div class="stat">
+      <div class="stat-title">Pedidos pendientes</div>
+      <div class="stat-value">{{number_format($order_pending)}}</div>
+    </div>
+
+  </div>
+  <div class="stats shadow">
+
+    <div class="stat">
+      <div class="stat-title">Pedidos Listos sin entregar</div>
+      <div class="stat-value">{{number_format($order_ready)}}</div>
+    </div>
+
+  </div>
 @endsection
