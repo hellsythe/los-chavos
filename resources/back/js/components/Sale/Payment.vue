@@ -1,6 +1,5 @@
 <template>
     <div class="flex justify-end">
-        <label for="confirmpayment" class="btn">Confirmar Pedido</label>
         <input type="checkbox" id="confirmpayment" class="modal-toggle" />
         <div class="modal">
             <div class="modal-box">
@@ -8,7 +7,7 @@
                 <h3 class="font-bold text-lg">Confirmar Pedido</h3>
                 <div class="flex py-2">
                     <p>Total a pagar: </p>
-                    <p class=" ml-auto">{{ total.total }}</p>
+                    <p class=" ml-auto">{{ payment.total }}</p>
                 </div>
                 <div class="flex py-2">
                     <p class="flex items-center">Anticipo: </p>
@@ -37,7 +36,7 @@
                     <p class=" ml-auto">{{ formatter(payment.payment - payment.advance) }}</p>
                 </div>
                 <div class="modal-action">
-                    <label for="confirmpayment" class="btn">Confirmar e Imprimir ticket</label>
+                    <label @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
                 </div>
             </div>
         </div>
@@ -53,20 +52,17 @@ export default {
 
     },
     props: {
-        selectedServices: JSON,
-        garmentData: JSON,
         payment: JSON,
     },
     data() {
         return {
-            showReportInfo: true,
         };
     },
     mounted() {
 
     },
     methods: {
-        validate() {
+        saveOrder() {
             this.$emit('save-order')
         },
         formatter(amount){

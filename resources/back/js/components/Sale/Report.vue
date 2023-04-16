@@ -66,6 +66,10 @@
                         </tfoot>
                     </table>
                 </div>
+                <PaymentComponent :payment="payment" @save-order="saveOrder" />
+                <div class="flex justify-end">
+                    <label for="confirmpayment" class="btn">Registrar Pago</label>
+                </div>
             </div>
         </div>
     </div>
@@ -77,12 +81,14 @@ import {
     EyeIcon,
 } from "@heroicons/vue/24/solid";
 import money from './../formater';
+import PaymentComponent from "./Payment.vue";
 
 export default {
     name: "ReportSale",
     components: {
         EyeIcon,
-        EyeSlashIcon
+        EyeSlashIcon,
+        PaymentComponent,
     },
     computed: {
         total: function () {
@@ -123,7 +129,7 @@ export default {
 
     },
     methods: {
-        validate() {
+        saveOrder() {
             this.$emit('save-order')
         },
         formatter(amount){
