@@ -1,7 +1,7 @@
 <template>
-    <ClientComponent :client="client" />
-    <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" />
-    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" />
+    <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
+    <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
+    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
 </template>
 
 <script>
@@ -26,6 +26,9 @@ export default {
             selectedServices: [{}],
             garmentData: {},
             payment: {payment:0, advance:0},
+            showClientInfo: {value: true},
+            showServicesInfo: {value: false},
+            showReportInfo: {value: false},
         };
     },
     mounted() {
@@ -38,8 +41,6 @@ export default {
                 services: this.selectedServices,
                 garment: this.garmentData,
             });
-            console.log(response);
-            console.log('anime');
         }
     },
 };

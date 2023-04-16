@@ -3,14 +3,14 @@
         <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
             <div class="flex justify-between mb-1">
                 <h1 class="font-bold">Servicios</h1>
-                <button @click="showServicesInfo = true" v-if="!showServicesInfo">
+                <button @click="showServicesInfo.value = true" v-if="!showServicesInfo.value">
                     <EyeIcon class="h-4 mr-1" />
                 </button>
-                <button @click="showServicesInfo = false" v-if="showServicesInfo">
+                <button @click="showServicesInfo.value = false" v-if="showServicesInfo.value">
                     <EyeSlashIcon class="h-4 mr-1" />
                 </button>
             </div>
-            <div v-if="showServicesInfo">
+            <div v-show="showServicesInfo.value">
                 <ul class="menu menu-vertical lg:menu-horizontal bg-base-100 rounded-box">
                     <li @click="currentServiceIndex = index" v-for="(seledtedService, index) in selectedServices">
                         <a :class="{ active: index == currentServiceIndex }">
@@ -56,6 +56,8 @@ export default {
         availableservices: JSON,
         selectedServices: JSON,
         garmentData: JSON,
+        showServicesInfo: JSON,
+        showReportInfo: JSON,
     },
     components: {
         EyeIcon,
@@ -70,7 +72,6 @@ export default {
     data() {
         return {
             currentServices: [],
-            showServicesInfo: true,
             currentServiceIndex: 0,
             garmentErrors: {}
         };
@@ -99,6 +100,11 @@ export default {
                 this.garmentErrors.amount = 'La cantidad no puede estar vacia o ser igual a 0';
                 errors = true;
             };
+
+            if (!errors) {
+                this.showServicesInfo.value = false;
+                this.showReportInfo.value = true;
+            }
         },
     },
 };

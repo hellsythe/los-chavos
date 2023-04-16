@@ -3,14 +3,14 @@
         <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
             <div class="flex justify-between">
                 <h1 class="font-bold">Confirmar Pedido</h1>
-                <button @click="showReportInfo = true" v-if="!showReportInfo">
+                <button @click="showReportInfo.value = true" v-if="!showReportInfo.value">
                     <EyeIcon class="h-4 mr-1" />
                 </button>
-                <button @click="showReportInfo = false" v-if="showReportInfo">
+                <button @click="showReportInfo.value = false" v-if="showReportInfo.value">
                     <EyeSlashIcon class="h-4 mr-1" />
                 </button>
             </div>
-            <div v-if="showReportInfo">
+            <div v-if="showReportInfo.value">
                 <div class="overflow-x-auto">
                     <table class="table table-compact w-full">
                         <thead>
@@ -27,7 +27,7 @@
                                     <th>{{ index + 1 }}</th>
                                     <td>{{ service.service_id.name }} - {{ service.subservice_id.name }} - sobre {{ garmentData.data?.name }}</td>
                                     <td>{{ formatter(service.price) }}</td>
-                                    <td v-if="garmentData.amount > 1">{{ formatter(service.price) * garmentData.amount }}
+                                    <td v-if="garmentData.amount > 1">{{ formatter(service.price * garmentData.amount) }}
                                     </td>
                                 </tr>
                                 <tr v-if="service.subservice_id.id == 4">
@@ -112,10 +112,11 @@ export default {
         selectedServices: JSON,
         garmentData: JSON,
         payment: JSON,
+        showServicesInfo: JSON,
+        showReportInfo: JSON,
     },
     data() {
         return {
-            showReportInfo: true,
         };
     },
     mounted() {
