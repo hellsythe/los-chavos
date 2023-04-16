@@ -43,6 +43,7 @@ export default {
                 client: this.client,
                 services: this.selectedServices,
                 garment: this.garmentData,
+                payment: this.payment,
             });
 
             this.order.id = response.id;

@@ -33,7 +33,7 @@ Route::namespace('\App\Http\Controllers\Admin')
     Route::SdkResource('design', DesignController::class);
     Route::get('/', 'DashboardController@index')->name('dashboard');
     Route::get('/sale-point', 'OrderController@salePoint')->name('sale.point');
-    Route::post('/sale-save', 'OrderController@saveOrder')->name('sale.point.save');
+    Route::post('/sale-save', 'OrderController@processOrder')->name('sale.point.save');
 });
 
 

@@ -15,6 +15,14 @@ return new class extends Migration
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->commonFields();
+            $table->foreignId('order_id');
+            $table->foreignId('service_id');
+            $table->foreignId('subservice_id');
+            $table->double('price', 8, 2);
+            $table->double('total', 8, 2);
+            $table->string('point_x');
+            $table->string('point_y');
+            $table->string('comments');
         });
     }
 

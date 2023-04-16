@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->commonFields();
+            $table->foreignId('order_id');
+            $table->double('amount', 8, 2);
         });
     }
 

@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->commonFields();
             $table->foreignId('client_id');
+            $table->foreignId('garment_id');
+            $table->integer('garment_amount');
+            $table->double('total', 8, 2);
         });
     }
 
