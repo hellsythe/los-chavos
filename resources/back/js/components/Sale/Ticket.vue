@@ -5,7 +5,7 @@
                     <img style="width: 130px;" src="/img/logo.svg" alt="">
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                    <label>Folio: 341323</label>
+                    <label>Folio: {{order.id}}</label>
                     <label>Fecha: {{ date }}</label>
                 </div>
                 <table style="border-collapse: collapse; border: 1px solid; padding: 5px; width: 100%; margin-top: 10px;">
@@ -40,12 +40,16 @@
                         <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;"><strong>{{ formatter(payment.total - payment.advance) }}</strong></td>
                     </tr>
                 </table>
+                <div style="display: flex; justify-content: center;">
+                    <svg id="barcode"></svg>
+                </div>
             </div>
         </div>
 </template>
 
 <script>
-import money from './../formater';
+import money from './../formater';;
+import 'jsbarcode/dist/barcodes/JsBarcode.code128.min.js';
 
 export default {
     name: "Ticket",
@@ -53,6 +57,7 @@ export default {
         selectedServices: JSON,
         garmentData: JSON,
         payment: JSON,
+        order: JSON,
     },
     components: {
     },
@@ -75,6 +80,12 @@ export default {
             a.document.write('<script type="text/javascript">window.onafterprint = window.close; window.print();<\/script>');
             a.document.close();
             a.print();
+            JsBarcode("#barcode", this.order.id, {
+                height: 25,
+                fontSize: 12,
+                displayValue: false
+            });
+
         },
         getDate(){
             var today = new Date();

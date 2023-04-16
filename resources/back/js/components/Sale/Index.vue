@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
-    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
+    <ReportComponent :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
 </template>
 
 <script>
@@ -29,6 +29,9 @@ export default {
             showClientInfo: {value: true},
             showServicesInfo: {value: false},
             showReportInfo: {value: false},
+            order: {
+                id: 999
+            }
         };
     },
     mounted() {
