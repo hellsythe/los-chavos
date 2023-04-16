@@ -1,0 +1,77 @@
+<template>
+    <div class="flex justify-end">
+        <label for="confirmpayment" class="btn">Confirmar Pedido</label>
+        <input type="checkbox" id="confirmpayment" class="modal-toggle" />
+        <div class="modal">
+            <div class="modal-box">
+                <label for="confirmpayment" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                <h3 class="font-bold text-lg">Confirmar Pedido</h3>
+                <div class="flex py-2">
+                    <p>Total a pagar: </p>
+                    <p class=" ml-auto">{{ total.total }}</p>
+                </div>
+                <div class="flex py-2">
+                    <p class="flex items-center">Anticipo: </p>
+                    <p class="ml-auto">
+                        <label class="input-group">
+                            <span>$</span>
+                            <input type="number" v-model="payment.advance" class="input input-bordered"/>
+                        </label>
+                    </p>
+                </div>
+                <div class="flex py-2">
+                    <p>Resta: </p>
+                    <p class="ml-auto">{{ formatter(payment.total - payment.advance) }}</p>
+                </div>
+                <div class="flex py-2">
+                    <p class="flex items-center">Pago: </p>
+                    <p class="ml-auto">
+                        <label class="input-group">
+                            <span>$</span>
+                            <input type="number" v-model="payment.payment" class="input input-bordered"/>
+                        </label>
+                    </p>
+                </div>
+                <div class="flex py-2">
+                    <p>Cambio: </p>
+                    <p class=" ml-auto">{{ formatter(payment.payment - payment.advance) }}</p>
+                </div>
+                <div class="modal-action">
+                    <label for="confirmpayment" class="btn">Confirmar e Imprimir ticket</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import money from './../formater';
+
+export default {
+    name: "ReportSale",
+    components: {
+
+    },
+    props: {
+        selectedServices: JSON,
+        garmentData: JSON,
+        payment: JSON,
+    },
+    data() {
+        return {
+            showReportInfo: true,
+        };
+    },
+    mounted() {
+
+    },
+    methods: {
+        validate() {
+            this.$emit('save-order')
+        },
+        formatter(amount){
+            return  money.format(amount);
+        }
+    },
+};
+</script>

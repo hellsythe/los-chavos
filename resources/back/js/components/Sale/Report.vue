@@ -66,19 +66,6 @@
                         </tfoot>
                     </table>
                 </div>
-                <div class="flex justify-end">
-                    <label for="confirmpayment" class="btn">Confirmar Pedido</label>
-                    <input type="checkbox" id="confirmpayment" class="modal-toggle" />
-                    <div class="modal">
-                        <div class="modal-box">
-                            <h3 class="font-bold text-lg">Confirmar Pedido</h3>
-                            <p class="py-4">Total a pagar: {{ total.total }}</p>
-                            <div class="modal-action">
-                                <label for="confirmpayment" class="btn">Confirmar e Imprimir ticket</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -112,6 +99,7 @@ export default {
                 }
             });
 
+            this.payment.total = (sum * this.garmentData.amount) + extra;
             return {
                 neto: this.formatter(sum),
                 extra: this.formatter(extra),
@@ -123,6 +111,7 @@ export default {
     props: {
         selectedServices: JSON,
         garmentData: JSON,
+        payment: JSON,
     },
     data() {
         return {

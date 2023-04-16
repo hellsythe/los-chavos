@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :client="client" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" />
-    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" />
+    <ReportComponent :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" />
 </template>
 
 <script>
@@ -25,6 +25,7 @@ export default {
             client: {},
             selectedServices: [{}],
             garmentData: {},
+            payment: {payment:0, advance:0},
         };
     },
     mounted() {
