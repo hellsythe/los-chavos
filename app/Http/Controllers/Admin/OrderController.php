@@ -117,20 +117,20 @@ class OrderController extends ResourceController
             $serviceModel->total = $service['price'] * $request['garment']['amount'];
             $serviceModel->save();
 
-            switch ($serviceModel->subservice_id) {
-                case 1:
-                    $this->saveDesing($order, $service);
-                    break;
-                case 2:
-                    $this->saveCustom($order, $service);
-                    break;
-                case 3:
-                    $this->saveUpdateDesing($order, $service);
-                    break;
-                case 4:
-                    $this->saveNewDesing($order, $service);
-                    break;
-            }
+            // switch ($serviceModel->subservice_id) {
+            //     case 1:
+            //         $this->saveDesing($order, $service);
+            //         break;
+            //     case 2:
+            //         $this->saveCustom($order, $service);
+            //         break;
+            //     case 3:
+            //         $this->saveUpdateDesing($order, $service);
+            //         break;
+            //     case 4:
+            //         $this->saveNewDesing($order, $service);
+            //         break;
+            // }
         }
     }
 
