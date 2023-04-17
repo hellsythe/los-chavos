@@ -6,6 +6,10 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
+use App\Models\OrderDesign;
+use App\Models\OrderNewDesign;
+use App\Models\OrderUpdateDesign;
+use App\Models\OrderCustomDesign;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -112,7 +116,50 @@ class OrderController extends ResourceController
             $serviceModel->price = $service['price'];
             $serviceModel->total = $service['price'] * $request['garment']['amount'];
             $serviceModel->save();
+
+            switch ($serviceModel->subservice_id) {
+                case 1:
+                    $this->saveDesing($order, $service);
+                    break;
+                case 2:
+                    $this->saveCustom($order, $service);
+                    break;
+                case 3:
+                    $this->saveUpdateDesing($order, $service);
+                    break;
+                case 4:
+                    $this->saveNewDesing($order, $service);
+                    break;
+            }
         }
+    }
+
+    private function saveDesing($order, $service)
+    {
+        $model = new OrderDesign();
+        $model->order_id = $order->id;
+        $model->save();
+    }
+
+    private function saveNewDesing($order, $service)
+    {
+        $model = new OrderNewDesign();
+        $model->order_id = $order->id;
+        $model->save();
+    }
+
+    private function saveUpdateDesing($order, $service)
+    {
+        $model = new OrderUpdateDesign();
+        $model->order_id = $order->id;
+        $model->save();
+    }
+
+    private function saveCustom($order, $service)
+    {
+        $model = new OrderCustomDesign();
+        $model->order_id = $order->id;
+        $model->save();
     }
 
     private function savePayment($order, $payment)
