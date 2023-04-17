@@ -9,10 +9,25 @@ use App\Models\Payment;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Sdkconsultoria\Core\Controllers\Traits\ApiControllerTrait;
 
 class OrderController extends ResourceController
 {
+    use ApiControllerTrait;
+
     protected $model = \App\Models\Order::class;
+
+    public function viewAny(Request $request)
+    {
+        $model = new $this->model;
+        $this->authorize('viewAny', $model);
+
+        $query = $model::where('orders.status', '>', $model::STATUS_ACTIVE);
+        $query = $this->searchable($query, $request)->with('client');
+        $query = $this->applyOrderByToQuery($query, $request->input('order'));
+
+        return $this->setPagination($query, $request);
+    }
 
     public function salePoint()
     {
@@ -53,16 +68,18 @@ class OrderController extends ResourceController
     private function saveOrder($client, $request)
     {
         $order = new Order();
+        $order->created_by = auth()->user()->id;
         $order->garment_id = $request['garment']['data']['id'];
         $order->garment_amount = $request['garment']['amount'];
         $order->client_id = $client->id;
         $order->total = $request['payment']['total'];
 
         if ($order->total == $request['payment']['advance'] ) {
-            $order->status == Order::STATUS_PENDING;
+            $order->status = Order::STATUS_PENDING;
         } else {
-            $order->status == Order::STATUS_MISSING_PAYMENT;
+            $order->status = Order::STATUS_MISSING_PAYMENT;
         }
+
         $order->save();
 
         return $order;
@@ -87,6 +104,7 @@ class OrderController extends ResourceController
     private function savePayment($order, $payment)
     {
         $paymentModel = new Payment();
+        $paymentModel->created_by = auth()->user()->id;
         $paymentModel->order_id = $order->id;
         $paymentModel->amount = $payment['advance'];
         $paymentModel->save();

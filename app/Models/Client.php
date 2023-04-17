@@ -10,7 +10,9 @@ class Client extends BaseModel
     protected function fields()
     {
         return[
-            TextField::make('')->label('')->rules(['required']),
+            TextField::make('name')->label('Nombre completo')->rules(['required']),
+            TextField::make('phone')->label('Teléfono')->rules(['required']),
+            TextField::make('email')->label('Correo')->rules(['required']),
         ];
     }
 

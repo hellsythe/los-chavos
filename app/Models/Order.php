@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends BaseModel
 {
@@ -18,7 +19,7 @@ class Order extends BaseModel
     protected function fields()
     {
         return[
-            TextField::make('')->label('')->rules(['required']),
+            TextField::make('id')->label('Folio')->rules(['required']),
         ];
     }
 
@@ -28,5 +29,10 @@ class Order extends BaseModel
             'singular' => 'Pedido',
             'plural' => 'Pedidos',
         ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 }

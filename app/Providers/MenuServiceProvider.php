@@ -11,6 +11,7 @@ use App\Models\Service;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Design;
+use App\Models\Payment;
 use Base;
 
 class MenuServiceProvider extends ServiceProvider
@@ -45,15 +46,14 @@ class MenuServiceProvider extends ServiceProvider
             'crud' => '',
             'extra_urls' => [],
         ], ['super-admin', 'Punto de venta']);
+        $service_menu->addElement(Order::makeMenu('truck'));
+        $service_menu->addElement(Payment::makeMenu('currency-dollar'));
         $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
         $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);
-        $service_menu->addElement(Typography::makeMenu('book-open'), ['super-admin']);
-        $service_menu->addElement(Garment::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Typography::makeMenu('language'), ['super-admin']);
+        $service_menu->addElement(Garment::makeMenu('academic-cap'), ['super-admin']);
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
-        $service_menu->addElement(Subservice::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
-        // $service_menu->addElement(Employee::makeMenu('tag'), ['super-admin']);
-        // $service_menu->addElement(Payment::makeMenu('book-open'));
-        // $service_menu->addElement(Order::makeMenu('book-open'));
     }
 }
