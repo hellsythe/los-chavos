@@ -14,6 +14,7 @@ use Sdkconsultoria\Core\Controllers\Traits\ApiControllerTrait;
 class OrderController extends ResourceController
 {
     use ApiControllerTrait;
+    protected $view = 'back.order';
 
     protected $model = \App\Models\Order::class;
 
