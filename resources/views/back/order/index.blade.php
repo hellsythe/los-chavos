@@ -20,9 +20,4 @@ $array_search = array_merge($model->getParseSearchFilters(), [['field' => 'clien
             :translations='{!! json_encode($array_translation) !!}'
         />
     </div>
-    <script>
-        document.addEventListener('scanComplete', function(e) {
-            window.location.href = '/admin/order/' + e.detail;
-         })
-    </script>
 @endsection

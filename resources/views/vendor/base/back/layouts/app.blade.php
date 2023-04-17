@@ -27,6 +27,11 @@
             </main>
         </div>
     </div>
+    <script>
+        document.addEventListener('scanComplete', function(e) {
+            window.location.href = '/admin/order/' + e.detail;
+         })
+    </script>
 </body>
 
 </html>
