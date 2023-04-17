@@ -18,6 +18,19 @@ class OrderController extends ResourceController
 
     protected $model = \App\Models\Order::class;
 
+    protected function filters(): array
+    {
+        return [
+            'client' => function ($query, $value) {
+                $query->join('clients', 'clients.id', '=', 'orders.client_id');
+                return $query->where(function($query) use ($value){
+                    return $query->where('clients.name', 'like', '%'.$value.'%')
+                        ->orWhere('clients.phone', 'like', '%'.$value.'%');
+                });
+            },
+        ];
+    }
+
     public function viewAny(Request $request)
     {
         $model = new $this->model;
