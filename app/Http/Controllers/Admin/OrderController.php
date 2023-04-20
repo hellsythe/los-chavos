@@ -59,7 +59,7 @@ class OrderController extends ResourceController
 
     public function processOrder(Request $request)
     {
-        dd($request);
+        // dd($request);
         $client = $this->saveClient($request->client);
         $order = $this->saveOrder($client, $request);
         $this->saveOrderDetails($order, $request);
@@ -131,10 +131,10 @@ class OrderController extends ResourceController
                     $this->saveCustom($orderDetail, $service);
                     break;
                 case 3:
-                //     $this->saveUpdateDesing($orderDetail, $service);
+                    $this->saveUpdateDesing($orderDetail, $service, $request['garment']['amount']);
                     break;
                 case 4:
-                    $this->saveNewDesign($orderDetail, $service);
+                    $this->saveNewDesign($orderDetail, $service, $request['garment']['amount']);
                     break;
             }
         }
@@ -150,7 +150,7 @@ class OrderController extends ResourceController
         $model->save();
     }
 
-    private function saveNewDesign($orderDetail, $service)
+    private function saveNewDesign($orderDetail, $service, $garmentAmount)
     {
         $design = $this->createNewDesign($service);
 
@@ -158,20 +158,36 @@ class OrderController extends ResourceController
         $model->order_detail_id = $orderDetail->id;
         $model->design_id = $design->id;
         $model->price = $service['price_new'];
+
+        if ($garmentAmount > config('app.max_garment')) {
+            $model->price = 0;
+        }
+
         $model->save();
     }
 
     private function createNewDesign($service)
     {
         $design = new Design();
+        $design->created_by = auth()->user()->id;
 
         return $design;
     }
 
-    private function saveUpdateDesing($orderDetail, $service)
+    private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
     {
+        $design = $this->createNewDesign($service);
+
         $model = new OrderUpdateDesign();
         $model->order_detail_id = $orderDetail->id;
+        $model->price = $service['price_update'];
+
+        if ($garmentAmount > config('app.max_garment')) {
+            $model->price = 0;
+        }
+
+        $model->old_design_id = $service['design']['id'];
+        $model->design_id = $design->id;
         $model->save();
     }
 

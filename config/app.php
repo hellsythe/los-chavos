@@ -197,4 +197,5 @@ return [
         // ...
     ])->toArray(),
 
+    'max_garment' => (int) env('MAX_GARMENT', 6),
 ];
