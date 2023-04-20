@@ -47,6 +47,29 @@ class OrderTest extends TestCase
 
         $response->status(200);
         $response->assertJsonStructure(['id']);
+        $this->assertDatabaseHas('order_details', [
+            'order_id' => $response['id']
+        ]);
+    }
+
+
+    public function test_custom_embroidery()
+    {
+        $user = $this->makeUser(['permission' => 'order:create']);
+        $response = $this->actingAs($user)->post('/admin/sale-save', [
+            'client' => $this->getClient(),
+            'garment' => $this->getGarment(),
+            'services' => [
+                $this->getSubservice(Subservice::findModel(2)),
+            ],
+            'payment' => $this->getPayment(),
+        ]);
+
+        $response->status(200);
+        $response->assertJsonStructure(['id']);
+        $this->assertDatabaseHas('order_details', [
+            'order_id' => $response['id']
+        ]);
     }
 
     protected function getClient(Client $client = null)
@@ -64,7 +87,8 @@ class OrderTest extends TestCase
 
     protected function getSubservice(Subservice $subservice = null)
     {
-        return [
+        $subserviceDetails = $this->getSubserviceDetails($subservice);
+        return array_merge([
             'service_id' => [
                 'id' => $subservice->service_id,
             ],
@@ -75,7 +99,44 @@ class OrderTest extends TestCase
                 'x' => $this->faker()->numberBetween(100, 9999),
                 'y' => $this->faker()->numberBetween(100, 9999),
             ],
-            'price' => 500
+            'price' => 500,
+        ],  $subserviceDetails);
+    }
+
+    protected function getSubserviceDetails(Subservice $subservice)
+    {
+        switch ($subservice->id) {
+            case 1:
+                return $this->getSubserviceBordado();
+                break;
+
+            case 2:
+                return $this->getSubserviceBordadoCustom();
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
+
+    protected function getSubserviceBordado()
+    {
+        return [
+            'design' => [
+                'id' => 1
+            ],
+            'comments' => $this->faker()->text()
+        ];
+    }
+
+    protected function getSubserviceBordadoCustom()
+    {
+        return [
+            'typography' => [
+                'id' => 1
+            ],
+            'textsize' => $this->faker()->text(),
+            'custom' => ['text' => $this->faker()->text()],
         ];
     }
 

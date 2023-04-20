@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('order_custom_designs', function (Blueprint $table) {
             $table->commonFields();
             $table->foreignId('order_detail_id');
-            $table->foreignId('typography');
+            $table->foreignId('typography_id');
             $table->string('size');
             $table->text('text');
         });

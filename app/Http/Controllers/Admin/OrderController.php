@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Client;
+use App\Models\Design;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
@@ -58,6 +59,7 @@ class OrderController extends ResourceController
 
     public function processOrder(Request $request)
     {
+        dd($request);
         $client = $this->saveClient($request->client);
         $order = $this->saveOrder($client, $request);
         $this->saveOrderDetails($order, $request);
@@ -108,63 +110,78 @@ class OrderController extends ResourceController
     private function saveOrderDetails($order, $request)
     {
         foreach ($request['services'] as $service) {
-            $serviceModel = new OrderDetail();
-            $serviceModel->order_id = $order->id;
-            $serviceModel->service_id = $service['service_id']['id'];
-            $serviceModel->subservice_id = $service['subservice_id']['id'];
-            $serviceModel->point_x = $service['point']['x'];
-            $serviceModel->point_y = $service['point']['y'];
-            $serviceModel->comments = $service['comments'] ?? null;
-            $serviceModel->price = $service['price'];
-            $serviceModel->total = $service['price'] * $request['garment']['amount'];
-            $serviceModel->save();
+            $orderDetail = new OrderDetail();
+            $orderDetail->order_id = $order->id;
+            $orderDetail->service_id = $service['service_id']['id'];
+            $orderDetail->subservice_id = $service['subservice_id']['id'];
+            $orderDetail->point_x = $service['point']['x'];
+            $orderDetail->point_y = $service['point']['y'];
+            $orderDetail->comments = $service['comments'] ?? null;
+            $orderDetail->price = $service['price'];
+            $orderDetail->total = $service['price'] * $request['garment']['amount'];
+            $orderDetail->save();
 
-            $order->total += $serviceModel->total;
+            $order->total += $orderDetail->total;
 
-            // switch ($serviceModel->subservice_id) {
-            //     case 1:
-            //         $this->saveDesing($order, $service);
-            //         break;
-            //     case 2:
-            //         $this->saveCustom($order, $service);
-            //         break;
-            //     case 3:
-            //         $this->saveUpdateDesing($order, $service);
-            //         break;
-            //     case 4:
-            //         $this->saveNewDesing($order, $service);
-            //         break;
-            // }
+            switch ($orderDetail->subservice_id) {
+                case 1:
+                    $this->saveDesing($orderDetail, $service);
+                    break;
+                case 2:
+                    $this->saveCustom($orderDetail, $service);
+                    break;
+                case 3:
+                //     $this->saveUpdateDesing($orderDetail, $service);
+                    break;
+                case 4:
+                    $this->saveNewDesign($orderDetail, $service);
+                    break;
+            }
         }
 
         $order->save();
     }
 
-    private function saveDesing($order, $service)
+    private function saveDesing($orderDetail, $service)
     {
         $model = new OrderDesign();
-        $model->order_id = $order->id;
+        $model->order_detail_id = $orderDetail->id;
+        $model->design_id = $service['design']['id'];
         $model->save();
     }
 
-    private function saveNewDesing($order, $service)
+    private function saveNewDesign($orderDetail, $service)
     {
+        $design = $this->createNewDesign($service);
+
         $model = new OrderNewDesign();
-        $model->order_id = $order->id;
+        $model->order_detail_id = $orderDetail->id;
+        $model->design_id = $design->id;
+        $model->price = $service['price_new'];
         $model->save();
     }
 
-    private function saveUpdateDesing($order, $service)
+    private function createNewDesign($service)
+    {
+        $design = new Design();
+
+        return $design;
+    }
+
+    private function saveUpdateDesing($orderDetail, $service)
     {
         $model = new OrderUpdateDesign();
-        $model->order_id = $order->id;
+        $model->order_detail_id = $orderDetail->id;
         $model->save();
     }
 
-    private function saveCustom($order, $service)
+    private function saveCustom($orderDetail, $service)
     {
         $model = new OrderCustomDesign();
-        $model->order_id = $order->id;
+        $model->order_detail_id = $orderDetail->id;
+        $model->text = $service['custom']['text'];
+        $model->typography_id = $service['typography']['id'];
+        $model->size = $service['textsize'];
         $model->save();
     }
 
