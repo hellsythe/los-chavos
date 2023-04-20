@@ -23,6 +23,9 @@ class ClientFactory extends Factory
     {
         return [
             'status' => $this->model::STATUS_ACTIVE,
+            'name' => $this->faker->name(). ' '.$this->faker->lastName(),
+            'email' => $this->faker->email(),
+            'phone' => $this->faker->phoneNumber(),
         ];
     }
 }
