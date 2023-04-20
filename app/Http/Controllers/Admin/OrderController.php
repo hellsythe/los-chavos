@@ -92,7 +92,7 @@ class OrderController extends ResourceController
         $order->garment_id = $request['garment']['data']['id'];
         $order->garment_amount = $request['garment']['amount'];
         $order->client_id = $client->id;
-        $order->total = $request['payment']['total'];
+        $order->total = 0;
 
         if ($order->total == $request['payment']['advance'] ) {
             $order->status = Order::STATUS_PENDING;
@@ -119,6 +119,8 @@ class OrderController extends ResourceController
             $serviceModel->total = $service['price'] * $request['garment']['amount'];
             $serviceModel->save();
 
+            $order->total += $serviceModel->total;
+
             // switch ($serviceModel->subservice_id) {
             //     case 1:
             //         $this->saveDesing($order, $service);
@@ -134,6 +136,8 @@ class OrderController extends ResourceController
             //         break;
             // }
         }
+
+        $order->save();
     }
 
     private function saveDesing($order, $service)
@@ -171,6 +175,5 @@ class OrderController extends ResourceController
         $paymentModel->order_id = $order->id;
         $paymentModel->amount = $payment['advance'];
         $paymentModel->save();
-
     }
 }
