@@ -49,6 +49,8 @@ class OrderController extends ResourceController
 
     public function salePoint()
     {
+        $this->authorize('create', new $this->model);
+
         return view('back.sale.point', [
             'available_services' => Service::all()
         ]);
