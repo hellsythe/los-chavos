@@ -5,7 +5,7 @@
             <TypeaheadInput :loadFromApiUrl="'/admin/typography/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.textsize }}</div>
         </div>
 
         <div class="form-control w-full mb-2">
@@ -15,14 +15,14 @@
                 <option>Adulto max 10 cm de ancho</option>
                 <option>Niño max 7 cm de ancho</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.typography }}</div>
         </div>
     </div>
 
     <div v-if="this.service.typography" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Texto a Bordar</span></label>
         <TipTap v-model="service.custom.text" :style="{ 'font-family': fontFamily }"></TipTap>
-        <div class="text-red-500 text-xs font-semibold mt-1"></div>
+        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.custom }}</div>
     </div>
 </template>
 
@@ -34,6 +34,7 @@ export default {
     name: "CustomEmbroidery",
     props: {
         service: JSON,
+        errors: JSON,
     },
     components: {
         TypeaheadInput,

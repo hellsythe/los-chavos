@@ -3,12 +3,12 @@
         <div class="form-control w-64 mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Nombre del nuevo diseño</span></label>
             <input type="text" class="w-full input input-bordered" v-model="service.new_design_name" />
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.new_design_name }}</div>
         </div>
         <div class="form-control w-64 mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Selecciona el nuevo ponchado</span></label>
             <input type="file" class="file-input w-full max-w-xs" @change="handleFileUpload($event)" />
-            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.newDesign }}</div>
         </div>
         <div class="mt-6 ml-auto">
             <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
@@ -22,6 +22,7 @@ export default {
     name: "NewEmbroidery",
     props: {
         service: JSON,
+        errors: JSON,
     },
     data() {
         return {

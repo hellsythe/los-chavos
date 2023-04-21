@@ -4,7 +4,9 @@
             <label for="" class="label"><span class="label-text">Tipo de servicio</span></label>
             <select class="select select-bordered w-full" v-model="service.service_id" :onchange="loadSubservicesFromApi">
                 <option disabled selected>Elije uno</option>
-                <option :value="{id: service.id, name:service.name}" v-for="service in availableservices ">{{ service.name }}</option>
+                <option :value="{ id: service.id, name: service.name }" v-for="service in availableservices ">{{
+                    service.name
+                }}</option>
             </select>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service_id }}</div>
         </div>
@@ -47,42 +49,92 @@ export default {
             this.availablesubservices = response.data;
         },
         validate() {
-            let errors = false;
-
             this.cleanErrors();
-            if (!this.service.service_id.id) {
-                this.errors.service_id = 'El Tipo servicio no puede estar vacio';
-                errors = true;
-            };
-
-            if (!this.service.subservice_id.id) {
-                this.errors.subservice_id = 'El Tipo subservicio no puede estar vacio';
-                errors = true;
-            };
-
-            if (!this.service.hasOwnProperty('price') || this.service.price.length === 0) {
-                this.errors.price = 'El Precio por prenda no puede estar vacio';
-                errors = true;
-            };
-
-            if (!this.service.hasOwnProperty('design') || this.service.design.length === 0) {
-                this.errors.design = 'El Diseño no puede estar vacio';
-                errors = true;
-            };
-
+            this.validateExistingDesign();
+            this.validateCommon();
+            this.validateNewDesign();
+            this.validateCustomDesign();
+            this.validateUpdatedDesign();
+            if (Object.keys(this.errors).length !== 0) {
+                return true;
+            }
         },
         cleanErrors() {
             this.errors = {};
         },
-        validateNewDesign()
-        {
 
+        validateCommon() {
+            if (!this.service.service_id.id) {
+                this.errors.service_id = 'El Tipo servicio no puede estar vacio';
+            };
+
+            if (!this.service.subservice_id.id) {
+                this.errors.subservice_id = 'El Tipo subservicio no puede estar vacio';
+            };
+
+            if (!this.service.hasOwnProperty('price') || this.service.price.length === 0) {
+                this.errors.price = 'El Precio por prenda no puede estar vacio';
+            };
         },
-        validateUpdatedDesign()
-        {
+        validateExistingDesign() {
+            if (this.service.subservice_id.id === 1) {
+                if (!this.service.hasOwnProperty('design')) {
+                    this.errors.design = 'El Diseño no puede estar vacio';
+                }
+            }
+        },
+        validateNewDesign() {
+            if (this.service.subservice_id.id === 4) {
+                if (!this.service.hasOwnProperty('new_design_name') || this.service.new_design_name === '') {
+                    this.errors.new_design_name = 'El Nombre del nuevo diseño no puede estar vacio';
+                }
 
+                if (!this.service.hasOwnProperty('newDesign') || this.service.new_design_name === '') {
+                    this.errors.newDesign = 'El Archivo del nuevo Diseño no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('puntadas') || this.service.puntadas === '') {
+                    this.errors.puntadas = 'Las puntadas del nuevo Diseño no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('price_new') || this.service.price_new === '') {
+                    this.errors.price_new = 'El precio del nuevo Diseño no puede estar vacio';
+                }
+            }
+        },
+        validateUpdatedDesign() {
+            if (this.service.subservice_id.id === 3) {
+                if (!this.service.hasOwnProperty('updateDesign') || this.service.new_design_name === '') {
+                    this.errors.updateDesign = 'El Archivo de Diseño Modificado no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('puntadas') || this.service.puntadas === '') {
+                    this.errors.puntadas = 'Las puntadas del Diseño Modificado no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('price_update') || this.service.price_update === '') {
+                    this.errors.price_update = 'El precio por actualizar Diseño no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('design')) {
+                    this.errors.design = 'El Diseño anterior no puede estar vacio';
+                }
+            }
+        },
+        validateCustomDesign() {
+            if (this.service.subservice_id.id === 2) {
+                if (!this.service.hasOwnProperty('textsize') || this.service.textsize === '') {
+                    this.errors.textsize = 'El Tamaño del la letra no puede estar vacio';
+                }
+
+                if (!this.service.hasOwnProperty('typography') || this.service.typography === '') {
+                    this.errors.typography = 'La tipografía no puede estar vacio';
+                }
+                if (!this.service.hasOwnProperty('custom') || this.service.custom.text === '' || this.service.custom.text === '<p></p>') {
+                    this.errors.custom = 'El texto personalizado no puede estar vacio';
+                }
+            };
         }
-
     },
 };
 </script>

@@ -49,6 +49,7 @@ export default {
                 services: this.selectedServices,
                 garment: this.garmentData,
                 payment: this.payment,
+                extra: this.extra,
             });
 
             this.order.id = response.id;
