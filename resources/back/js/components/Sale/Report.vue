@@ -14,7 +14,7 @@
                 <div class="flex">
                     <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
-                        <input type="date" v-model="extra.date" class="input input-bordered w-full">
+                        <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="extra.date" class="input input-bordered w-full">
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.date }}</div>
                     </div>
                     <div class="form-control mb-2 mr-2 w-64">
@@ -115,6 +115,10 @@ export default {
         TicketComponent,
     },
     computed: {
+        minDate: function() {
+            let date = new Date().toISOString().split("T")[0];
+            return date;
+        },
         total: function () {
             let sum = 0;
             let extra = 0;
@@ -174,7 +178,7 @@ export default {
         registerPayment() {
             this.errors.date = '';
 
-            if (!this.extra.hasOwnProperty('date') || this.extra.date == '') {
+            if (!this.extra.hasOwnProperty('date') || this.extra.date == ''|| this.extra.date == null) {
                 this.errors.date = 'La fecha de entrega no puede estar vacia';
             }
 
