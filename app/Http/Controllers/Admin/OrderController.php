@@ -167,7 +167,7 @@ class OrderController extends ResourceController
         $model->save();
     }
 
-    private function createNewDesign($service, $fileName)
+    private function createNewDesign($service, $fileData)
     {
         $design = new Design();
         $design->created_by = auth()->user()->id;
@@ -179,18 +179,18 @@ class OrderController extends ResourceController
         $design->save();
         $design->media = URL::to('/storage/design/'.$design->id.'.pdf');
         $design->save();
-        $this->saveFileDesign($fileName);
+        $this->saveFileDesign($fileData, $design->id);
 
         return $design;
     }
 
-    private function saveFileDesign($data)
+    private function saveFileDesign($data, $id)
     {
         list($type, $data) = explode(';', $data);
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
 
-        Storage::put('design/archivito.pdf', $data);
+        Storage::put('public/design/'.$id.'.pdf', $data);
     }
 
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
