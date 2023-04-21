@@ -17,7 +17,7 @@
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
         </div>
-        <div class="form-control mb-2" v-if="service.subservice_id.id == 3">
+        <div class="form-control mb-2 mr-2" v-if="service.subservice_id.id == 3">
             <label for="" class="label"><span class="label-text">Costo por modificar ponchado</span></label>
             <label class="input-group">
                 <span>$</span>
@@ -25,13 +25,18 @@
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_update }}</div>
         </div>
-        <div class="form-control mb-2" v-if="service.subservice_id.id == 4">
+        <div class="form-control mb-2  mr-2" v-if="service.subservice_id.id == 4">
             <label for="" class="label"><span class="label-text">Costo por ponchado nuevo</span></label>
             <label class="input-group">
                 <span>$</span>
                 <input type="number" class="input input-bordered" v-model="service.price_new" />
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_new }}</div>
+        </div>
+        <div class="form-control mb-2" v-if="service.subservice_id.id == 4 || service.subservice_id.id == 3">
+            <label for="" class="label"><span class="label-text">Puntadas</span></label>
+            <input type="number" class="input input-bordered" v-model="service.puntadas" />
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.puntadas }}</div>
         </div>
     </div>
 

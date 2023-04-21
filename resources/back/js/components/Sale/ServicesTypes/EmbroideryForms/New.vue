@@ -1,8 +1,13 @@
 <template>
     <div class="flex">
         <div class="form-control w-64 mb-2 mr-2">
+            <label for="" class="label"><span class="label-text">Nombre del nuevo diseño</span></label>
+            <input type="text" class="w-full input input-bordered" v-model="service.new_design_name" />
+            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+        </div>
+        <div class="form-control w-64 mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Selecciona el nuevo ponchado</span></label>
-            <input type="file" class="file-input w-full max-w-xs" />
+            <input type="file" class="file-input w-full max-w-xs" @change="handleFileUpload($event)" />
             <div class="text-red-500 text-xs font-semibold mt-1"></div>
         </div>
         <div class="mt-6 ml-auto">
@@ -26,7 +31,16 @@ export default {
     mounted() {
     },
     methods: {
+        async handleFileUpload(e) {
+            let that = this;
+            let file = e.target.files[0];
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
 
+            reader.onload = function () {
+                that.service.newDesign = reader.result;
+            }
+        }
     },
 };
 </script>

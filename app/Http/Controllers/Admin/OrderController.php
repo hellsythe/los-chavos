@@ -14,6 +14,8 @@ use App\Models\OrderCustomDesign;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Sdkconsultoria\Core\Controllers\Traits\ApiControllerTrait;
 
 class OrderController extends ResourceController
@@ -28,9 +30,9 @@ class OrderController extends ResourceController
         return [
             'client' => function ($query, $value) {
                 $query->join('clients', 'clients.id', '=', 'orders.client_id');
-                return $query->where(function($query) use ($value){
-                    return $query->where('clients.name', 'like', '%'.$value.'%')
-                        ->orWhere('clients.phone', 'like', '%'.$value.'%');
+                return $query->where(function ($query) use ($value) {
+                    return $query->where('clients.name', 'like', '%' . $value . '%')
+                        ->orWhere('clients.phone', 'like', '%' . $value . '%');
                 });
             },
         ];
@@ -59,7 +61,6 @@ class OrderController extends ResourceController
 
     public function processOrder(Request $request)
     {
-        // dd($request);
         $client = $this->saveClient($request->client);
         $order = $this->saveOrder($client, $request);
         $this->saveOrderDetails($order, $request);
@@ -96,7 +97,7 @@ class OrderController extends ResourceController
         $order->client_id = $client->id;
         $order->total = 0;
 
-        if ($order->total == $request['payment']['advance'] ) {
+        if ($order->total == $request['payment']['advance']) {
             $order->status = Order::STATUS_PENDING;
         } else {
             $order->status = Order::STATUS_MISSING_PAYMENT;
@@ -152,7 +153,7 @@ class OrderController extends ResourceController
 
     private function saveNewDesign($orderDetail, $service, $garmentAmount)
     {
-        $design = $this->createNewDesign($service);
+        $design = $this->createNewDesign($service, $service['newDesign']);
 
         $model = new OrderNewDesign();
         $model->order_detail_id = $orderDetail->id;
@@ -166,17 +167,37 @@ class OrderController extends ResourceController
         $model->save();
     }
 
-    private function createNewDesign($service)
+    private function createNewDesign($service, $fileName)
     {
         $design = new Design();
         $design->created_by = auth()->user()->id;
+        $design->minutes = $service['puntadas'];
+        $design->price = $service['price'];
+        $design->name = $service['new_design_name'];
+        $design->media = 'prueba';
+        $design->status = Design::STATUS_ACTIVE;
+        $design->save();
+        $design->media = URL::to('/storage/design/'.$design->id.'.pdf');
+        $design->save();
+        $this->saveFileDesign($fileName);
 
         return $design;
     }
 
+    private function saveFileDesign($data)
+    {
+        list($type, $data) = explode(';', $data);
+        list(, $data) = explode(',', $data);
+        $data = base64_decode($data);
+
+        Storage::put('design/archivito.pdf', $data);
+    }
+
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
     {
-        $design = $this->createNewDesign($service);
+        $desingCurrent = Design::findModel($service['design']['id']);
+        $service['new_design_name'] = $desingCurrent->name;
+        $design = $this->createNewDesign($service, $service['updateDesign']);
 
         $model = new OrderUpdateDesign();
         $model->order_detail_id = $orderDetail->id;
@@ -189,6 +210,7 @@ class OrderController extends ResourceController
         $model->old_design_id = $service['design']['id'];
         $model->design_id = $design->id;
         $model->save();
+        $desingCurrent->delete();
     }
 
     private function saveCustom($orderDetail, $service)
