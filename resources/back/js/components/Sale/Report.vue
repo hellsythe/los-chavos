@@ -11,6 +11,20 @@
                 </button>
             </div>
             <div v-if="showReportInfo.value">
+                <div class="flex">
+                    <div class="form-control mb-2 mr-2 w-64">
+                        <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
+                        <input type="date" v-model="extra.date" class="input input-bordered w-full">
+                        <div class="text-red-500 text-xs font-semibold mt-1"></div>
+                    </div>
+                    <div class="form-control mb-2 mr-2 w-64">
+                        <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la prendas?</span></label>
+                        <div class="mt-3 flex items-center">
+                            <input v-model="extra.isOrder" type="checkbox" checked="checked" class="checkbox mr-1" /> Habilitar
+                        </div>
+                        <div class="text-red-500 text-xs font-semibold mt-1"></div>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="table table-compact w-full">
                         <thead>
@@ -25,7 +39,8 @@
                             <template v-for="(service, index) in selectedServices">
                                 <tr>
                                     <th>{{ index + 1 }}</th>
-                                    <td>{{ service.service_id.name }} - {{ service.subservice_id.name }} - sobre {{ garmentData.data?.name }}</td>
+                                    <td>{{ service.service_id.name }} - {{ service.subservice_id.name }} - sobre {{
+                                        garmentData.data?.name }}</td>
                                     <td>{{ formatter(service.price) }}</td>
                                     <td v-if="garmentData.amount > 1">{{ formatter(service.price * garmentData.amount) }}
                                     </td>
@@ -35,7 +50,8 @@
                                     <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Diseño
                                             nuevo</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
                                             prendas</strong></td>
-                                    <td :class="{ 'line-through': garmentData.amount > 6 }">{{ formatter(service.price_new) }}
+                                    <td :class="{ 'line-through': garmentData.amount > 6 }">{{ formatter(service.price_new)
+                                    }}
                                     </td>
                                     <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
                                         {{ formatter(service.price_new) }}</td>
@@ -75,7 +91,8 @@
                 </div>
             </div>
         </div>
-        <TicketComponent ref="ticket" :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData" :order="order" />
+        <TicketComponent ref="ticket" :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData"
+            :order="order" />
     </div>
 </template>
 
@@ -129,6 +146,7 @@ export default {
         showReportInfo: JSON,
         order: JSON,
         printed: JSON,
+        extra: JSON,
     },
     data() {
         return {
@@ -141,14 +159,13 @@ export default {
         async saveOrder() {
             await this.$emit('save-order');
         },
-        print(){
+        print() {
             this.$refs.ticket.print();
         },
-        formatter(amount){
-            return  money.format(amount);
+        formatter(amount) {
+            return money.format(amount);
         },
-        goToDashboard()
-        {
+        goToDashboard() {
             window.location.href = '/admin';
         }
     },

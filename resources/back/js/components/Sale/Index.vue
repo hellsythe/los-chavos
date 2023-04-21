@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
     <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
-    <ReportComponent ref="report" :printed="printed" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
+    <ReportComponent ref="report" :extra="extra" :printed="printed" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
 </template>
 
 <script>
@@ -32,7 +32,11 @@ export default {
             order: {
                 id: 999
             },
-            printed: { value:false}
+            printed: { value:false},
+            extra: {
+                date: null,
+                isOrder: null,
+            }
         };
     },
     mounted() {
