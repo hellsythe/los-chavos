@@ -58,6 +58,7 @@ export default {
         garmentData: JSON,
         showServicesInfo: JSON,
         showReportInfo: JSON,
+        final_errors: JSON,
     },
     components: {
         EyeIcon,
@@ -104,6 +105,9 @@ export default {
             if (!errors) {
                 this.showServicesInfo.value = false;
                 this.showReportInfo.value = true;
+                this.final_errors.service = false;
+            } else{
+                this.final_errors.service = 'Existen errores en alguno de los Servicios';
             }
         },
     },

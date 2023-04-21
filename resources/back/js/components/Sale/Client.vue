@@ -57,7 +57,8 @@ export default {
     props: {
         client: JSON,
         showClientInfo: JSON,
-        showServicesInfo: JSON
+        showServicesInfo: JSON,
+        final_errors: JSON,
     },
     data() {
         return {
@@ -85,6 +86,9 @@ export default {
             if (!errors) {
                 this.showClientInfo.value = false;
                 this.showServicesInfo.value = true;
+                this.final_errors.client = false;
+            } else{
+                this.final_errors.client = 'Existen errores en el Cliente';
             }
         },
         clearErrors() {

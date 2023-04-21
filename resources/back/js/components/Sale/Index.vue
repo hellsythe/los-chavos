@@ -1,7 +1,7 @@
 <template>
-    <ClientComponent :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
-    <ServicesComponent :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
-    <ReportComponent ref="report" :extra="extra" :printed="printed" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
+    <ClientComponent :final_errors="final_errors"  :client="client" :showClientInfo="showClientInfo" :showServicesInfo="showServicesInfo" />
+    <ServicesComponent :final_errors="final_errors" :availableservices="services" :selectedServices="selectedServices" :garmentData="garmentData" :showServicesInfo="showServicesInfo" :showReportInfo="showReportInfo" />
+    <ReportComponent :final_errors="final_errors" ref="report" :extra="extra" :printed="printed" :order="order" :selectedServices="selectedServices" :garmentData="garmentData" @save-order="saveOrder" :payment="payment" :showReportInfo="showReportInfo" />
 </template>
 
 <script>
@@ -36,6 +36,10 @@ export default {
             extra: {
                 date: null,
                 isOrder: null,
+            },
+            final_errors: {
+                client: false,
+                service: false,
             }
         };
     },

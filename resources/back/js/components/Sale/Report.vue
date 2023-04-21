@@ -15,7 +15,7 @@
                     <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
                         <input type="date" v-model="extra.date" class="input input-bordered w-full">
-                        <div class="text-red-500 text-xs font-semibold mt-1"></div>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.date }}</div>
                     </div>
                     <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la prendas?</span></label>
@@ -82,12 +82,12 @@
                         </tfoot>
                     </table>
                 </div>
-                <PaymentComponent :payment="payment">
+                <PaymentComponent :payment="payment" :openModal="openModal">
                     <label v-if="!printed.value" @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
                     <label v-else @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
                 </PaymentComponent>
                 <div class="flex justify-end">
-                    <label for="confirmpayment" class="btn">Registrar Pago</label>
+                    <label @click="registerPayment" class="btn">Registrar Pago</label>
                 </div>
             </div>
         </div>
@@ -147,9 +147,12 @@ export default {
         order: JSON,
         printed: JSON,
         extra: JSON,
+        final_errors: JSON,
     },
     data() {
         return {
+            errors: {},
+            openModal: false
         };
     },
     mounted() {
@@ -167,6 +170,17 @@ export default {
         },
         goToDashboard() {
             window.location.href = '/admin';
+        },
+        registerPayment() {
+            this.errors.date = '';
+
+            if (!this.extra.hasOwnProperty('date') || this.extra.date == '') {
+                this.errors.date = 'La fecha de entrega no puede estar vacia';
+            }
+
+            if (this.final_errors.client == false && this.final_errors.service  == false && this.errors.date == '') {
+                document.getElementById('payment-modal').classList.add("modal-open");
+            }
         }
     },
 };

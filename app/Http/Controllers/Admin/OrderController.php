@@ -91,6 +91,8 @@ class OrderController extends ResourceController
     private function saveOrder($client, $request)
     {
         $order = new Order();
+        $order->order_number = $request['extra']['orderId'] ?? '0';
+        $order->deadline = $request['extra']['date'];
         $order->created_by = auth()->user()->id;
         $order->garment_id = $request['garment']['data']['id'];
         $order->garment_amount = $request['garment']['amount'];
@@ -139,7 +141,7 @@ class OrderController extends ResourceController
                     break;
             }
         }
-
+        $order->missing_payment = $orderDetail->total - $request['payment']['advance'];
         $order->save();
     }
 

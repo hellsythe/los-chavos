@@ -1,9 +1,9 @@
 <template>
     <div class="flex justify-end">
         <input type="checkbox" id="confirmpayment" class="modal-toggle" />
-        <div class="modal">
+        <div class="modal" id="payment-modal">
             <div class="modal-box">
-                <label for="confirmpayment" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                <label @click="closeModal" for="confirmpayment" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                 <h3 class="font-bold text-lg">Confirmar Pedido</h3>
                 <div class="flex py-2">
                     <p>Total a pagar: </p>
@@ -67,6 +67,10 @@ export default {
         // },
         formatter(amount){
             return  money.format(amount);
+        },
+        closeModal()
+        {
+            document.getElementById('payment-modal').classList.remove("modal-open")
         }
     },
 };
