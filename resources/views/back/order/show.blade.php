@@ -107,8 +107,8 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="4">Total</td>
-                        <td>${{number_format($model->total)}}</td>
+                        <td colspan="4" class="text-right"><strong>Total</strong></td>
+                        <td>${{number_format($model->total, 2)}}</td>
                     </tr>
                 </tbody>
             </table>

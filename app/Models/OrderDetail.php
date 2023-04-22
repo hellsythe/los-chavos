@@ -35,7 +35,7 @@ class OrderDetail extends BaseModel
 
     public function orderDesign()
     {
-        return $this->belongsTo(OrderDesign::class);
+        return $this->hasOne(OrderDesign::class);
     }
 
     public function orderNewDesign()

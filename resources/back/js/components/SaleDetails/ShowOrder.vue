@@ -10,7 +10,14 @@
     </ul>
     <div v-for="(service, index) in services">
         <div v-show="index == currentServiceIndex">
-
+            <Design v-if="service.subservice_id == 1" :details="service.order_design"/>
+            <Custom v-if="service.subservice_id == 2" :details="service.order_custom_design"/>
+            <Design v-if="service.subservice_id == 3" :details="service.order_update_design"/>
+            <Design v-if="service.subservice_id == 4" :details="service.order_new_design"/>
+            <label class="label"><span class="label-text">Comentarios:</span></label>
+            <div class="form-control w-full mb-2">
+                <textarea class="textarea" readonly>{{ service.comments }}</textarea>
+            </div>
         </div>
     </div>
     <div class="mt-3">
@@ -22,6 +29,8 @@
 <script>
 import colors from './../colors';
 import Konva from 'konva';
+import Custom from './Embroidery/Custom.vue';
+import Design from './Embroidery/Design.vue';
 
 export default {
     name: "Services",
@@ -30,7 +39,8 @@ export default {
         garment: JSON
     },
     components: {
-
+        Custom,
+        Design,
     },
     computed: {
         get_colors() { return colors }
