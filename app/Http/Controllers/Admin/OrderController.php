@@ -98,13 +98,6 @@ class OrderController extends ResourceController
         $order->garment_amount = $request['garment']['amount'];
         $order->client_id = $client->id;
         $order->total = 0;
-
-        if ($order->total == $request['payment']['advance']) {
-            $order->status = Order::STATUS_PENDING;
-        } else {
-            $order->status = Order::STATUS_MISSING_PAYMENT;
-        }
-
         $order->save();
 
         return $order;
@@ -141,7 +134,19 @@ class OrderController extends ResourceController
                     break;
             }
         }
-        $order->missing_payment = $orderDetail->total - $request['payment']['advance'];
+
+        if ($order->total == $request['payment']['advance']) {
+
+            if ($request['extra']['orderId']??0 == '1') {
+                $order->status = Order::STATUS_WAITING_ORDER;
+            } else {
+                $order->status = Order::STATUS_PENDING;
+            }
+        } else {
+            $order->status = Order::STATUS_MISSING_PAYMENT;
+        }
+
+        $order->missing_payment = $order->total - $request['payment']['advance'];
         $order->save();
     }
 

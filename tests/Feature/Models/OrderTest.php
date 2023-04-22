@@ -3,6 +3,7 @@
 namespace Tests\Feature\Models;
 
 use App\Models\Client;
+use App\Models\Order;
 use App\Models\Subservice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -35,16 +36,19 @@ class OrderTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_embroidery_existing()
+    public function test_new_embroidery_existing_total_payment()
     {
+        $services = [
+            $this->getSubservice(Subservice::findModel(1)),
+        ];
+        $garment =  $this->getGarment();
+        $total = $this->calculateTotalByService($services, $garment);
         $user = $this->makeUser(['permission' => 'order:create']);
         $response = $this->actingAs($user)->post('/admin/sale-save', [
             'client' => $this->getClient(),
-            'garment' => $this->getGarment(),
-            'services' => [
-                $this->getSubservice(Subservice::findModel(1)),
-            ],
-            'payment' => $this->getPayment(),
+            'garment' => $garment,
+            'services' => $services,
+            'payment' => $this->getPayment($total),
             'extra' => [
                 'date' => date('Y-m-d')
             ]
@@ -55,19 +59,28 @@ class OrderTest extends TestCase
         $this->assertDatabaseHas('order_details', [
             'order_id' => $response['id']
         ]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $response['id'],
+            'status' => Order::STATUS_PENDING,
+            'missing_payment' => '0.00'
+        ]);
     }
 
 
-    public function test_custom_embroidery()
+    public function test_new_embroidery_existing_missing_payment()
     {
+        $services = [
+            $this->getSubservice(Subservice::findModel(1)),
+        ];
+        $garment =  $this->getGarment();
+        $total = $this->calculateTotalByService($services, $garment);
         $user = $this->makeUser(['permission' => 'order:create']);
         $response = $this->actingAs($user)->post('/admin/sale-save', [
             'client' => $this->getClient(),
-            'garment' => $this->getGarment(),
-            'services' => [
-                $this->getSubservice(Subservice::findModel(2)),
-            ],
-            'payment' => $this->getPayment(),
+            'garment' => $garment,
+            'services' => $services,
+            'payment' => $this->getPayment($total/2),
             'extra' => [
                 'date' => date('Y-m-d')
             ]
@@ -78,5 +91,101 @@ class OrderTest extends TestCase
         $this->assertDatabaseHas('order_details', [
             'order_id' => $response['id']
         ]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $response['id'],
+            'status' => Order::STATUS_MISSING_PAYMENT,
+            'missing_payment' => $total/2
+        ]);
     }
+
+    public function test_new_embroidery_existing_total_payment_as_order()
+    {
+        $services = [
+            $this->getSubservice(Subservice::findModel(1)),
+        ];
+        $garment =  $this->getGarment();
+        $total = $this->calculateTotalByService($services, $garment);
+        $user = $this->makeUser(['permission' => 'order:create']);
+        $response = $this->actingAs($user)->post('/admin/sale-save', [
+            'client' => $this->getClient(),
+            'garment' => $garment,
+            'services' => $services,
+            'payment' => $this->getPayment($total),
+            'extra' => [
+                'date' => date('Y-m-d'),
+                'orderId' => 1
+            ]
+        ]);
+
+        $response->status(200);
+        $response->assertJsonStructure(['id']);
+        $this->assertDatabaseHas('order_details', [
+            'order_id' => $response['id']
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $response['id'],
+            'status' => Order::STATUS_WAITING_ORDER,
+            'missing_payment' => '0.00',
+            'order_number' => 1,
+        ]);
+    }
+
+
+    public function test_new_embroidery_existing_missing_payment_as_order()
+    {
+        $services = [
+            $this->getSubservice(Subservice::findModel(1)),
+        ];
+        $garment =  $this->getGarment();
+        $total = $this->calculateTotalByService($services, $garment);
+        $user = $this->makeUser(['permission' => 'order:create']);
+        $response = $this->actingAs($user)->post('/admin/sale-save', [
+            'client' => $this->getClient(),
+            'garment' => $garment,
+            'services' => $services,
+            'payment' => $this->getPayment($total/2),
+            'extra' => [
+                'date' => date('Y-m-d'),
+                'orderId' => 1
+            ]
+        ]);
+
+        $response->status(200);
+        $response->assertJsonStructure(['id']);
+        $this->assertDatabaseHas('order_details', [
+            'order_id' => $response['id']
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $response['id'],
+            'status' => Order::STATUS_MISSING_PAYMENT,
+            'missing_payment' => $total/2,
+            'order_number' => 1,
+        ]);
+    }
+
+    // public function test_custom_embroidery()
+    // {
+    //     $services = [
+    //         $this->getSubservice(Subservice::findModel(2)),
+    //     ];
+    //     $user = $this->makeUser(['permission' => 'order:create']);
+    //     $response = $this->actingAs($user)->post('/admin/sale-save', [
+    //         'client' => $this->getClient(),
+    //         'garment' => $this->getGarment(),
+    //         'services' => $services,
+    //         'payment' => $this->getPayment(),
+    //         'extra' => [
+    //             'date' => date('Y-m-d')
+    //         ]
+    //     ]);
+
+    //     $response->status(200);
+    //     $response->assertJsonStructure(['id']);
+    //     $this->assertDatabaseHas('order_details', [
+    //         'order_id' => $response['id']
+    //     ]);
+    // }
 }

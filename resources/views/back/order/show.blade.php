@@ -118,6 +118,10 @@
                         <td colspan="4" class="text-right"><strong>Total</strong></td>
                         <td>${{ number_format($model->total, 2) }}</td>
                     </tr>
+                    <tr>
+                        <td colspan="4" class="text-right"><strong>Pendiente de pago</strong></td>
+                        <td>${{ number_format($model->missing_payment, 2) }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -136,6 +140,10 @@
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
         <div class="flex justify-between mb-2">
             <h1 class="font-bold">Pagos</h1>
+            <div id="sale"></div>
+            @if ($model->missing_payment != 0)
+                <button class="btn btn-active">Realizar Abono</button>
+            @endif
         </div>
         <table class="table w-full">
             <thead>
@@ -151,19 +159,23 @@
                     $total = 0;
                 @endphp
                 @foreach ($model->payments as $payment)
-                @php
-                    $total += $payment->amount;
-                @endphp
-                <tr>
-                    <td>{{$payment->id}}</td>
-                    <td>{{ date_format(date_create($payment->createt_at), 'd-m-Y H:i') }}</td>
-                    <td>{{$payment->createdBy->email}}</td>
-                    <td>${{ number_format($payment->amount, 2) }}</td>
-                </tr>
+                    @php
+                        $total += $payment->amount;
+                    @endphp
+                    <tr>
+                        <td>{{ $payment->id }}</td>
+                        <td>{{ date_format(date_create($payment->createt_at), 'd-m-Y H:i') }}</td>
+                        <td>{{ $payment->createdBy->email }}</td>
+                        <td>${{ number_format($payment->amount, 2) }}</td>
+                    </tr>
                 @endforeach
                 <tr>
                     <td colspan="3" class="text-right"><strong>Total</strong></td>
                     <td>${{ number_format($total, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Pendiente de pago</strong></td>
+                    <td>${{ number_format($model->missing_payment, 2) }}</td>
                 </tr>
             </tbody>
         </table>

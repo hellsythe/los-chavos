@@ -85,10 +85,19 @@ trait OrdersBuilder {
         ];
     }
 
-    protected function getPayment()
+    protected function calculateTotalByService($services, $garment)
+    {
+        $total = 0;
+        foreach ($services as $service) {
+            $total += $service['price'] * $garment['amount'];
+        }
+        return $total;
+    }
+
+    protected function getPayment($total = null)
     {
         return [
-            'advance' => 300,
+            'advance' => $total ?? 300,
         ];
     }
 }
