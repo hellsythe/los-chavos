@@ -87,4 +87,9 @@ class Order extends BaseModel
 
         return 'Es un pedido';
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

@@ -17,6 +17,10 @@
                 <input type="text" class="input input-bordered w-full" value="{{ $model->id }}" readonly>
             </div>
             <div class="form-control w-full mb-2 mr-2">
+                <label class="label"><span class="label-text">Elaboro</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->createdBy->email }}" readonly>
+            </div>
+            <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Fecha de entrega</span></label>
                 <input type="text" class="input input-bordered w-full"
                     value="{{ date_format(date_create($model->deadline), 'd-m-Y') }}" readonly>
@@ -82,7 +86,10 @@
                 <tbody>
                     @foreach ($model->details as $index => $detail)
                         <tr>
-                            <th><div class="ml-1 w-4 h-4 rounded-full" style="background-color: {{$colors[$index]}}"></div></th>
+                            <th>
+                                <div class="ml-1 w-4 h-4 rounded-full" style="background-color: {{ $colors[$index] }}">
+                                </div>
+                            </th>
                             <td>{{ $detail->service->name }}</td>
                             <td>{{ $detail->subservice->name }}</td>
                             <td>${{ number_format($detail->price, 2) }}</td>
@@ -108,7 +115,7 @@
                     @endforeach
                     <tr>
                         <td colspan="4" class="text-right"><strong>Total</strong></td>
-                        <td>${{number_format($model->total, 2)}}</td>
+                        <td>${{ number_format($model->total, 2) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -120,8 +127,45 @@
             <h1 class="font-bold">Detalles</h1>
         </div>
         <div id="sale">
-            <show-order-component :garment="{{json_encode($model->garment)}}" :services="{{json_encode($model->details)}}" />
+            <show-order-component :garment="{{ json_encode($model->garment) }}"
+                :services="{{ json_encode($model->details) }}" />
         </div>
+    </div>
+
+    <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
+        <div class="flex justify-between mb-2">
+            <h1 class="font-bold">Pagos</h1>
+        </div>
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Folio</th>
+                    <th>Fecha</th>
+                    <th>Elaboro</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $total = 0;
+                @endphp
+                @foreach ($model->payments as $payment)
+                @php
+                    $total += $payment->amount;
+                @endphp
+                <tr>
+                    <td>{{$payment->id}}</td>
+                    <td>{{ date_format(date_create($payment->createt_at), 'd-m-Y H:i') }}</td>
+                    <td>{{$payment->createdBy->email}}</td>
+                    <td>${{ number_format($payment->amount, 2) }}</td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Total</strong></td>
+                    <td>${{ number_format($total, 2) }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     @yield('model')
