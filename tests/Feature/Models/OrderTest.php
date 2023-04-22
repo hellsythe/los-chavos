@@ -6,11 +6,13 @@ use App\Models\Client;
 use App\Models\Subservice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Models\Traits\OrdersBuilder;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
 {
     use WithFaker;
+    use OrdersBuilder;
 
     public function test_enter_guess_user(): void
     {
@@ -43,6 +45,9 @@ class OrderTest extends TestCase
                 $this->getSubservice(Subservice::findModel(1)),
             ],
             'payment' => $this->getPayment(),
+            'extra' => [
+                'date' => date('Y-m-d')
+            ]
         ]);
 
         $response->status(200);
@@ -63,6 +68,9 @@ class OrderTest extends TestCase
                 $this->getSubservice(Subservice::findModel(2)),
             ],
             'payment' => $this->getPayment(),
+            'extra' => [
+                'date' => date('Y-m-d')
+            ]
         ]);
 
         $response->status(200);
@@ -70,90 +78,5 @@ class OrderTest extends TestCase
         $this->assertDatabaseHas('order_details', [
             'order_id' => $response['id']
         ]);
-    }
-
-    protected function getClient(Client $client = null)
-    {
-        if (!$client) {
-            $client = Client::factory()->make();
-        }
-
-        return [
-            'name' => $client->name,
-            'phone' => $client->phone,
-            'email' => $client->email,
-        ];
-    }
-
-    protected function getSubservice(Subservice $subservice = null)
-    {
-        $subserviceDetails = $this->getSubserviceDetails($subservice);
-        return array_merge([
-            'service_id' => [
-                'id' => $subservice->service_id,
-            ],
-            'subservice_id' => [
-                'id' => $subservice->id,
-            ],
-            'point' => [
-                'x' => $this->faker()->numberBetween(100, 9999),
-                'y' => $this->faker()->numberBetween(100, 9999),
-            ],
-            'price' => 500,
-        ],  $subserviceDetails);
-    }
-
-    protected function getSubserviceDetails(Subservice $subservice)
-    {
-        switch ($subservice->id) {
-            case 1:
-                return $this->getSubserviceBordado();
-                break;
-
-            case 2:
-                return $this->getSubserviceBordadoCustom();
-                break;
-            default:
-                # code...
-                break;
-        }
-    }
-
-    protected function getSubserviceBordado()
-    {
-        return [
-            'design' => [
-                'id' => 1
-            ],
-            'comments' => $this->faker()->text()
-        ];
-    }
-
-    protected function getSubserviceBordadoCustom()
-    {
-        return [
-            'typography' => [
-                'id' => 1
-            ],
-            'textsize' => $this->faker()->text(),
-            'custom' => ['text' => $this->faker()->text()],
-        ];
-    }
-
-    protected function getGarment(int $total = null)
-    {
-        return [
-            "data" => [
-                "id" => 1
-            ],
-            "amount" => $total ?? $this->faker()->numberBetween(1, 99)
-        ];
-    }
-
-    protected function getPayment()
-    {
-        return [
-            'advance' => 300,
-        ];
     }
 }

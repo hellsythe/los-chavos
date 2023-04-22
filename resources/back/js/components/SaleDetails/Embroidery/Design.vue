@@ -1,6 +1,6 @@
 <template>
     <label class="label"><span class="label-text">Diseño</span></label>
-    <input :value="design.model?.name" type="text" class="input input-bordered w-full">
+    <input :value="design.model?.name" type="text" class="input input-bordered w-full" readonly>
     <embed :src="design.model?.media" width="100%" height="300px" class="mt-4" />
 </template>
 
