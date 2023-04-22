@@ -43,28 +43,8 @@ class OrderTest extends TestCase
         ];
         $garment =  $this->getGarment();
         $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total),
-            'extra' => [
-                'date' => date('Y-m-d')
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_PENDING,
-            'missing_payment' => '0.00'
-        ]);
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_PENDING, '0');
     }
 
 
@@ -74,29 +54,9 @@ class OrderTest extends TestCase
             $this->getSubservice(Subservice::findModel(1)),
         ];
         $garment =  $this->getGarment();
-        $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total/2),
-            'extra' => [
-                'date' => date('Y-m-d')
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_MISSING_PAYMENT,
-            'missing_payment' => $total/2
-        ]);
+        $total = $this->calculateTotalByService($services, $garment) / 2;
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_MISSING_PAYMENT, $total);
     }
 
     public function test_embroidery_existing_total_payment_as_order()
@@ -106,30 +66,8 @@ class OrderTest extends TestCase
         ];
         $garment =  $this->getGarment();
         $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total),
-            'extra' => [
-                'date' => date('Y-m-d'),
-                'orderId' => 1
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_WAITING_ORDER,
-            'missing_payment' => '0.00',
-            'order_number' => 1,
-        ]);
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total, 1);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_WAITING_ORDER, '0.00', 1);
     }
 
 
@@ -139,31 +77,9 @@ class OrderTest extends TestCase
             $this->getSubservice(Subservice::findModel(1)),
         ];
         $garment =  $this->getGarment();
-        $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total/2),
-            'extra' => [
-                'date' => date('Y-m-d'),
-                'orderId' => 1
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_MISSING_PAYMENT,
-            'missing_payment' => $total/2,
-            'order_number' => 1,
-        ]);
+        $total = $this->calculateTotalByService($services, $garment) / 2;
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total, 1);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_MISSING_PAYMENT, $total, 1);
     }
 
     public function test_new_embroidery_total_payment_with_new_cost()
@@ -173,28 +89,8 @@ class OrderTest extends TestCase
         ];
         $garment =  $this->getGarment(3);
         $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total),
-            'extra' => [
-                'date' => date('Y-m-d')
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_PENDING,
-            'missing_payment' => '0.00'
-        ]);
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_PENDING, '0.00');
     }
 
     public function test_new_embroidery_total_payment_without_new_cost()
@@ -204,28 +100,8 @@ class OrderTest extends TestCase
         ];
         $garment =  $this->getGarment();
         $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total),
-            'extra' => [
-                'date' => date('Y-m-d')
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_PENDING,
-            'missing_payment' => '0.00'
-        ]);
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_PENDING, '0.00');
     }
 
     public function test_new_embroidery_missing_payment_with_new_cost()
@@ -234,29 +110,9 @@ class OrderTest extends TestCase
             $this->getSubservice(Subservice::findModel(4)),
         ];
         $garment =  $this->getGarment(3);
-        $total = $this->calculateTotalByService($services, $garment);
-        $user = $this->makeUser(['permission' => 'order:create']);
-        $response = $this->actingAs($user)->post('/admin/sale-save', [
-            'client' => $this->getClient(),
-            'garment' => $garment,
-            'services' => $services,
-            'payment' => $this->getPayment($total/2),
-            'extra' => [
-                'date' => date('Y-m-d')
-            ]
-        ]);
-
-        $response->status(200);
-        $response->assertJsonStructure(['id']);
-        $this->assertDatabaseHas('order_details', [
-            'order_id' => $response['id']
-        ]);
-
-        $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_MISSING_PAYMENT,
-            'missing_payment' => $this->getPayment($total/2)
-        ]);
+        $total = $this->calculateTotalByService($services, $garment) / 2;
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_MISSING_PAYMENT, $total);
     }
 
     public function test_new_embroidery_missing_payment_without_new_cost()
@@ -265,15 +121,23 @@ class OrderTest extends TestCase
             $this->getSubservice(Subservice::findModel(4)),
         ];
         $garment =  $this->getGarment(15);
-        $total = $this->calculateTotalByService($services, $garment);
+        $total = $this->calculateTotalByService($services, $garment) / 2;
+
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_MISSING_PAYMENT, $total);
+    }
+
+    protected function makeUserSentRequestAndAssertStatusResponse($garment, $services, $total, $orderId = null)
+    {
         $user = $this->makeUser(['permission' => 'order:create']);
         $response = $this->actingAs($user)->post('/admin/sale-save', [
             'client' => $this->getClient(),
             'garment' => $garment,
             'services' => $services,
-            'payment' => $this->getPayment($total/2),
+            'payment' => $this->getPayment($total),
             'extra' => [
-                'date' => date('Y-m-d')
+                'date' => date('Y-m-d'),
+                'orderId' => $orderId
             ]
         ]);
 
@@ -283,10 +147,16 @@ class OrderTest extends TestCase
             'order_id' => $response['id']
         ]);
 
+        return $response;
+    }
+
+    protected function assertOrderStatusAndMissingPayment($id, $status, $missingPayment, $orderId = 0)
+    {
         $this->assertDatabaseHas('orders', [
-            'id' => $response['id'],
-            'status' => Order::STATUS_MISSING_PAYMENT,
-            'missing_payment' => $this->getPayment($total/2)
+            'id' => $id,
+            'status' => $status,
+            'missing_payment' => $missingPayment,
+            'order_number' => $orderId,
         ]);
     }
 
