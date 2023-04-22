@@ -206,7 +206,7 @@ class OrderController extends ResourceController
 
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
     {
-        $desingCurrent = Design::findModel($service['design']['id']);
+        $desingCurrent = Design::withTrashed()->where('id', $service['design']['id'])->first();
         $service['new_design_name'] = $desingCurrent->name;
         $design = $this->createNewDesign($service, $service['updateDesign']);
 

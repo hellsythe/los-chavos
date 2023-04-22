@@ -50,6 +50,10 @@ trait OrdersBuilder
                 return $this->getSubserviceBordadoCustom();
                 break;
 
+            case 3:
+                return $this->getSubserviceUpdateBordado();
+                break;
+
             case 4:
                 return $this->getSubserviceNewBordado();
                 break;
@@ -85,9 +89,22 @@ trait OrdersBuilder
         return [
             'newDesign' => "data:application/octet-stream;base64,Z2hwX21PUGQ2M0VteWdkM1hsQTFvOXJVT3FCQ3ptUnFUSjBrQjh6Sgo=",
             'new_design_name' => $this->faker()->name(),
-            'price' => $this->faker()->numberBetween(30,200),
-            'price_new' => $this->faker()->numberBetween(50,200),
-            'puntadas' => $this->faker()->numberBetween(100,500),
+            'price' => $this->faker()->numberBetween(30, 200),
+            'price_new' => $this->faker()->numberBetween(50, 200),
+            'puntadas' => $this->faker()->numberBetween(100, 500),
+        ];
+    }
+
+    protected function getSubserviceUpdateBordado()
+    {
+        return [
+            'updateDesign' => "data:application/octet-stream;base64,Z2hwX21PUGQ2M0VteWdkM1hsQTFvOXJVT3FCQ3ptUnFUSjBrQjh6Sgo=",
+            'price' => $this->faker()->numberBetween(30, 200),
+            'price_update' => $this->faker()->numberBetween(50, 200),
+            'puntadas' => $this->faker()->numberBetween(100, 500),
+            'design' => [
+                'id' => 1
+            ],
         ];
     }
 
@@ -108,8 +125,14 @@ trait OrdersBuilder
             $total += $service['price'] * $garment['amount'];
 
             if ($service['price_new'] ?? false) {
-                if($garment['amount'] <= config('app.max_garment')) {
+                if ($garment['amount'] <= config('app.max_garment')) {
                     $total += $service['price_new'];
+                }
+            }
+
+            if ($service['price_update'] ?? false) {
+                if ($garment['amount'] <= config('app.max_garment')) {
+                    $total += $service['price_update'];
                 }
             }
         }
