@@ -236,6 +236,7 @@ class OrderController extends ResourceController
         $paymentModel->created_by = auth()->user()->id;
         $paymentModel->order_id = $order->id;
         $paymentModel->amount = $payment['advance'];
+        $paymentModel->status = Payment::STATUS_ACTIVE;
         $paymentModel->save();
     }
 }

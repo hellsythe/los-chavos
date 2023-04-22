@@ -133,16 +133,16 @@
         </div>
         <div id="sale">
             <show-order-component :garment="{{ json_encode($model->garment) }}"
-                :services="{{ json_encode($model->details) }}" />
+                :services="{{ json_encode($model->details) }}" > </show-order-component>
+            <payment-detail-component :model="{{$model}}"></show-order-component>
         </div>
     </div>
 
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
         <div class="flex justify-between mb-2">
             <h1 class="font-bold">Pagos</h1>
-            <div id="sale"></div>
             @if ($model->missing_payment != 0)
-                <button class="btn btn-active">Realizar Abono</button>
+                <label for="confirmpayment" class="btn btn-active">Realizar Abono</label>
             @endif
         </div>
         <table class="table w-full">
