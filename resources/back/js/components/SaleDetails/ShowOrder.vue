@@ -6,58 +6,75 @@
                 <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
             </a>
         </li>
-        <li>
-
-        </li>
+        <li></li>
     </ul>
     <div v-for="(service, index) in services">
+        <div v-show="index == currentServiceIndex">
+
+        </div>
+    </div>
+    <div class="mt-3">
+        <img :src="garment.preview" alt="" class="absolute mt-3 rounded-md">
+        <div id="container"></div>
     </div>
 </template>
 
 <script>
-import {
-    EyeSlashIcon,
-    EyeIcon,
-    PlusCircleIcon,
-} from "@heroicons/vue/24/solid";
-
 import colors from './../colors';
+import Konva from 'konva';
 
 export default {
     name: "Services",
     props: {
-        // availableservices: JSON,
-        // selectedServices: JSON,
-        // garmentData: JSON,
-        // showServicesInfo: JSON,
-        // showReportInfo: JSON,
-        // final_errors: JSON,
-        services: JSON
+        services: JSON,
+        garment: JSON
     },
     components: {
-        // EyeIcon,
-        // EyeSlashIcon,
-        PlusCircleIcon,
-        // ServiceComponent,
-        // GarmentComponent,
+
     },
     computed: {
         get_colors() { return colors }
     },
     data() {
         return {
-            // currentServices: [],
             currentServiceIndex: 0,
-            // garmentErrors: {}
         };
     },
     mounted() {
-
+        this.initCanva();
     },
     methods: {
-        addNewService() {
-            // this.selectedServices.push({});
-            // this.$refs.garment.initCanva();
+        initCanva() {
+            this.writeLayer();
+            this.writtePoitsByEachDesign();
+        },
+        writeLayer() {
+            var stage = new Konva.Stage({
+                container: 'container',
+                width: 500,
+                height: 300,
+            });
+
+            this.layer = new Konva.Layer();
+            stage.add(this.layer);
+        },
+        writtePoitsByEachDesign() {
+            for (let index = 0; index < this.services.length; index++) {
+                this.point(this.get_colors[index], index);
+            }
+        },
+        point(color, index) {
+            let circle = new Konva.Circle({
+                x: this.services[index].point_x,
+                y: this.services[index].point_y,
+                radius: 8,
+                fill: color,
+                stroke: 'black',
+                strokeWidth: 1,
+                draggable: false
+            });
+            circle.zIndex(99);
+            this.layer.add(circle);
         },
     },
 };

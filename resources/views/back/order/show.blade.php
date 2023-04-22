@@ -106,6 +106,10 @@
                             @endswitch
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="4">Total</td>
+                        <td>${{number_format($model->total)}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -116,7 +120,7 @@
             <h1 class="font-bold">Detalles</h1>
         </div>
         <div id="sale">
-            <show-order-component :services="{{json_encode($model->details)}}" />
+            <show-order-component :garment="{{json_encode($model->garment)}}" :services="{{json_encode($model->details)}}" />
         </div>
     </div>
 
