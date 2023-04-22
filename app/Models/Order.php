@@ -44,7 +44,16 @@ class Order extends BaseModel
 
     public function details(): HasMany
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(OrderDetail::class)
+            ->with('orderDesign')
+            ->with('orderNewDesign')
+            ->with('orderUpdateDesign')
+            ->with('orderCustomDesign');
+    }
+
+    public function garment(): BelongsTo
+    {
+        return $this->belongsTo(Garment::class);
     }
 
     public function getStatusAttribute($value)
@@ -69,5 +78,13 @@ class Order extends BaseModel
                 return 'Entregado';
                 break;
         }
+    }
+
+    public function getOrderStatusAttribute($value){
+        if ($this->order_number == '0') {
+            return 'NO APLICA';
+        }
+
+        return 'Es un pedido';
     }
 }

@@ -3,6 +3,11 @@
 @section('title', $model->getTranslation('showed'))
 
 @section('content')
+    @php
+        $colors = ['red', 'lime', 'black', 'fuchsia', 'darkorange', 'darkolivegreen', 'navy', 'purple', 'crimson', 'coral', 'darkseagreen', 'darkviolet', 'indigo'];
+    @endphp
+
+
     <?= Base::breadcrumb([$model->getRoute('index') => $model->getTranslation('plural'), $model->getTranslation('showed')]) ?>
 
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
@@ -18,7 +23,21 @@
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Estado</span></label>
-                <input type="email" class="input input-bordered w-full" value="{{ $model->status }}" readonly>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->status }}" readonly>
+            </div>
+        </div>
+        <div class="flex">
+            <div class="form-control w-full mb-2 mr-2">
+                <label class="label"><span class="label-text">Prenda</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->garment->name }}" readonly>
+            </div>
+            <div class="form-control w-full mb-2 mr-2">
+                <label class="label"><span class="label-text">Cantidad de prendas</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->garment_amount }}" readonly>
+            </div>
+            <div class="form-control w-full mb-2">
+                <label class="label"><span class="label-text">Estado del pedido</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->order_status }}" readonly>
             </div>
         </div>
     </div>
@@ -51,7 +70,6 @@
 
         <div class="overflow-x-auto">
             <table class="table w-full">
-                <!-- head -->
                 <thead>
                     <tr>
                         <th>#</th>
@@ -64,7 +82,7 @@
                 <tbody>
                     @foreach ($model->details as $index => $detail)
                         <tr>
-                            <th>{{ $index + 1 }}</th>
+                            <th><div class="ml-1 w-4 h-4 rounded-full" style="background-color: {{$colors[$index]}}"></div></th>
                             <td>{{ $detail->service->name }}</td>
                             <td>{{ $detail->subservice->name }}</td>
                             <td>${{ number_format($detail->price, 2) }}</td>
@@ -74,16 +92,16 @@
                             @switch($detail->subservice->id)
                                 @case(3)
                                     <td>-</td>
-                                    <td colspan="2">Costo por modificar diseño</td>
-                                    <td>${{number_format($detail->orderUpdateDesign->price, 2)}}</td>
-                                    <td>${{number_format($detail->orderUpdateDesign->price, 2)}}</td>
+                                    <td colspan="2">Costo por modificar diseño existente</td>
+                                    <td>${{ number_format($detail->orderUpdateDesign->price, 2) }}</td>
+                                    <td>${{ number_format($detail->orderUpdateDesign->price, 2) }}</td>
                                 @break
 
                                 @case(4)
                                     <td>-</td>
                                     <td colspan="2">Costo por nuevo diseño</td>
-                                    <td>${{number_format($detail->orderNewDesign->price, 2)}}</td>
-                                    <td>${{number_format($detail->orderNewDesign->price, 2)}}</td>
+                                    <td>${{ number_format($detail->orderNewDesign->price, 2) }}</td>
+                                    <td>${{ number_format($detail->orderNewDesign->price, 2) }}</td>
                                 @break
                             @endswitch
                         </tr>
@@ -92,5 +110,15 @@
             </table>
         </div>
     </div>
+
+    <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
+        <div class="flex justify-between mb-2">
+            <h1 class="font-bold">Detalles</h1>
+        </div>
+        <div id="sale">
+            <show-order-component :services="{{json_encode($model->details)}}" />
+        </div>
+    </div>
+
     @yield('model')
 @endsection
