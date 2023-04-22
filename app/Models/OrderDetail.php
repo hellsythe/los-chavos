@@ -33,6 +33,16 @@ class OrderDetail extends BaseModel
         return $this->belongsTo(Subservice::class);
     }
 
+    public function getDetailAttibute()
+    {
+        switch ($this->subservice_id) {
+            case 3:
+                return $this->orderUpdateDesign;
+            case 4:
+                return $this->orderNewDesign;
+        }
+    }
+
     public function orderDesign()
     {
         return $this->hasOne(OrderDesign::class);

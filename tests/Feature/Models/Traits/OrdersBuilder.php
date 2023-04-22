@@ -5,7 +5,8 @@ namespace Tests\Feature\Models\Traits;
 use App\Models\Client;
 use App\Models\Subservice;
 
-trait OrdersBuilder {
+trait OrdersBuilder
+{
 
     protected function getClient(Client $client = null)
     {
@@ -48,6 +49,10 @@ trait OrdersBuilder {
             case 2:
                 return $this->getSubserviceBordadoCustom();
                 break;
+
+            case 4:
+                return $this->getSubserviceNewBordado();
+                break;
             default:
                 # code...
                 break;
@@ -75,13 +80,24 @@ trait OrdersBuilder {
         ];
     }
 
+    protected function getSubserviceNewBordado()
+    {
+        return [
+            'newDesign' => "data:application/octet-stream;base64,Z2hwX21PUGQ2M0VteWdkM1hsQTFvOXJVT3FCQ3ptUnFUSjBrQjh6Sgo=",
+            'new_design_name' => $this->faker()->name(),
+            'price' => $this->faker()->numberBetween(30,200),
+            'price_new' => $this->faker()->numberBetween(50,200),
+            'puntadas' => $this->faker()->numberBetween(100,500),
+        ];
+    }
+
     protected function getGarment(int $total = null)
     {
         return [
             "data" => [
                 "id" => 1
             ],
-            "amount" => $total ?? $this->faker()->numberBetween(1, 99)
+            "amount" => $total ?? $this->faker()->numberBetween(10, 99)
         ];
     }
 
@@ -90,6 +106,12 @@ trait OrdersBuilder {
         $total = 0;
         foreach ($services as $service) {
             $total += $service['price'] * $garment['amount'];
+
+            if ($service['price_new'] ?? false) {
+                if($garment['amount'] <= config('app.max_garment')) {
+                    $total += $service['price_new'];
+                }
+            }
         }
         return $total;
     }

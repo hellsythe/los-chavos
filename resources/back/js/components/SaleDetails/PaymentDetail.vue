@@ -77,9 +77,9 @@ export default {
         formatter(amount){
             return  money.format(amount);
         },
-        closeModal()
+        validate()
         {
-            document.getElementById('payment-modal').classList.remove("modal-open")
+
         }
     },
 };

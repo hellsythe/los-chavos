@@ -127,10 +127,12 @@ class OrderController extends ResourceController
                     $this->saveCustom($orderDetail, $service);
                     break;
                 case 3:
-                    $this->saveUpdateDesing($orderDetail, $service, $request['garment']['amount']);
+                    $detail = $this->saveUpdateDesing($orderDetail, $service, $request['garment']['amount']);
+                    $order->total += $detail->price;
                     break;
                 case 4:
-                    $this->saveNewDesign($orderDetail, $service, $request['garment']['amount']);
+                    $detail = $this->saveNewDesign($orderDetail, $service, $request['garment']['amount']);
+                    $order->total += $detail->price;
                     break;
             }
         }
@@ -172,6 +174,8 @@ class OrderController extends ResourceController
         }
 
         $model->save();
+
+        return $model;
     }
 
     private function createNewDesign($service, $fileData)
@@ -218,6 +222,8 @@ class OrderController extends ResourceController
         $model->design_id = $design->id;
         $model->save();
         $desingCurrent->delete();
+
+        return $model;
     }
 
     private function saveCustom($orderDetail, $service)
@@ -228,6 +234,8 @@ class OrderController extends ResourceController
         $model->typography_id = $service['typography']['id'];
         $model->size = $service['textsize'];
         $model->save();
+
+        return $model;
     }
 
     private function savePayment($order, $payment)
