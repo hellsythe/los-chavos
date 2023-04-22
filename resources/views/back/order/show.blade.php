@@ -10,12 +10,13 @@
 
     <?= Base::breadcrumb([$model->getRoute('index') => $model->getTranslation('plural'), $model->getTranslation('showed')]) ?>
 
+    <div class="flex justify-end">
+        <div class=" mb-2 mr-2 flex">
+            <label class="label"><strong class="text-3xl	">Folio: &nbsp;#{{ $model->id }}</strong> </label>
+        </div>
+    </div>
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
         <div class="flex">
-            <div class="form-control w-full mb-2 mr-2">
-                <label class="label"><span class="label-text">Folio</span></label>
-                <input type="text" class="input input-bordered w-full" value="{{ $model->id }}" readonly>
-            </div>
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Elaboro</span></label>
                 <input type="text" class="input input-bordered w-full" value="{{ $model->createdBy->email }}" readonly>
