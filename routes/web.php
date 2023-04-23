@@ -32,6 +32,7 @@ Route::namespace('\App\Http\Controllers\Admin')
     Route::SdkResource('order', OrderController::class);
     Route::SdkResource('design', DesignController::class);
     Route::get('/', 'DashboardController@index')->name('dashboard');
+    Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
     Route::get('/sale-point', 'OrderController@salePoint')->name('sale.point');
     Route::post('/sale-save', 'OrderController@processOrder')->name('sale.point.save');
 });

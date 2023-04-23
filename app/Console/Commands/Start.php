@@ -204,6 +204,12 @@ class Start extends Command
         $role->givePermissionTo('design:view');
         $role->givePermissionTo('typography:viewAny');
         $role->givePermissionTo('typography:view');
+        $role->givePermissionTo('service:view');
+        $role->givePermissionTo('service:viewAny');
+        $role->givePermissionTo('subservice:view');
+        $role->givePermissionTo('subservice:viewAny');
+        $role->givePermissionTo('garment:view');
+        $role->givePermissionTo('garment:viewAny');
     }
     private function assingPermissionsToBordador()
     {
@@ -214,5 +220,11 @@ class Start extends Command
         $role->givePermissionTo('design:view');
         $role->givePermissionTo('typography:viewAny');
         $role->givePermissionTo('typography:view');
+        $role->givePermissionTo('service:view');
+        $role->givePermissionTo('service:viewAny');
+        $role->givePermissionTo('subservice:view');
+        $role->givePermissionTo('subservice:viewAny');
+        $role->givePermissionTo('garment:view');
+        $role->givePermissionTo('garment:viewAny');
     }
 }

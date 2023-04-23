@@ -72,7 +72,7 @@
                             <tr>
                                 <th colspan="2"></th>
                                 <th v-if="garmentData.amount > 1"></th>
-                                <th class="text-end">Total Por Prenda: {{ total.sum }}</th>
+                                <th class="text-end">Total Por Prenda: {{ total.neto }}</th>
                             </tr>
                             <tr v-if="garmentData.amount > 1">
                                 <th colspan="2"></th>

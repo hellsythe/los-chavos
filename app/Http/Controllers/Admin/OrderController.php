@@ -140,7 +140,7 @@ class OrderController extends ResourceController
 
         if ($order->total == $request['payment']['advance']) {
 
-            if ($request['extra']['orderId']??0 == '1') {
+            if ($request['extra']['orderId'] ?? 0 == '1') {
                 $order->status = Order::STATUS_WAITING_ORDER;
             } else {
                 $order->status = Order::STATUS_PENDING;
@@ -189,7 +189,7 @@ class OrderController extends ResourceController
         $design->media = 'prueba';
         $design->status = Design::STATUS_ACTIVE;
         $design->save();
-        $design->media = URL::to('/storage/design/'.$design->id.'.pdf');
+        $design->media = URL::to('/storage/design/' . $design->id . '.pdf');
         $design->save();
         $this->saveFileDesign($fileData, $design->id);
 
@@ -202,7 +202,7 @@ class OrderController extends ResourceController
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
 
-        Storage::put('public/design/'.$id.'.pdf', $data);
+        Storage::put('public/design/' . $id . '.pdf', $data);
     }
 
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
@@ -247,5 +247,37 @@ class OrderController extends ResourceController
         $paymentModel->amount = $payment['advance'];
         $paymentModel->status = Payment::STATUS_ACTIVE;
         $paymentModel->save();
+    }
+
+    public function updateOrderStatus($id, $status)
+    {
+        $order = Order::findModel($id);
+        $order->status = $status;
+
+        switch ($status) {
+            case Order::STATUS_ORDER_ARRIVED:
+                if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
+                    abort(403);
+                }
+                if ($order->missing_payment > 0) {
+                    $order->status = Order::STATUS_MISSING_PAYMENT;
+                } else{
+                    $order->status = Order::STATUS_PENDING;
+                }
+                break;
+            case Order::STATUS_FINISH:
+                if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
+                    abort(403);
+                }
+                break;
+            case Order::STATUS_READY:
+                if (!auth()->user()->hasRole(['super-admin', 'Bordador'])) {
+                    abort(403);
+                }
+                break;
+        }
+        $order->save();
+
+        return redirect('admin/order/' . $id);
     }
 }
