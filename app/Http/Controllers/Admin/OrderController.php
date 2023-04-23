@@ -44,6 +44,7 @@ class OrderController extends ResourceController
         $this->authorize('viewAny', $model);
 
         $query = $model::where('orders.status', '>', $model::STATUS_ACTIVE);
+        $query = $model::where('orders.status', '<', $model::STATUS_FINISH);
         $query = $this->searchable($query, $request)->with('client');
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
 
