@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <TicketComponent ref="ticket" :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData"
+        <TicketComponent ref="ticket" :extra="extra" :payment="payment" :selectedServices="selectedServices" :garmentData="garmentData"
             :order="order" />
     </div>
 </template>
