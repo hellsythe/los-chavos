@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Events\NewOrder;
 use App\Models\Order;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // NewOrder::dispatch('anime');
-
         return view('back.dashboard.index', [
             'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
             'order_ready' => Order::where('status', Order::STATUS_READY)->count(),

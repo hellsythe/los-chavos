@@ -19,6 +19,5 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('orders', function (User $user) {
-    return true;
     return $user->hasRole('Bordador');
 });

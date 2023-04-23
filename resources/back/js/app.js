@@ -4,6 +4,8 @@ import './components/components';
 import Echo from 'laravel-echo';
 
 import Pusher from 'pusher-js';
+import notify from './desktopnotifications';
+
 window.Pusher = Pusher;
 
 window.Echo = new Echo({
@@ -17,8 +19,11 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
+Notification.requestPermission();
 
 window.Echo.private(`orders`)
     .listen('NewOrder', (e) => {
-        console.log(e.order);
+        notify(e.order);
+        location.reload();
     });
+

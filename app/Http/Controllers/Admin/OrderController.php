@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\NewOrder;
 use App\Models\Client;
 use App\Models\Design;
 use App\Models\Order;
@@ -144,6 +145,7 @@ class OrderController extends ResourceController
                 $order->status = Order::STATUS_WAITING_ORDER;
             } else {
                 $order->status = Order::STATUS_PENDING;
+                NewOrder::dispatch($order);
             }
         } else {
             $order->status = Order::STATUS_MISSING_PAYMENT;
@@ -263,6 +265,7 @@ class OrderController extends ResourceController
                     $order->status = Order::STATUS_MISSING_PAYMENT;
                 } else{
                     $order->status = Order::STATUS_PENDING;
+                    NewOrder::dispatch($order);
                 }
                 break;
             case Order::STATUS_FINISH:
