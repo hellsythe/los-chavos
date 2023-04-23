@@ -1,5 +1,5 @@
 <template>
-    <div id="ticket" style="display: block;">
+    <div id="ticket" style="display: none;">
         <div style="width: 170px; padding: 2px; font-size: 12px;">
             <div style="display: flex; justify-content: center;">
                 <img style="width: 130px;" src="/img/logo.svg" alt="">
