@@ -58,7 +58,7 @@
             </div>
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Teléfono del cliente</span></label>
-                <input type="number" class="input input-bordered w-full" value="{{ $model->client->phone }}" readonly>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->client->phone }}" readonly>
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Correo del cliente</span></label>

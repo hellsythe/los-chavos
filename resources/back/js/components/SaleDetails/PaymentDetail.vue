@@ -14,10 +14,11 @@
                     <p class="ml-auto">
                         <label class="input-group">
                             <span>$</span>
-                            <input type="number" v-model="payment.deposit" class="input input-bordered"/>
+                            <input type="number" v-model="payment.deposit" class="input input-bordered" />
                         </label>
                     </p>
                 </div>
+                <div class="text-red-500 text-xs font-semibold mt-1 text-right">{{ errors.deposit }}</div>
                 <div class="flex py-2">
                     <p>Resta: </p>
                     <p class="ml-auto">{{ formatter(model.missing_payment - payment.deposit) }}</p>
@@ -27,7 +28,7 @@
                     <p class="ml-auto">
                         <label class="input-group">
                             <span>$</span>
-                            <input type="number" v-model="payment.payment" class="input input-bordered"/>
+                            <input type="number" v-model="payment.payment" class="input input-bordered" />
                         </label>
                     </p>
                 </div>
@@ -69,18 +70,31 @@ export default {
     },
     methods: {
         async confirm() {
-            let response = await postToApi(`/admin/payment/api`, {
+            if (!this.validate()) {
+                return '';
+            }
+
+            await postToApi(`/admin/payment/api`, {
                 order_id: this.model.id,
-                amount: 10,
+                amount: this.payment.deposit,
             });
             location.reload();
         },
-        formatter(amount){
-            return  money.format(amount);
+        formatter(amount) {
+            return money.format(amount);
         },
-        validate()
-        {
+        validate() {
+            if (this.payment.deposit) {
+                if (this.payment.deposit > this.model.missing_payment) {
+                    this.errors.deposit = "El abono no puede ser mayor al pago pendiente";
+                    return false;
+                }
 
+                return true;
+            }
+
+            this.errors.deposit = "El abono no puede estar vacio";
+            return false;
         }
     },
 };

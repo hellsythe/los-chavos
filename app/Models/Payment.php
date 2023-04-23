@@ -22,4 +22,31 @@ class Payment extends BaseModel
             'plural' => 'Pagos',
         ];
     }
+
+    public function save(array $options = [])
+    {
+        parent::save($options);
+        $this->updateOrderMissingPayment();
+    }
+
+    protected function updateOrderMissingPayment()
+    {
+        $order = Order::findModel($this->order_id);
+        $order->missing_payment -= $this->amount;
+
+        if ($order->missing_payment < 1) {
+            $order->status = Order::STATUS_PENDING;
+
+            if ($order->order_number == '1') {
+                $order->status = Order::STATUS_WAITING_ORDER;
+            }
+        }
+
+        $order->save();
+    }
+
+    public function order()
+    {
+        return $this->belongsToMany(Order::class);
+    }
 }
