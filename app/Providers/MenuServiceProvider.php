@@ -37,7 +37,7 @@ class MenuServiceProvider extends ServiceProvider
             'name' => 'Dashboard',
             'icon' => \Base::icon('home', ['class' => 'h-6 w-6']),
             'url' => 'dashboard',
-        ], ['super-admin']);
+        ]);
 
         $service_menu->addElement([
             'name' => 'Punto de venta',
@@ -45,8 +45,8 @@ class MenuServiceProvider extends ServiceProvider
             'url' =>  'sale.point',
             'crud' => '',
             'extra_urls' => [],
-        ], ['super-admin', 'order:create']);
-        $service_menu->addElement(Order::makeMenu('truck'));
+        ], ['super-admin', 'Punto de venta']);
+        $service_menu->addElement(Order::makeMenu('truck'), ['super-admin', 'Punto de venta', 'Bordador']);
         // $service_menu->addElement(Payment::makeMenu('currency-dollar'), ['super-admin']);
         $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
         $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);

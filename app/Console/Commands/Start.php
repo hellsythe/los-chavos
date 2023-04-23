@@ -36,6 +36,8 @@ class Start extends Command
         $this->createTypography();
         $this->createRoles();
         $this->deleteRoles();
+        $this->assingPermissionsToVenta();
+        $this->assingPermissionsToBordador();
     }
 
     private function createServices()
@@ -189,6 +191,28 @@ class Start extends Command
 
     private function createPermissions()
     {
-        $permission = Permission::create(['name' => 'Corte de caja']);
+        $permission = Permission::firstOrCreate(['name' => 'Corte de caja']);
+    }
+
+    private function assingPermissionsToVenta()
+    {
+        $role = Role::firstOrCreate(['name' => 'Punto de venta', 'status' => Role::STATUS_ACTIVE]);
+        $role->givePermissionTo('order:create');
+        $role->givePermissionTo('order:view');
+        $role->givePermissionTo('order:viewAny');
+        $role->givePermissionTo('design:viewAny');
+        $role->givePermissionTo('design:view');
+        $role->givePermissionTo('typography:viewAny');
+        $role->givePermissionTo('typography:view');
+    }
+    private function assingPermissionsToBordador()
+    {
+        $role = Role::firstOrCreate(['name' => 'Bordador', 'status' => Role::STATUS_ACTIVE]);
+        $role->givePermissionTo('order:view');
+        $role->givePermissionTo('order:viewAny');
+        $role->givePermissionTo('design:viewAny');
+        $role->givePermissionTo('design:view');
+        $role->givePermissionTo('typography:viewAny');
+        $role->givePermissionTo('typography:view');
     }
 }

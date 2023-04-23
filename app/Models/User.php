@@ -16,7 +16,7 @@ use Sdkconsultoria\Core\Models\Traits\BaseModel as TraitBaseModel;
 use Sdkconsultoria\Core\Models\Traits\ImageTrait;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens;
     use ImageTrait;
