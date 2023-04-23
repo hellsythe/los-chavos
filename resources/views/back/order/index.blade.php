@@ -18,6 +18,11 @@ $array_search = array_merge($model->getParseSearchFilters(), [['field' => 'clien
             :fields="{{json_encode($array)}}"
             :filters={{json_encode($array_search)}}
             :translations='{!! json_encode($array_translation) !!}'
+            :template_actions="{{json_encode([
+                'update' => false,
+                'delete' => false,
+                'show' => true,
+            ])}}"
         />
     </div>
 @endsection
