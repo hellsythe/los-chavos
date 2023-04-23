@@ -138,6 +138,17 @@ class OrderTest extends TestCase
         $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_PENDING, '0.00');
     }
 
+    public function test_update_embroidery_total_payment_without_update_cost()
+    {
+        $services = [
+            $this->getSubservice(Subservice::findModel(3)),
+        ];
+        $garment =  $this->getGarment(11);
+        $total = $this->calculateTotalByService($services, $garment);
+        $response = $this->makeUserSentRequestAndAssertStatusResponse($garment, $services, $total);
+        $this->assertOrderStatusAndMissingPayment($response['id'], Order::STATUS_PENDING, '0.00');
+    }
+
     protected function makeUserSentRequestAndAssertStatusResponse($garment, $services, $total, $orderId = null)
     {
         $user = $this->makeUser(['permission' => 'order:create']);

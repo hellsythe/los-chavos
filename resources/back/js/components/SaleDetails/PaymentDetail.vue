@@ -60,7 +60,8 @@ export default {
             payment: {
                 deposit: 0,
                 payment: 0,
-            }
+            },
+            errors: {}
         };
     },
     mounted() {
