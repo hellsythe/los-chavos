@@ -24,7 +24,7 @@ Notification.requestPermission();
 window.Echo.private(`orders`)
     .listen('NewOrder', (e) => {
         notify(e.order);
-        // location.reload();
+        location.reload();
     });
 
 
