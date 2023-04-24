@@ -80,7 +80,8 @@ class Order extends BaseModel
         }
     }
 
-    public function getOrderStatusAttribute($value){
+    public function getOrderStatusAttribute($value)
+    {
         if ($this->order_number == '0') {
             return 'NO APLICA';
         }
@@ -91,5 +92,12 @@ class Order extends BaseModel
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function getDeadlineAttribute($value)
+    {
+
+        $date = date_create($value);
+        return date_format($date, "d/m/Y");
     }
 }

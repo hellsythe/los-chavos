@@ -21,4 +21,9 @@ class OrderDesign extends BaseModel
             'plural' => 'OrderDesign',
         ];
     }
+
+    public function design()
+    {
+        return $this->belongsTo(Design::class);
+    }
 }

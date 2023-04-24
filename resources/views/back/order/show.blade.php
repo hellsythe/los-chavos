@@ -34,7 +34,7 @@
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Fecha de entrega</span></label>
                 <input type="text" class="input input-bordered w-full"
-                    value="{{ date_format(date_create($model->deadline), 'd-m-Y') }}" readonly>
+                    value="{{ $model->deadline }}" readonly>
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Estado</span></label>
