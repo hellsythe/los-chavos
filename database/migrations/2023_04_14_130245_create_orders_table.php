@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('total', 8, 2);
             $table->double('missing_payment', 8, 2)->nullable();
             $table->string('order_number')->nullable();
-            $table->dateTime('deadline');
+            $table->date('deadline');
         });
     }
 
