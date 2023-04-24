@@ -26,7 +26,7 @@
                     class="btn btn-active">Marcar como Terminado</a>
             @endif
 
-            @if (auth()->user()->hasRole(['Punto de venta', 'Bordador', 'super-admin']) &&
+            @if (auth()->user()->hasRole(['super-admin']) &&
                     ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
                         $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
                 <div class="tooltip"
@@ -36,7 +36,7 @@
                 </div>
             @endif
 
-            @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
+            @if (auth()->user()->hasRole(['super-admin', 'Punto de venta', 'Bordador']) &&
                     $model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT)
                 <div class="tooltip"
                     data-tip="Este pedido no tiene el pago 100%, pero se puede solicitar a un Administrador la autorización para realizarlo">

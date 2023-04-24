@@ -4,7 +4,7 @@ import './components/components';
 import Echo from 'laravel-echo';
 
 import Pusher from 'pusher-js';
-import notify from './desktopnotifications';
+import {notify, notifyb} from './desktopnotifications';
 
 window.Pusher = Pusher;
 
@@ -26,4 +26,17 @@ window.Echo.private(`orders`)
         notify(e.order);
         location.reload();
     });
+
+
+window.Echo.private(`orders_auth_request`)
+.listen('OrderAuthRequest', (e) => {
+    notifyb(e.order);
+    location.reload();
+});
+
+
+window.Echo.private(`orders_auth`)
+.listen('OrderAuth', (e) => {
+    notifyb(e.order);
+});
 

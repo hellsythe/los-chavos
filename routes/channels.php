@@ -21,3 +21,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('orders', function (User $user) {
     return $user->hasRole('Bordador');
 });
+
+Broadcast::channel('orders_auth', function (User $user) {
+    return $user->hasRole(['Bordador', 'Punto de venta']);
+});
+
+Broadcast::channel('orders_auth_request', function (User $user) {
+    return $user->hasRole('super-admin');
+});

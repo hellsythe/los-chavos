@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Events\NewOrder;
+use App\Events\OrderAuth;
+use App\Events\OrderAuthRequest;
 use App\Models\Client;
 use App\Models\Design;
 use App\Models\Order;
@@ -288,12 +290,20 @@ class OrderController extends ResourceController
                     abort(403);
                 }
                 $order->requested_by = auth()->user()->id;
+                OrderAuthRequest::dispatch([
+                    'id' => $order->id,
+                    'message' => 'La orden # ' . $order->id . ' requiere autorización por parte de un administrador'
+                ]);
                 break;
             case Order::STATUS_PENDING:
                 if (!auth()->user()->hasRole(['super-admin'])) {
                     abort(403);
                 }
                 $order->authorized_by = auth()->user()->id;
+                OrderAuth::dispatch([
+                    'id' => $order->id,
+                    'message' => 'La orden # ' . $order->id . ' fue autorizada por ' . auth()->user()->email
+                ]);
                 break;
             default:
                 abort(403);

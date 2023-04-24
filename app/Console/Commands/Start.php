@@ -210,6 +210,8 @@ class Start extends Command
         $role->givePermissionTo('subservice:viewAny');
         $role->givePermissionTo('garment:view');
         $role->givePermissionTo('garment:viewAny');
+        $role->givePermissionTo('order_detail:viewAny');
+        $role->givePermissionTo('order_detail:view');
     }
     private function assingPermissionsToBordador()
     {
@@ -226,5 +228,7 @@ class Start extends Command
         $role->givePermissionTo('subservice:viewAny');
         $role->givePermissionTo('garment:view');
         $role->givePermissionTo('garment:viewAny');
+        $role->givePermissionTo('order_detail:viewAny');
+        $role->givePermissionTo('order_detail:view');
     }
 }
