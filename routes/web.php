@@ -56,20 +56,20 @@ Route::namespace('\Sdkconsultoria\Core\Http\Controllers')
 
 
 
-// Route::get('/test', function () {
+Route::get('/test', function () {
 
-//     // $request = Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
-//     //     "messaging_product" => "whatsapp",
-//     //     "to" => "522213428198",
-//     //     "type" => "template",
-//     //     "template" => [
-//     //         "name" => "notificar_solicitud",
-//     //         "language" => ["code" => "es_MX"],
+    // $request = Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
+    //     "messaging_product" => "whatsapp",
+    //     "to" => "522213428198",
+    //     "type" => "template",
+    //     "template" => [
+    //         "name" => "notificar_solicitud",
+    //         "language" => ["code" => "es_MX"],
 
-//     //     ],
-//     // ]);
-//     // dd($request->body());
-//     $order = Order::first();
-//     (new WhatsappNotification())->sendRequestNotification($order);
-//     dd('holis');
-// });
+    //     ],
+    // ]);
+    // dd($request->body());
+    $order = Order::first();
+    (new WhatsappNotification())->sendRequestNotification($order);
+    dd('holis');
+});
