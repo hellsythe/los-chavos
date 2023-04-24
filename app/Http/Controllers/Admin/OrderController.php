@@ -151,7 +151,7 @@ class OrderController extends ResourceController
             $order->status = Order::STATUS_MISSING_PAYMENT;
         }
 
-        $order->missing_payment = $order->total - $request['payment']['advance'];
+        $order->missing_payment = $order->total;
         $order->save();
     }
 
@@ -263,7 +263,7 @@ class OrderController extends ResourceController
                 }
                 if ($order->missing_payment > 0) {
                     $order->status = Order::STATUS_MISSING_PAYMENT;
-                } else{
+                } else {
                     $order->status = Order::STATUS_PENDING;
                     NewOrder::dispatch($order);
                 }
