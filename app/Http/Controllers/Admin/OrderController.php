@@ -16,6 +16,7 @@ use App\Models\OrderUpdateDesign;
 use App\Models\OrderCustomDesign;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
+use App\Services\WhatsappNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -294,6 +295,7 @@ class OrderController extends ResourceController
                     'id' => $order->id,
                     'message' => 'La orden # ' . $order->id . ' requiere autorización por parte de un administrador'
                 ]);
+                (new WhatsappNotification())->sendRequestNotification($order);
                 break;
             case Order::STATUS_PENDING:
                 if (!auth()->user()->hasRole(['super-admin'])) {

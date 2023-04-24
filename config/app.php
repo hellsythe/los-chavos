@@ -198,4 +198,6 @@ return [
     ])->toArray(),
 
     'max_garment' => (int) env('MAX_GARMENT', 6),
+    'whatsapp_phone_id' => env('WHATSAPP_PHONE_ID', null),
+    'whatsapp_token' => env('WHATSAPP_TOKEN', null),
 ];
