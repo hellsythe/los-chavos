@@ -26,6 +26,7 @@ class Payment extends BaseModel
     public function save(array $options = [])
     {
         parent::save($options);
+
         $this->updateOrderMissingPayment();
     }
 

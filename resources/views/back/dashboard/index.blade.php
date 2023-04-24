@@ -24,6 +24,12 @@
             <div class="stat-value">{{ number_format($order_ready) }}</div>
         </div>
     </div>
+    <div class="stats shadow">
+        <div class="stat">
+            <div class="stat-title">Pedidos Esperando autorización</div>
+            <div class="stat-value">{{ number_format($missing_auth) }}</div>
+        </div>
+    </div>
     <div class="mt-4">
         <a href="{{route('dashboard.groupby')}}" class="btn btn-active">Agrupar por Diseños iguales</a>
     </div>
@@ -34,6 +40,7 @@
         'deadline',
         // 'detail.design_id',
         'detail.design.name',
+        'order.garment_amount',
     ]);
     $array_translation = array_merge($model->getFullTranslations(), [
         'service.name' => 'Servicio',
@@ -43,6 +50,7 @@
         'deadline' => 'Fecha de entrega',
         // 'detail.design_id' => 'Folio de Diseño',
         'detail.design.name' => 'Nombre del Diseño',
+        'order.garment_amount' => 'Prendas',
     ]);
 
     $array_search = array_merge($model->getParseSearchFilters(), [

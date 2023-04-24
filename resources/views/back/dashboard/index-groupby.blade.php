@@ -24,6 +24,12 @@
             <div class="stat-value">{{ number_format($order_ready) }}</div>
         </div>
     </div>
+    <div class="stats shadow">
+        <div class="stat">
+            <div class="stat-title">Pedidos Esperando autorización</div>
+            <div class="stat-value">{{ number_format($missing_auth) }}</div>
+        </div>
+    </div>
     <div class="mt-4">
         <a href="{{ route('dashboard') }}" class="btn btn-active">Ver toda la lista de pedidos</a>
     </div>
@@ -32,8 +38,9 @@
         <thead>
             <tr>
                 <td>#</td>
-                <td>Total</td>
+                <td>Total de pedidos</td>
                 <td>Diseño</td>
+                <td>Total de prendas</td>
                 <th width="100px"></th>
             </tr>
         </thead>
@@ -43,6 +50,7 @@
                     <td>{{$index+1}}</td>
                     <td>{{$item->total}}</td>
                     <td>{{$item->design}}</td>
+                    <td>{{$item->garments}}</td>
                     <td>
                         <a class="link link-primary" href="{{route('dashboard.grouped', ['id' => $item->desing_id])}}">Detalles</a>
                     </td>

@@ -12,6 +12,8 @@ class Order extends BaseModel
 {
     public const STATUS_MISSING_PAYMENT = 40;
 
+    public const STATUS_WAITING_AUTH = 45;
+
     public const STATUS_WAITING_ORDER = 50;
 
     public const STATUS_ORDER_ARRIVED = 60;

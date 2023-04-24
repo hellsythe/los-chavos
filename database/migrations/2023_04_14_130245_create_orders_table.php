@@ -17,6 +17,7 @@ return new class extends Migration
             $table->commonFields();
             $table->foreignId('client_id');
             $table->foreignId('garment_id');
+            $table->foreignId('authorized_by')->nullable()->constrained('users');
             $table->integer('garment_amount');
             $table->double('total', 8, 2);
             $table->double('missing_payment', 8, 2)->nullable();

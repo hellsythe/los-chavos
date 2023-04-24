@@ -16,6 +16,7 @@ class DashboardController extends Controller
             'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
             'order_ready' => Order::where('status', Order::STATUS_READY)->count(),
             'order_pending' => Order::where('status', Order::STATUS_PENDING)->count(),
+            'missing_auth' => Order::where('status', Order::STATUS_WAITING_AUTH)->count(),
             'model' => new OrderDetail()
         ]);
     }
@@ -24,6 +25,7 @@ class DashboardController extends Controller
     {
         $data = OrderDetail::select([
             DB::raw('COUNT(*) as total'),
+            DB::raw('sum(orders.garment_amount) as garments'),
             'designs.name as design',
             'designs.id as desing_id',
         ])
@@ -32,13 +34,14 @@ class DashboardController extends Controller
         ->join('designs', 'order_designs.design_id', '=', 'designs.id')
         ->where('orders.status', Order::STATUS_PENDING)
         ->groupBy('order_designs.design_id')
-        ->orderBy('total', 'DESC')
+        ->orderBy('garments', 'DESC')
         ->get();
 
         return view('back.dashboard.index-groupby', [
             'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
             'order_ready' => Order::where('status', Order::STATUS_READY)->count(),
             'order_pending' => Order::where('status', Order::STATUS_PENDING)->count(),
+            'missing_auth' => Order::where('status', Order::STATUS_WAITING_AUTH)->count(),
             'model' => new OrderDetail(),
             'data' => $data
         ]);
