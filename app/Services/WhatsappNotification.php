@@ -39,8 +39,6 @@ class WhatsappNotification
                 "language" => ["code" => "es_MX"],
             ],
         ]);
-
-        dd($request->body());
     }
 
     protected function getAllAdminis()
