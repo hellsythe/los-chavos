@@ -79,6 +79,9 @@ class Order extends BaseModel
             case self::STATUS_FINISH:
                 return 'Entregado';
                 break;
+            case self::STATUS_WAITING_AUTH:
+                return 'Esperando autorización';
+                break;
         }
     }
 

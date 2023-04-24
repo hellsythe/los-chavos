@@ -58,12 +58,15 @@ class User extends Authenticatable
             TextField::make('lastname_2')
                 ->label('Apellido Materno')
                 ->rules(['required']),
+            TextField::make('phone')
+                ->label('Teléfono')
+                ->rules(['nullable', 'numeric']),
             TextField::make('email')
                 ->label('Correo')
                 ->rules(['required', 'email']),
             PasswordField::make('password')
                 ->label('Contraseña')
-                ->rules(['required', 'min:6', 'confirmed'])->rulesUpdate(['nullable','min:6', 'confirmed'])->hideOnIndex(),
+                ->rules(['required', 'min:6', 'confirmed'])->rulesUpdate(['nullable', 'min:6', 'confirmed'])->hideOnIndex(),
             PasswordField::make('password_confirmation')->rulesUpdate(['nullable'])
                 ->label('Confirmar contraseña')
                 ->rules(['min:6'])->hideOnIndex()->canBeSaved(false),
@@ -72,7 +75,7 @@ class User extends Authenticatable
                 ->label('Rol')
                 ->loadOptionsFromUrl('/admin/v1/role')
                 ->setComponent('SelectedField')
-                ->saveAs(function($model, $value) {
+                ->saveAs(function ($model, $value) {
                     $model->syncRoles([$value]);
                 }),
         ];

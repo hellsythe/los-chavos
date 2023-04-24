@@ -12,14 +12,38 @@
 
     <div class=" mb-2 mr-2 flex justify-between">
         <div>
-            @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) && $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
-                <a href="{{route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_ORDER_ARRIVED])}}" class="btn btn-active">Marcar que el pedido llego</a>
+            @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
+                    $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
+                <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_ORDER_ARRIVED]) }}"
+                    class="btn btn-active">Marcar que el pedido llego</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) && $model->getRawOriginal('status') == $model::STATUS_READY)
-                <a href="{{route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH])}}" class="btn btn-active">Marcar como Entregado</a>
+                <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH]) }}"
+                    class="btn btn-active">Marcar como Entregado</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Bordador']) && $model->getRawOriginal('status') == $model::STATUS_PENDING)
-            <a href="{{route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_READY])}}" class="btn btn-active">Marcar como Terminado</a>
+                <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_READY]) }}"
+                    class="btn btn-active">Marcar como Terminado</a>
+            @endif
+
+            @if (auth()->user()->hasRole(['Punto de venta', 'Bordador', 'super-admin']) &&
+                    ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
+                        $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
+                <div class="tooltip"
+                    data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
+                    <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_PENDING]) }}"
+                        class="btn btn-active">Autorizar Pedido para su realización</a>
+                </div>
+            @endif
+
+            @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
+                    $model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT)
+                <div class="tooltip"
+                    data-tip="Este pedido no tiene el pago 100%, pero se puede solicitar a un Administrador la autorización para realizarlo">
+
+                    <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_WAITING_AUTH]) }}"
+                        class="btn btn-active">Solicitar autorización para pedido</a>
+                </div>
             @endif
 
         </div>
@@ -33,8 +57,7 @@
             </div>
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Fecha de entrega</span></label>
-                <input type="text" class="input input-bordered w-full"
-                    value="{{ $model->deadline }}" readonly>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->deadline }}" readonly>
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Estado</span></label>

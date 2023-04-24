@@ -278,6 +278,26 @@ class OrderController extends ResourceController
                     abort(403);
                 }
                 break;
+            case Order::STATUS_READY:
+                if (!auth()->user()->hasRole(['super-admin', 'Bordador'])) {
+                    abort(403);
+                }
+                break;
+            case Order::STATUS_WAITING_AUTH:
+                if (!auth()->user()->hasRole(['super-admin', 'Bordador', 'Punto de venta'])) {
+                    abort(403);
+                }
+                $order->requested_by = auth()->user()->id;
+                break;
+            case Order::STATUS_PENDING:
+                if (!auth()->user()->hasRole(['super-admin'])) {
+                    abort(403);
+                }
+                $order->authorized_by = auth()->user()->id;
+                break;
+            default:
+                abort(403);
+                break;
         }
         $order->save();
 
