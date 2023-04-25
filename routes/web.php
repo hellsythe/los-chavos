@@ -24,6 +24,8 @@ Route::get('/', function () {
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
     ->prefix('admin')->group(function () {
+        Route::SdkResource('order-design-print', OrderDesignPrintController::class);
+        Route::SdkResource('design-print', DesignPrintController::class);
         Route::SdkResource('typography', TypographyController::class);
         Route::SdkResource('garment', GarmentController::class);
         Route::SdkResource('subservice', SubserviceController::class);
