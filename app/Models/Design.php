@@ -23,8 +23,8 @@ class Design extends BaseModel
     public function getTranslations() : array
     {
         return [
-            'singular' => 'Diseño',
-            'plural' => 'Diseños',
+            'singular' => 'Diseño Bordado',
+            'plural' => 'Diseños Bordado',
         ];
     }
 }
