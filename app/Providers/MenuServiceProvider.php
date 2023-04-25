@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\DesignPrint;
 use App\Models\Typography;
 use App\Models\Garment;
 use App\Models\Subservice;
@@ -49,6 +50,7 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Order::makeMenu('truck'), ['super-admin', 'Punto de venta', 'Bordador']);
         // $service_menu->addElement(Payment::makeMenu('currency-dollar'), ['super-admin']);
         $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
+        $service_menu->addElement(DesignPrint::makeMenu('puzzle-piece'),['super-admin']);
         $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);
         $service_menu->addElement(Typography::makeMenu('language'), ['super-admin']);
         $service_menu->addElement(Garment::makeMenu('academic-cap'), ['super-admin']);
