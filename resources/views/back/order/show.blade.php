@@ -29,8 +29,7 @@
             @if (auth()->user()->hasRole(['super-admin']) &&
                     ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
                         $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
-                <div class="tooltip"
-                    data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
+                <div class="tooltip" data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_PENDING]) }}"
                         class="btn btn-active">Autorizar Pedido para su realización</a>
                 </div>
@@ -177,44 +176,46 @@
                 <label for="confirmpayment" class="btn btn-active">Realizar Abono</label>
             @endif
         </div>
-        <table class="table w-full">
-            <thead>
-                <tr>
-                    <th>Folio</th>
-                    <th>Fecha</th>
-                    <th>Elaboro</th>
-                    <th>Importe</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $total = 0;
-                @endphp
-                @foreach ($model->payments as $payment)
-                    @php
-                        $total += $payment->amount;
-                    @endphp
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
                     <tr>
-                        <td>{{ $payment->id }}</td>
-                        <td>{{ date_format(date_create($payment->createt_at), 'd-m-Y H:i') }}</td>
-                        <td>{{ $payment->createdBy->email }}</td>
-                        <td>${{ number_format($payment->amount, 2) }}</td>
+                        <th>Folio</th>
+                        <th>Fecha</th>
+                        <th>Elaboro</th>
+                        <th>Importe</th>
                     </tr>
-                @endforeach
-                <tr>
-                    <td colspan="3" class="text-right"><strong>Total de abonos</strong></td>
-                    <td>${{ number_format($total, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="text-right"><strong>Total del pedido</strong></td>
-                    <td>${{ number_format($model->total, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="text-right"><strong>Pendiente de pago</strong></td>
-                    <td>${{ number_format($model->missing_payment, 2) }}</td>
-                </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @php
+                        $total = 0;
+                    @endphp
+                    @foreach ($model->payments as $payment)
+                        @php
+                            $total += $payment->amount;
+                        @endphp
+                        <tr>
+                            <td>{{ $payment->id }}</td>
+                            <td>{{ date_format(date_create($payment->createt_at), 'd-m-Y H:i') }}</td>
+                            <td>{{ $payment->createdBy->email }}</td>
+                            <td>${{ number_format($payment->amount, 2) }}</td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total de abonos</strong></td>
+                        <td>${{ number_format($total, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total del pedido</strong></td>
+                        <td>${{ number_format($model->total, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Pendiente de pago</strong></td>
+                        <td>${{ number_format($model->missing_payment, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     @yield('model')
