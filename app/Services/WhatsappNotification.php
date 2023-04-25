@@ -43,8 +43,42 @@ class WhatsappNotification
         }
     }
 
-    public function sendApprovedNotification()
+    public function sendApprovedNotification($order)
     {
+        foreach ($this->getAllAdminis() as $user) {
+            if ($user->phone) {
+                $this->send(
+                    $user->phone,
+                    'pedido_aprobado',
+                    [
+                        [
+                            "type" => "body",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $order->id
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => auth()->user()->name . ' '.auth()->user()->lastname
+                                ],
+                            ]
+                        ],
+                        [
+                            "type" => "button",
+                            "sub_type" => "url",
+                            "index" => "0",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $order->id
+                                ]
+                            ]
+                        ]
+                    ]
+                );
+            }
+        }
     }
 
     public function sendNewOrder()

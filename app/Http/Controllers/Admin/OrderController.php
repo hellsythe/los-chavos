@@ -351,6 +351,7 @@ class OrderController extends ResourceController
                     'id' => $order->id,
                     'message' => 'La orden # ' . $order->id . ' fue autorizada por ' . auth()->user()->email
                 ]);
+                (new WhatsappNotification())->sendApprovedNotification($order);
                 break;
             default:
                 abort(403);
