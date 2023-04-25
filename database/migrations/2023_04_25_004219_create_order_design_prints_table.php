@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('order_detail_id');
             $table->foreignId('design_print_id');
             $table->double('price', 8, 2);
-            $table->boolean('saveDesign');
+            $table->boolean('save_design');
+            $table->boolean('if_new_design');
         });
     }
 
