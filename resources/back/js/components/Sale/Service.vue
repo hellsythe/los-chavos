@@ -12,6 +12,7 @@
         </div>
 
         <EmbroideryComponent :service="service" v-if="service.service_id?.id == 1" :errors="errors" />
+        <PrintComponent :service="service" v-if="service.service_id?.id == 2" :errors="errors" />
     </div>
 </template>
 
@@ -19,6 +20,7 @@
 import { resquestToApi } from '@base/js/request/resquestToApi';
 import DesignComponent from './Design.vue';
 import EmbroideryComponent from './ServicesTypes/Embroidery.vue';
+import PrintComponent from './Print.vue';
 
 export default {
     name: "Service",
@@ -31,6 +33,7 @@ export default {
     components: {
         DesignComponent,
         EmbroideryComponent,
+        PrintComponent,
     },
     data() {
         return {
