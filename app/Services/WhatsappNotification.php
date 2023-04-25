@@ -83,6 +83,36 @@ class WhatsappNotification
 
     public function sendNewOrder($order)
     {
+        foreach ($this->getAllAdminis() as $user) {
+            if ($user->phone) {
+                $this->send(
+                    $user->phone,
+                    'nuevo_pedido',
+                    [
+                        [
+                            "type" => "body",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $order->id
+                                ],
+                            ]
+                        ],
+                        // [
+                        //     "type" => "button",
+                        //     "sub_type" => "url",
+                        //     "index" => "0",
+                        //     "parameters" => [
+                        //         [
+                        //             "type" => "text",
+                        //             "text" => $order->id
+                        //         ]
+                        //     ]
+                        // ]
+                    ]
+                );
+            }
+        }
     }
 
 

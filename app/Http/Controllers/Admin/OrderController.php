@@ -77,6 +77,8 @@ class OrderController extends ResourceController
             (new WhatsappNotification())->sendOrderTicketToClient($order);
         }
 
+        (new WhatsappNotification())->sendNewOrder($order);
+
         return [
             'id' => $order->id
         ];
