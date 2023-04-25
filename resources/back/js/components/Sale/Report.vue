@@ -11,7 +11,7 @@
                 </button>
             </div>
             <div v-if="showReportInfo.value">
-                <div class="flex">
+                <div class="lg:flex">
                     <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
                         <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="extra.date" class="input input-bordered w-full">

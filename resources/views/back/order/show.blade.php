@@ -10,38 +10,38 @@
 
     <?= Base::breadcrumb([$model->getRoute('index') => $model->getTranslation('plural'), $model->getTranslation('showed')]) ?>
 
-    <div class=" mb-2 mr-2 flex justify-between">
+    <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">
         <div>
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
                     $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_ORDER_ARRIVED]) }}"
-                    class="btn btn-active">Marcar que el pedido llego</a>
+                    class="btn btn-active mt-1 w-full lg:w-64">Marcar que el pedido llego</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) && $model->getRawOriginal('status') == $model::STATUS_READY)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH]) }}"
-                    class="btn btn-active">Marcar como Entregado</a>
+                    class="btn btn-active mt-1 w-full lg:w-64">Marcar como Entregado</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Bordador']) && $model->getRawOriginal('status') == $model::STATUS_PENDING)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_READY]) }}"
-                    class="btn btn-active">Marcar como Terminado</a>
+                    class="btn btn-active mt-1 w-full lg:w-64">Marcar como Terminado</a>
             @endif
 
             @if (auth()->user()->hasRole(['super-admin']) &&
                     ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
                         $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
-                <div class="tooltip" data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
+                <div class="tooltip w-full lg:w-64" data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_PENDING]) }}"
-                        class="btn btn-active">Autorizar Pedido para su realización</a>
+                        class="btn btn-active mt-1 w-full lg:w-64">Autorizar Pedido para su realización</a>
                 </div>
             @endif
 
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta', 'Bordador']) &&
                     $model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT)
-                <div class="tooltip"
+                <div class="tooltip w-full lg:w-64"
                     data-tip="Este pedido no tiene el pago 100%, pero se puede solicitar a un Administrador la autorización para realizarlo">
 
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_WAITING_AUTH]) }}"
-                        class="btn btn-active">Solicitar autorización para pedido</a>
+                        class="btn btn-active mt-1 w-full lg:w-64">Solicitar autorización para pedido</a>
                 </div>
             @endif
 
@@ -49,7 +49,7 @@
         <div><label class="label"><strong class="text-3xl">Folio: &nbsp;#{{ $model->id }}</strong> </label></div>
     </div>
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">
-        <div class="flex">
+        <div class="lg:flex">
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Elaboro</span></label>
                 <input type="text" class="input input-bordered w-full" value="{{ $model->createdBy->email }}" readonly>
@@ -63,7 +63,7 @@
                 <input type="text" class="input input-bordered w-full" value="{{ $model->status }}" readonly>
             </div>
         </div>
-        <div class="flex">
+        <div class="lg:flex">
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Prenda</span></label>
                 <input type="text" class="input input-bordered w-full" value="{{ $model->garment->name }}" readonly>
@@ -83,7 +83,7 @@
         <div class="flex justify-between">
             <h1 class="font-bold">Información del cliente</h1>
         </div>
-        <div class="flex">
+        <div class="lg:flex">
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Nombre del cliente</span></label>
                 <input type="text" class="input input-bordered w-full" value="{{ $model->client->name }}" readonly>

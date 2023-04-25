@@ -11,7 +11,7 @@
                 </button>
             </div>
             <div v-if="showClientInfo.value">
-                <div class="flex">
+                <div class="lg:flex">
                     <div class="form-control w-full mb-2 mr-2">
                         <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
                         <input v-model="client.name" type="text" class="input input-bordered w-full"

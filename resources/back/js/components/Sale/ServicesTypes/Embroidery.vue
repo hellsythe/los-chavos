@@ -1,5 +1,5 @@
 <template>
-    <div class="flex">
+    <div class="lg:flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de Bordado</span></label>
             <select class="select select-bordered w-full" v-model="service.subservice_id">

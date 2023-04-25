@@ -1,5 +1,5 @@
 <template>
-    <div class="flex">
+    <div class="lg:flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de prenda</span></label>
             <TypeaheadInput :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
@@ -7,7 +7,7 @@
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ error.data }}</div>
         </div>
-        <div class="form-control w-64 mb-2 mr-2">
+        <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Cantidad de prendas</span></label>
             <input v-model="garment.amount" type="number" class="input input-bordered w-full">
             <div class="text-red-500 text-xs font-semibold mt-1">{{ error.amount }}</div>
