@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('order_design_prints', function (Blueprint $table) {
             $table->commonFields();
             $table->foreignId('order_detail_id');
-            $table->foreignId('design_print_id');
+            $table->foreignId('design_print_id')->nullable();
             $table->double('price', 8, 2);
             $table->boolean('save_design');
             $table->boolean('if_new_design');

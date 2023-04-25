@@ -7,6 +7,7 @@ use App\Events\OrderAuth;
 use App\Events\OrderAuthRequest;
 use App\Models\Client;
 use App\Models\Design;
+use App\Models\DesignPrint;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
@@ -14,6 +15,7 @@ use App\Models\OrderDesign;
 use App\Models\OrderNewDesign;
 use App\Models\OrderUpdateDesign;
 use App\Models\OrderCustomDesign;
+use App\Models\OrderDesignPrint;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
 use App\Services\WhatsappNotification;
@@ -139,6 +141,10 @@ class OrderController extends ResourceController
                     $detail = $this->saveNewDesign($orderDetail, $service, $request['garment']['amount']);
                     $order->total += $detail->price;
                     break;
+                case 5:
+                    $detail = $this->savePrintDesign($orderDetail, $service, $request['garment']['amount']);
+
+                    break;
             }
         }
 
@@ -164,6 +170,42 @@ class OrderController extends ResourceController
         $model->order_detail_id = $orderDetail->id;
         $model->design_id = $service['design']['id'];
         $model->save();
+    }
+
+    private function savePrintDesign($orderDetail, $service)
+    {
+        $model = new OrderDesignPrint();
+        $model->order_detail_id = $orderDetail->id;
+        $model->price = $service['price'];
+
+        if ($service['is_new_design']) {
+            if ($service['design_is_here']) {
+                $print = $this->createNewPrintDesign($service, $service['new_print_file']);
+                $model->design_print_id = $print->id;
+            }
+        } else{
+            $model->design_print_id = $service['designFilePrint']['id'];
+        }
+
+        $model->save_design = $service['save_design'];
+        $model->if_new_design = $service['is_new_design'];
+        $model->save();
+    }
+
+    private function createNewPrintDesign($service, $fileData)
+    {
+        $design = new DesignPrint();
+        $design->created_by = auth()->user()->id;
+        $design->price = $service['price'];
+        $design->name = $service['print_name'];
+        $design->media = 'prueba';
+        $design->status = DesignPrint::STATUS_ACTIVE;
+        $design->save();
+        $design->media = URL::to('/storage/design-print/' . $design->id . '.pdf');
+        $design->save();
+        $this->saveFileDesign($fileData, $design->id, 'design-print');
+
+        return $design;
     }
 
     private function saveNewDesign($orderDetail, $service, $garmentAmount)
@@ -201,13 +243,13 @@ class OrderController extends ResourceController
         return $design;
     }
 
-    private function saveFileDesign($data, $id)
+    private function saveFileDesign($data, $id, $url = 'design')
     {
         list($type, $data) = explode(';', $data);
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
 
-        Storage::put('public/design/' . $id . '.pdf', $data);
+        Storage::put('public/'.$url.'/' . $id . '.pdf', $data);
     }
 
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
