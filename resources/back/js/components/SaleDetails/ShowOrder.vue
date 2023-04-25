@@ -14,6 +14,7 @@
             <Custom v-if="service.subservice_id == 2" :details="service.order_custom_design"/>
             <Design v-if="service.subservice_id == 3" :details="service.order_update_design"/>
             <Design v-if="service.subservice_id == 4" :details="service.order_new_design"/>
+            <DesignPrint v-if="service.subservice_id == 5" :details="service.order_design_print.design_print"/>
             <label class="label"><span class="label-text">Comentarios:</span></label>
             <div class="form-control w-full mb-2">
                 <textarea class="textarea" readonly>{{ service.comments }}</textarea>
@@ -31,6 +32,7 @@ import colors from './../colors';
 import Konva from 'konva';
 import Custom from './Embroidery/Custom.vue';
 import Design from './Embroidery/Design.vue';
+import DesignPrint from './Embroidery/DesignPrint.vue';
 
 export default {
     name: "Services",
@@ -41,6 +43,7 @@ export default {
     components: {
         Custom,
         Design,
+        DesignPrint,
     },
     computed: {
         get_colors() { return colors }

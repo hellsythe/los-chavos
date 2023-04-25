@@ -47,6 +47,7 @@ class Order extends BaseModel
     public function details(): HasMany
     {
         return $this->hasMany(OrderDetail::class)
+            ->with('orderDesignPrint')
             ->with('orderDesign')
             ->with('orderNewDesign')
             ->with('orderUpdateDesign')

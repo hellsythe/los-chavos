@@ -21,4 +21,9 @@ class OrderDesignPrint extends BaseModel
             'plural' => 'OrderDesignPrint',
         ];
     }
+
+    public function designPrint()
+    {
+        return $this->belongsTo(DesignPrint::class);
+    }
 }

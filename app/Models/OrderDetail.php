@@ -14,13 +14,12 @@ class OrderDetail extends BaseModel
 
     protected function fields()
     {
-        return[
+        return [
             TextField::make('order_id')->label('Folio')->rules(['required']),
-            // TextField::make('deadline')->label('Fecha de entrega')->rules(['required']),
         ];
     }
 
-    public function getTranslations() : array
+    public function getTranslations(): array
     {
         return [
             'singular' => 'OrderDetail',
@@ -47,6 +46,8 @@ class OrderDetail extends BaseModel
                 return $this->orderUpdateDesign->with('design')->first();
             case 4:
                 return $this->orderNewDesign->with('design')->first();
+            case 5:
+                return $this->orderDesignPrint->with('designPrint')->first();
         }
     }
 
@@ -68,6 +69,11 @@ class OrderDetail extends BaseModel
     public function orderCustomDesign()
     {
         return $this->hasOne(OrderCustomDesign::class);
+    }
+
+    public function orderDesignPrint()
+    {
+        return $this->hasOne(OrderDesignPrint::class)->with('designPrint');
     }
 
     public function order()
