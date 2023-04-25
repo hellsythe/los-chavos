@@ -61,7 +61,14 @@ class Start extends Command
             $estampado->save();
         }
 
-        $this->createSubservice($estampado);
+        $ponchado_nuevo = Subservice::where('name', 'Estampado')->first();
+        if (!$ponchado_nuevo) {
+            $ponchado_nuevo = new Subservice();
+            $ponchado_nuevo->name = 'Estampado';
+            $ponchado_nuevo->service_id = $estampado->id;
+            $ponchado_nuevo->status = Subservice::STATUS_ACTIVE;
+            $ponchado_nuevo->save();
+        }
     }
 
     private function createSubservice($service)
