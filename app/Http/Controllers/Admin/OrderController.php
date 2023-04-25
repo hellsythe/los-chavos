@@ -73,6 +73,10 @@ class OrderController extends ResourceController
         $this->saveOrderDetails($order, $request);
         $this->savePayment($order,  $request['payment']);
 
+        if ($request['extra']['whatsapp'] ?? false) {
+            (new WhatsappNotification())->sendOrderTicketToClient($order);
+        }
+
         return [
             'id' => $order->id
         ];

@@ -81,7 +81,12 @@ class WhatsappNotification
         }
     }
 
-    public function sendNewOrder()
+    public function sendNewOrder($order)
+    {
+    }
+
+
+    public function sendOrderTicketToClient($order)
     {
     }
 
