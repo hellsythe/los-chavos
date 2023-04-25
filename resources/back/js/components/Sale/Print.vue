@@ -16,7 +16,8 @@
                 </div>
 
                 <DesignPrint v-else :service="service" text="Diseño Existente" :errors="errors" />
-                <div class="form-control mb-2 mr-2">
+
+                <div class="form-control mb-2 mr-2" v-if="service.is_new_design && service.design_is_here">
                     <label for="" class="label"><span class="label-text">Nombre del nuevo diseño de Estampado</span></label>
                     <input type="text" class="input input-bordered" v-model="service.print_name" />
                     <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.print_name }}</div>
