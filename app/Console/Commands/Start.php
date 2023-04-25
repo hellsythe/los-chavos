@@ -219,6 +219,8 @@ class Start extends Command
         $role->givePermissionTo('garment:viewAny');
         $role->givePermissionTo('order_detail:viewAny');
         $role->givePermissionTo('order_detail:view');
+        $role->givePermissionTo('design_print:viewAny');
+        $role->givePermissionTo('design_print:view');
     }
     private function assingPermissionsToBordador()
     {
@@ -237,5 +239,7 @@ class Start extends Command
         $role->givePermissionTo('garment:viewAny');
         $role->givePermissionTo('order_detail:viewAny');
         $role->givePermissionTo('order_detail:view');
+        $role->givePermissionTo('design_print:viewAny');
+        $role->givePermissionTo('design_print:view');
     }
 }

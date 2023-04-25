@@ -13,7 +13,7 @@
         </div>
     </div>
     <div v-if="getDesignFileFormat() != 'pdf'" class="flex flex-col justify-end items-end">
-        <img v-if="showPreview" :src="this.service.designFilePrint.media" width="500" />
+        <img v-if="showPreview" :src="this.service.designFilePrint?.media" width="500" />
     </div>
 </template>
 
