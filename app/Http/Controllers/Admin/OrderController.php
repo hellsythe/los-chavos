@@ -183,7 +183,7 @@ class OrderController extends ResourceController
                 $print = $this->createNewPrintDesign($service, $service['new_print_file']);
                 $model->design_print_id = $print->id;
             }
-        } else{
+        } else {
             $model->design_print_id = $service['designFilePrint']['id'];
         }
 
@@ -194,6 +194,9 @@ class OrderController extends ResourceController
 
     private function createNewPrintDesign($service, $fileData)
     {
+        $ext = explode(';', $service['new_print_file']);
+        $ext = explode('/', $ext[0])[1];
+
         $design = new DesignPrint();
         $design->created_by = auth()->user()->id;
         $design->price = $service['price'];
@@ -201,9 +204,9 @@ class OrderController extends ResourceController
         $design->media = 'prueba';
         $design->status = DesignPrint::STATUS_ACTIVE;
         $design->save();
-        $design->media = URL::to('/storage/design-print/' . $design->id . '.pdf');
+        $design->media = URL::to('/storage/design-print/' . $design->id . '.' . $ext);
         $design->save();
-        $this->saveFileDesign($fileData, $design->id, 'design-print');
+        $this->saveFileDesign($fileData, $design->id, 'design-print', $ext);
 
         return $design;
     }
@@ -243,13 +246,13 @@ class OrderController extends ResourceController
         return $design;
     }
 
-    private function saveFileDesign($data, $id, $url = 'design')
+    private function saveFileDesign($data, $id, $url = 'design', $ext = 'pdf')
     {
         list($type, $data) = explode(';', $data);
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
 
-        Storage::put('public/'.$url.'/' . $id . '.pdf', $data);
+        Storage::put('public/' . $url . '/' . $id . '.' . $ext, $data);
     }
 
     private function saveUpdateDesing($orderDetail, $service, $garmentAmount)
