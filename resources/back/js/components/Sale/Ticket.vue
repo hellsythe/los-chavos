@@ -57,6 +57,8 @@
             <div style="display: flex; justify-content: center;">
                 <svg id="barcode"></svg>
             </div>
+            <p style="font-size: 10px; text-align: center;">“Favor de corroborar su nota verificando que los datos de su servicio sean correctos, tal como usted lo solicita, no nos hacemos responsables si usted no los verifica”</p>
+            <p style="font-size: 10px; text-align: center;">“Todas las entregas de servicio son a partir de las 18:00 hrs del día de la entrega”</p>
         </div>
     </div>
 </template>
