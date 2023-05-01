@@ -3,7 +3,7 @@
 @section('title_tab', 'Dashboard')
 
 @section('content')
-    <?= Base::breadcrumb([url('admin/orders-by-design') => 'Pedidos agrupados por diseño', $model->name]) ?>
+    <?= Base::breadcrumb([url('admin/orders-by-design') => 'Ordenes agrupados por diseño', $model->name]) ?>
     <div class="overflow-x-auto">
         <table class="table w-full mt-3 mb-3">
             <thead>

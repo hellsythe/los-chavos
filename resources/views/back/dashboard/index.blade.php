@@ -5,14 +5,14 @@
 @section('content')
     <div class="stats shadow mt-2">
         <div class="stat">
-            <div class="stat-title">Pedidos sin pago al 100%</div>
+            <div class="stat-title">Ordenes sin pago al 100%</div>
             <div class="stat-value">{{ number_format($order_missing_payment) }}</div>
         </div>
     </div>
     <div class="stats shadow mt-2">
 
         <div class="stat">
-            <div class="stat-title">Pedidos pendientes</div>
+            <div class="stat-title">Ordenes pendientes</div>
             <div class="stat-value">{{ number_format($order_pending) }}</div>
         </div>
 
@@ -20,13 +20,13 @@
     <div class="stats shadow mt-2">
 
         <div class="stat">
-            <div class="stat-title">Pedidos Listos sin entregar</div>
+            <div class="stat-title">Ordenes Listos sin entregar</div>
             <div class="stat-value">{{ number_format($order_ready) }}</div>
         </div>
     </div>
     <div class="stats shadow mt-2">
         <div class="stat">
-            <div class="stat-title">Pedidos Esperando autorización</div>
+            <div class="stat-title">Ordenes Esperando autorización</div>
             <div class="stat-value">{{ number_format($missing_auth) }}</div>
         </div>
     </div>

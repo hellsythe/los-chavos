@@ -4,7 +4,7 @@
         <div class="modal" id="payment-modal">
             <div class="modal-box">
                 <label @click="closeModal" for="confirmpayment" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                <h3 class="font-bold text-lg">Confirmar Pedido</h3>
+                <h3 class="font-bold text-lg">Confirmar Orden</h3>
                 <div class="flex py-2">
                     <p>Total a pagar: </p>
                     <p class=" ml-auto">{{ formatter(payment.total) }}</p>

@@ -5,14 +5,14 @@
 @section('content')
     <div class="stats shadow mt-2">
         <div class="stat">
-            <div class="stat-title">Pedidos sin pago al 100%</div>
+            <div class="stat-title">Ordenes sin pago al 100%</div>
             <div class="stat-value">{{ number_format($order_missing_payment) }}</div>
         </div>
     </div>
     <div class="stats shadow mt-2">
 
         <div class="stat">
-            <div class="stat-title">Pedidos pendientes</div>
+            <div class="stat-title">Ordenes pendientes</div>
             <div class="stat-value">{{ number_format($order_pending) }}</div>
         </div>
 
@@ -20,18 +20,18 @@
     <div class="stats shadow mt-2">
 
         <div class="stat">
-            <div class="stat-title">Pedidos Listos sin entregar</div>
+            <div class="stat-title">Ordenes Listos sin entregar</div>
             <div class="stat-value">{{ number_format($order_ready) }}</div>
         </div>
     </div>
     <div class="stats shadow mt-2">
         <div class="stat">
-            <div class="stat-title">Pedidos Esperando autorización</div>
+            <div class="stat-title">Ordenes Esperando autorización</div>
             <div class="stat-value">{{ number_format($missing_auth) }}</div>
         </div>
     </div>
     <div class="mt-4">
-        <a href="{{ route('dashboard') }}" class="btn btn-active">Ver toda la lista de pedidos</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-active">Ver toda la lista de Ordenes</a>
     </div>
 
     <div class="overflow-x-auto">
@@ -39,7 +39,7 @@
             <thead>
                 <tr>
                     <td>#</td>
-                    <td>Total de pedidos</td>
+                    <td>Total de Ordenes</td>
                     <td>Diseño</td>
                     <td>Total de prendas</td>
                     <th width="100px"></th>

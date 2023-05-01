@@ -6,7 +6,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                 <label>Folio: {{ order.id }}</label>
-                <label>Fecha de pedido: {{ date }}</label>
+                <label>Fecha de Orden: {{ date }}</label>
             </div>
             <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                 <label>Fecha de entrega: {{ extra?.date }}</label>

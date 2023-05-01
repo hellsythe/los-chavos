@@ -34,8 +34,8 @@ class Order extends BaseModel
     public function getTranslations(): array
     {
         return [
-            'singular' => 'Pedido',
-            'plural' => 'Pedidos',
+            'singular' => 'Ordene',
+            'plural' => 'Ordenes',
         ];
     }
 

@@ -4,7 +4,7 @@
         <div class="modal" id="payment-modal">
             <div class="modal-box">
                 <label for="confirmpayment" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                <h3 class="font-bold text-lg">Realizar Abono a pedido # {{ model.id }}</h3>
+                <h3 class="font-bold text-lg">Realizar Abono a Orden # {{ model.id }}</h3>
                 <div class="flex py-2">
                     <p>Saldo restante: </p>
                     <p class=" ml-auto">{{ formatter(model.missing_payment) }}</p>

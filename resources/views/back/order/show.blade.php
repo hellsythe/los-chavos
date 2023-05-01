@@ -29,19 +29,19 @@
             @if (auth()->user()->hasRole(['super-admin']) &&
                     ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
                         $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
-                <div class="tooltip w-full lg:w-64" data-tip="Este pedido no tiene el pago 100%, pero se puede autorizar a que se realize">
+                <div class="tooltip w-full lg:w-64" data-tip="Este orden no tiene el pago 100%, pero se puede autorizar a que se realize">
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_PENDING]) }}"
-                        class="btn btn-active mt-1 w-full lg:w-64">Autorizar Pedido para su realización</a>
+                        class="btn btn-active mt-1 w-full lg:w-64">Autorizar orden para su realización</a>
                 </div>
             @endif
 
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta', 'Bordador']) &&
                     $model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT)
                 <div class="tooltip w-full lg:w-64"
-                    data-tip="Este pedido no tiene el pago 100%, pero se puede solicitar a un Administrador la autorización para realizarlo">
+                    data-tip="Este orden no tiene el pago 100%, pero se puede solicitar a un Administrador la autorización para realizarlo">
 
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_WAITING_AUTH]) }}"
-                        class="btn btn-active mt-1 w-full lg:w-64">Solicitar autorización para pedido</a>
+                        class="btn btn-active mt-1 w-full lg:w-64">Solicitar autorización para orden</a>
                 </div>
             @endif
 
@@ -73,7 +73,7 @@
                 <input type="text" class="input input-bordered w-full" value="{{ $model->garment_amount }}" readonly>
             </div>
             <div class="form-control w-full mb-2">
-                <label class="label"><span class="label-text">Estado del pedido</span></label>
+                <label class="label"><span class="label-text">Estado de la orden</span></label>
                 <input type="text" class="input input-bordered w-full" value="{{ $model->order_status }}" readonly>
             </div>
         </div>
@@ -206,7 +206,7 @@
                         <td>${{ number_format($total, 2) }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-right"><strong>Total del pedido</strong></td>
+                        <td colspan="3" class="text-right"><strong>Total del orden</strong></td>
                         <td>${{ number_format($model->total, 2) }}</td>
                     </tr>
                     <tr>

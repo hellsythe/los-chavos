@@ -5,8 +5,8 @@ export function notify(order) {
     } else if (Notification.permission === "granted") {
         // Check whether notification permissions have already been granted;
         // if so, create a notification
-        const notification = new Notification("Nuevo Pedido", {
-            body: 'Da click para ver los detalles del nuevo pedido #' + order.id,
+        const notification = new Notification("Nueva orden", {
+            body: 'Da click para ver los detalles de la nueva orden #' + order.id,
             icon: 'http://localhost/img/logo.svg',
         });
 
@@ -38,7 +38,7 @@ export function notifyb(order) {
     } else if (Notification.permission === "granted") {
         // Check whether notification permissions have already been granted;
         // if so, create a notification
-        const notification = new Notification("Nuevo Pedido", {
+        const notification = new Notification("Nueva orden", {
             body: order.message,
             icon: 'http://localhost/img/logo.svg',
         });
