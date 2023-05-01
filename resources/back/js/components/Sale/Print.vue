@@ -3,16 +3,19 @@
 
         <div class="flex justify-between">
             <div>
-                <div class="mt-3 flex items-center">
-                    <input v-model="service.is_new_design" type="checkbox" checked="checked" class="checkbox mr-1" /> ¿Es un
-                    Diseño
-                    Nuevo?
+                <div class="form-control mb-2 mr-2">
+                    <label for="¿Es un Diseño Nuevo?">¿Es un Diseño Nuevo?</label>
+                    <select  v-model="service.is_new_design" class="select w-full max-w-xs">
+                        <option :value="false">No</option>
+                        <option :value="true">Si</option>
+                    </select>
                 </div>
-
-                <div class="mt-3 flex items-center" v-if="service.is_new_design">
-                    <input v-model="service.design_is_here" type="checkbox" checked="checked" class="checkbox mr-1" /> ¿Se
-                    cuenta
-                    con el diseño?
+                <div v-if="service.is_new_design" class="form-control mb-2 mr-2">
+                    <label for="¿Es un Diseño Nuevo?">¿El cliente cuenta con el diseño en este momento?</label>
+                    <select  v-model="service.design_is_here" class="select w-full max-w-xs">
+                        <option :value="false">No</option>
+                        <option :value="true">Si</option>
+                    </select>
                 </div>
 
                 <DesignPrint v-else :service="service" text="Diseño Existente" :errors="errors" />
@@ -47,10 +50,12 @@
                         <span>Si no se cuenta con diseño este se debera subir posteriormente</span>
                     </div>
                 </div>
-                <div class="mt-3 flex items-center" v-if="service.is_new_design">
-                    <input v-model="service.save_design" type="checkbox" checked="checked" class="checkbox mr-1" /> ¿El
-                    diseño se
-                    debe guardar o solo es temporal?
+                <div v-if="service.design_is_here" class="form-control mb-2 mr-2">
+                    <label for="¿Es un Diseño Nuevo?">¿Se debe guardar el diseño para usarse en otras ordenes?</label>
+                    <select  v-model="service.save_design" class="select w-full max-w-xs">
+                        <option :value="false">No</option>
+                        <option :value="true">Si</option>
+                    </select>
                 </div>
             </div>
 

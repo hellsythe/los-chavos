@@ -35,7 +35,7 @@ export default {
             printed: { value:false},
             extra: {
                 date: null,
-                isOrder: null,
+                isOrder: 0,
             },
             final_errors: {
                 client: false,

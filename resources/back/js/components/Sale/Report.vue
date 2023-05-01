@@ -14,9 +14,10 @@
                 <div class="lg:flex">
                     <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la prendas?</span></label>
-                        <div class="mt-3 flex items-center">
-                            <input v-model="extra.isOrder" type="checkbox" checked="checked" class="checkbox mr-1" /> Habilitar
-                        </div>
+                        <select v-model="extra.isOrder" class="select w-full max-w-xs">
+                            <option value="1">Si es un pedido</option>
+                            <option value="0">No es un pedido</option>
+                        </select>
                         <div class="text-red-500 text-xs font-semibold mt-1"></div>
                     </div>
                 </div>
