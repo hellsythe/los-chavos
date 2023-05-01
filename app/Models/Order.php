@@ -7,7 +7,7 @@ use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Date;
 class Order extends BaseModel
 {
     public const STATUS_MISSING_PAYMENT = 40;
@@ -100,10 +100,8 @@ class Order extends BaseModel
         return $this->hasMany(Payment::class);
     }
 
-    public function getDeadlineAttribute($value)
+    public function getDeadlineAttribute($value): string
     {
-
-        $date = date_create($value);
-        return date_format($date, "d/m/Y");
+        return  Date::createFromDate($value)->format('l j F Y');
     }
 }
