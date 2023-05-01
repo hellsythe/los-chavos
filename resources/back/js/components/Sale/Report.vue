@@ -13,11 +13,6 @@
             <div v-if="showReportInfo.value">
                 <div class="lg:flex">
                     <div class="form-control mb-2 mr-2 w-64">
-                        <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
-                        <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="extra.date" class="input input-bordered w-full">
-                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.date }}</div>
-                    </div>
-                    <div class="form-control mb-2 mr-2 w-64">
                         <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la prendas?</span></label>
                         <div class="mt-3 flex items-center">
                             <input v-model="extra.isOrder" type="checkbox" checked="checked" class="checkbox mr-1" /> Habilitar

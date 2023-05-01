@@ -11,6 +11,11 @@
                 </button>
             </div>
             <div v-if="showClientInfo.value">
+                <div class="form-control mb-2 mr-2 w-64">
+                    <label for="" class="label"><span class="label-text">Fecha de entrega</span></label>
+                    <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="extra.date" class="input input-bordered w-full">
+                    <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.date }}</div>
+                </div>
                 <div class="lg:flex">
                     <div class="form-control w-full mb-2 mr-2">
                         <label for="" class="label"><span class="label-text">Nombre del cliente</span></label>
@@ -59,6 +64,7 @@ export default {
         showClientInfo: JSON,
         showServicesInfo: JSON,
         final_errors: JSON,
+        extra: JSON,
     },
     data() {
         return {
