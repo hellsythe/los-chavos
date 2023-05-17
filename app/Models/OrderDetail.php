@@ -80,4 +80,9 @@ class OrderDetail extends BaseModel
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function getDeadlineAttribute(): string
+    {
+        return $this->order->deadline;
+    }
 }
