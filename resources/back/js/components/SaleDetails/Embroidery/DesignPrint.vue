@@ -2,7 +2,7 @@
     <div v-if="details.design_print_id">
         <label class="label"><span class="label-text">Diseño</span></label>
         <input :value="details.design_print.name" type="text" class="input input-bordered w-full" readonly>
-        <embed :src="details.design_print.media" height="300px" class="mt-4" />
+        <embed :src="details.design_print.media" height="700px" class="mt-4" />
         <div class="mt-3 flex items-center">
             <input v-model="details.if_new_design" type="checkbox" checked="checked" class="checkbox mr-1"
                 onclick="return false;" readonly /> ¿Fue un nuevo diseño?

@@ -59,8 +59,8 @@ class MenuServiceProvider extends ServiceProvider
         ], ['super-admin']);
 
         // $service_menu->addElement(Payment::makeMenu('currency-dollar'), ['super-admin']);
-        $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin']);
-        $service_menu->addElement(DesignPrint::makeMenu('puzzle-piece'),['super-admin']);
+        $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin', 'Punto de venta']);
+        $service_menu->addElement(DesignPrint::makeMenu('puzzle-piece'),['super-admin', 'Punto de venta']);
         $service_menu->addElement(Client::makeMenu('user-group'), ['super-admin']);
         $service_menu->addElement(Typography::makeMenu('language'), ['super-admin']);
         $service_menu->addElement(Garment::makeMenu('academic-cap'), ['super-admin']);
