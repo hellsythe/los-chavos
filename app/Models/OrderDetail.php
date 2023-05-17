@@ -41,13 +41,13 @@ class OrderDetail extends BaseModel
     {
         switch ($this->subservice_id) {
             case 1:
-                return $this->orderDesign->with('design')->first();
+                return $this->orderDesign()->with('design')->first();
             case 3:
-                return $this->orderUpdateDesign->with('design')->first();
+                return $this->orderUpdateDesign()->with('design')->first();
             case 4:
-                return $this->orderNewDesign->with('design')->first();
+                return $this->orderNewDesign()->with('design')->first();
             case 5:
-                return $this->orderDesignPrint->with('designPrint')->first();
+                return $this->orderDesignPrint()->with('designPrint')->first();
         }
     }
 

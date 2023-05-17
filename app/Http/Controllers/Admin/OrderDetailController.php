@@ -24,7 +24,7 @@ class OrderDetailController extends ResourceController
         $query = $query->orderBy('orders.deadline', 'ASC');
 
         return $this->setPagination($query, $request);
-        // return $data->each(fn ($data) => $data->order->append('deadline'));
+        // return $data->each(fn ($data) => $data->append('mirai'));
     }
 
     public function show(Request $request, $id)
