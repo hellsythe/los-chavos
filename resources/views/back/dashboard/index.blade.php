@@ -67,7 +67,7 @@
             :translations='{!! json_encode($array_translation) !!}'
             :template_actions="{{ json_encode([
                 'update' => false,
-                'delete' => false,
+                'delete' => auth()->user()->hasRole(['super-admin']),
                 'show' => true,
             ]) }}" />
     </div>
