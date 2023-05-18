@@ -66,6 +66,15 @@ class OrderController extends ResourceController
         ]);
     }
 
+    public function salePointEdit()
+    {
+        $this->authorize('create', new $this->model);
+
+        return view('back.sale.point', [
+            'available_services' => Service::all()
+        ]);
+    }
+
     public function processOrder(Request $request)
     {
         $client = $this->saveClient($request->client);

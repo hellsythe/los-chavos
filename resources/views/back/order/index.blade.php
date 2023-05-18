@@ -19,7 +19,7 @@ $array_search = array_merge($model->getParseSearchFilters(), [['field' => 'clien
             :filters={{json_encode($array_search)}}
             :translations='{!! json_encode($array_translation) !!}'
             :template_actions="{{json_encode([
-                'update' => false,
+                'update' => auth()->user()->hasRole(['super-admin']) || $model->editable,
                 'delete' => auth()->user()->hasRole(['super-admin']),
                 'show' => true,
             ])}}"
