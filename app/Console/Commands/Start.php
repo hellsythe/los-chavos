@@ -204,6 +204,7 @@ class Start extends Command
     private function assingPermissionsToVenta()
     {
         $role = Role::firstOrCreate(['name' => 'Punto de venta', 'status' => Role::STATUS_ACTIVE]);
+        $role->givePermissionTo('payment:create');
         $role->givePermissionTo('order:create');
         $role->givePermissionTo('order:view');
         $role->givePermissionTo('order:viewAny');
