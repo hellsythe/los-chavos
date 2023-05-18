@@ -24,6 +24,9 @@ class Order extends BaseModel
 
     public const STATUS_FINISH = 90;
 
+    protected $appends = ['deadlinex'];
+
+
     protected function fields()
     {
         return [
@@ -103,5 +106,10 @@ class Order extends BaseModel
     public function getDeadlineAttribute($value): string
     {
         return  Date::createFromDate($value)->format('l j F Y');
+    }
+
+    public function getDeadlinexAttribute(): string
+    {
+        return $this->attributes['deadline'];
     }
 }

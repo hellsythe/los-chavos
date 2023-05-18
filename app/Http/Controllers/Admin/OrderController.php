@@ -66,12 +66,14 @@ class OrderController extends ResourceController
         ]);
     }
 
-    public function salePointEdit()
+    public function salePointEdit($id)
     {
         $this->authorize('create', new $this->model);
+        $model = $this->model::with('client')->with('details')->find($id)->toArray();
 
-        return view('back.sale.point', [
-            'available_services' => Service::all()
+        return view('back.sale.edit', [
+            'available_services' => Service::all(),
+            'model' => $model
         ]);
     }
 
