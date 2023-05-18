@@ -5,14 +5,14 @@
             <div>
                 <div class="form-control mb-2 mr-2">
                     <label for="¿Es un Diseño Nuevo?">¿Es un Diseño Nuevo?</label>
-                    <select  v-model="service.is_new_design" class="select w-full max-w-xs">
+                    <select v-model="service.is_new_design" class="select w-full max-w-xs">
                         <option :value="false">No</option>
                         <option :value="true">Si</option>
                     </select>
                 </div>
                 <div v-if="service.is_new_design" class="form-control mb-2 mr-2">
                     <label for="¿Es un Diseño Nuevo?">¿El cliente cuenta con el diseño en este momento?</label>
-                    <select  v-model="service.design_is_here" class="select w-full max-w-xs">
+                    <select v-model="service.design_is_here" class="select w-full max-w-xs">
                         <option :value="false">No</option>
                         <option :value="true">Si</option>
                     </select>
@@ -52,7 +52,7 @@
                 </div>
                 <div v-if="service.design_is_here" class="form-control mb-2 mr-2">
                     <label for="¿Es un Diseño Nuevo?">¿Se debe guardar el diseño para usarse en otras ordenes?</label>
-                    <select  v-model="service.save_design" class="select w-full max-w-xs">
+                    <select v-model="service.save_design" class="select w-full max-w-xs">
                         <option :value="false">No</option>
                         <option :value="true">Si</option>
                     </select>
@@ -65,7 +65,12 @@
         </div>
 
 
-
+        <div class="form-control w-full mb-2">
+            <label for="" class="label"><span class="label-text">Comentarios</span></label>
+            <textarea class="textarea textarea-bordered" placeholder="Comentarios para este diseño"
+                v-model="service.comments"></textarea>
+            <div class="text-red-500 text-xs font-semibold mt-1"></div>
+        </div>
 
     </div>
 </template>
