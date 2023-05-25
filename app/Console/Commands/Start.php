@@ -38,6 +38,7 @@ class Start extends Command
         $this->deleteRoles();
         $this->assingPermissionsToVenta();
         $this->assingPermissionsToBordador();
+        $this->assingPermissionsToEstampador();
     }
 
     private function createServices()
@@ -223,9 +224,21 @@ class Start extends Command
         $role->givePermissionTo('design_print:viewAny');
         $role->givePermissionTo('design_print:view');
     }
+
     private function assingPermissionsToBordador()
     {
         $role = Role::firstOrCreate(['name' => 'Bordador', 'status' => Role::STATUS_ACTIVE]);
+        $this->addDefaultPermissions($role);
+    }
+
+    private function assingPermissionsToEstampador()
+    {
+        $role = Role::firstOrCreate(['name' => 'Estampador', 'status' => Role::STATUS_ACTIVE]);
+        $this->addDefaultPermissions($role);
+    }
+
+    private function addDefaultPermissions($role)
+    {
         $role->givePermissionTo('order:view');
         $role->givePermissionTo('order:viewAny');
         $role->givePermissionTo('design:viewAny');
