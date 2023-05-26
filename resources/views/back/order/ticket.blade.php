@@ -1,8 +1,9 @@
     <div id="ticket">
-        <div style="font-size: 13px;">
-            <center>
-                <img style="width: 130px;" src="{{ public_path('img/logo.svg') }}" alt="">
-            </center>
+        <div style="font-size: 13px; margin-top: -20px">
+            <div style="text-align: center">
+                <img style="width: 130px;display: inline" src="{{ public_path('img/logo.svg') }}" alt="">
+            </div>
+            <div style="margin-top: -20px"></div>
             <label>Folio: {{ $order->id }}</label> <br>
             <label>Fecha de orden: {{ Date::createFromDate($order->created_at)->format('d-m-Y') }}</label> <br>
             <label>Fecha de entrega: {{ Date::createFromDate($order->getAttributes()['deadline'])->format('d-m-Y') }}</label> <br>
