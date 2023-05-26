@@ -44,7 +44,9 @@ export default {
         };
     },
     mounted() {
-
+        window.addEventListener("beforeunload", (event) => {
+        event.returnValue = true;
+        });
     },
     methods: {
         async saveOrder(){
