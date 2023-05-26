@@ -48,7 +48,7 @@
 
     <NewComponent v-if="service.subservice_id.id == 4" :service="service" :errors="errors" />
 
-    <div v-if="service.design" class="form-control w-full mb-2">
+    <div class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Comentarios</span></label>
         <textarea class="textarea textarea-bordered" placeholder="Comentarios para este diseño"
             v-model="service.comments"></textarea>

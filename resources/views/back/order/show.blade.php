@@ -12,6 +12,20 @@
 
     <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">
         <div>
+            <div id="sale">
+                <print-button :order="{{json_encode(
+                    [
+                    'date' => $model->created_at,
+                    'order' => $model,
+                    'extra' => [
+                        'date' => $model->getRawOriginal('deadline')
+                        // 'date' => $model->deadline
+                    ],
+                    'payment' => $model->payments,
+                    'services' => $model->details
+                ]
+                )}}" />
+            </div>
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
                     $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_ORDER_ARRIVED]) }}"
@@ -60,7 +74,7 @@
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Estado</span></label>
-                <input type="text" class="input input-bordered w-full" value="{{ $model->status }}" readonly>
+                <input type="text" class="input input-bordered w-full bg-{{$model->color_status}}" value="{{ $model->status }}" readonly>
             </div>
         </div>
         <div class="lg:flex">

@@ -26,11 +26,11 @@
 13 .- Estamos presentando un problema porque el programa no quiere guardar los servicios de estampado
 
 14.- Mostrar solo las ordenes pendientes
-15.- Resaltar el estatus
+15.- Resaltar el estatus -- Listo
 16.- Agrupar por fechas
 17.- Agregar al ticket el diseño y cantidad de fechas
 18.- Reimprimir ticket CQRS
-19.- Agregar comantarios en todos los lugares
+19.- Agregar comantarios en todos los lugares -- Listo
 20.- Cuando termines de llenar pase al siguiente campo
 21.- Eliminar Servicio
 22.- Notificar a todos mover el menu al principio

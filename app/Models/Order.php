@@ -112,4 +112,31 @@ class Order extends BaseModel
     {
         return $this->attributes['deadline'];
     }
+
+    public function getColorStatusAttribute()
+    {
+        switch ($this->getAttributes()['status']) {
+            case self::STATUS_MISSING_PAYMENT:
+                return 'error';
+                break;
+            case self::STATUS_WAITING_ORDER:
+                return 'Warning';
+                break;
+            case self::STATUS_ORDER_ARRIVED:
+                return 'info';
+                break;
+            case self::STATUS_PENDING:
+                return 'warning';
+                break;
+            case self::STATUS_READY:
+                return 'primary';
+                break;
+            case self::STATUS_FINISH:
+                return 'success';
+                break;
+            case self::STATUS_WAITING_AUTH:
+                return 'Warning';
+                break;
+        }
+    }
 }

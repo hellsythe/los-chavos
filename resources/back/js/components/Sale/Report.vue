@@ -79,7 +79,7 @@
                     </table>
                 </div>
                 <PaymentComponent :payment="payment" :openModal="openModal">
-                    <label v-if="!printed.value" @click="saveOrder" class="btn">Guardar e Imprimir ticket</label>
+                    <button v-if="!printed.value" @click="saveOrder" class="btn" :disabled="loading" >Guardar e Imprimir ticket</button>
                     <label v-else @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
                 </PaymentComponent>
                 <div class="flex justify-end">
@@ -152,7 +152,8 @@ export default {
     data() {
         return {
             errors: {},
-            openModal: false
+            openModal: false,
+            loading: false
         };
     },
     mounted() {
@@ -160,6 +161,7 @@ export default {
     },
     methods: {
         async saveOrder() {
+            this.loading = true;
             await this.$emit('save-order');
         },
         print() {

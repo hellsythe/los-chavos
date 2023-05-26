@@ -1,6 +1,14 @@
 @extends('front.layouts.app')
 
 @section('content')
+<div class="
+bg-error
+bg-Warning
+bg-info
+bg-warning
+bg-primary
+bg-success
+bg-Warning"></div>
     <div class="relative">
         <div class="min-h-screen py-6 flex flex-col justify-center sm:py-12 z-10 relative">
             <div class="relative py-3 sm:max-w-xl sm:mx-auto">

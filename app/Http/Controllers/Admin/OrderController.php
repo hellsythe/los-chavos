@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Sdkconsultoria\Core\Controllers\Traits\ApiControllerTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends ResourceController
 {
@@ -377,5 +378,12 @@ class OrderController extends ResourceController
         $order->save();
 
         return redirect('admin/order/' . $id);
+    }
+
+    public function ticket($id)
+    {
+        $pdf = Pdf::loadView('back.order.ticket', ['order' => Order::findModel($id)]);
+        $pdf->set_paper([0,0,210,500]);
+        return $pdf->stream('ticket.pdf');
     }
 }

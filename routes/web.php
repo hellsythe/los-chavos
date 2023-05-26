@@ -45,6 +45,7 @@ Route::namespace('\App\Http\Controllers\Admin')
 
         Route::post('/sale-save', 'OrderController@processOrder')->name('sale.point.save');
         Route::get('/cashbox', 'CashController@report')->name('cashbox.report');
+        Route::get('/ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
     });
 
 
