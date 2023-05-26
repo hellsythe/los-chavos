@@ -12,9 +12,9 @@
 
     <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">
         <div>
-            <div id="sale">
+            {{-- <div id="sale">
                 <print-button ticket="{{url('storage/tickets/15.pdf')}}" />
-            </div>
+            </div> --}}
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
                     $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_ORDER_ARRIVED]) }}"
