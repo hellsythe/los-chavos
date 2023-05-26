@@ -1,19 +1,12 @@
 <template>
     <button class="btn" :disabled="loading" @click="print">Reimprimir Ticket</button>
-    <TicketComponent ref="ticket" :extra="order.extra" :payment="order.payment" :selectedServices="order.selectedServices"
-        :garmentData="order.garmentData" :order="order.order" />
 </template>
 
 <script>
-import TicketComponent from "./Ticket.vue";
-
 export default {
     name: "PrintButton",
-    components: {
-        TicketComponent
-    },
     props: {
-        order: {}
+        ticket: ''
     },
     data() {
         return {
@@ -26,7 +19,16 @@ export default {
     methods: {
         print() {
             this.loading = true;
-            // this.$refs.ticket.print();
+            this.loading = true;
+            const iframe = document.createElement('iframe');
+            iframe.src = this.ticket;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            iframe.onload = () => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            };
         },
     },
 };

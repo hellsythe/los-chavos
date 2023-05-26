@@ -383,7 +383,7 @@ class OrderController extends ResourceController
     public function ticket($id)
     {
         $pdf = Pdf::loadView('back.order.ticket', ['order' => Order::findModel($id)]);
-        $pdf->setPaper([0,0,210,500]);
+        $pdf->setPaper([0,0,210,520]);
 
         Storage::put('public/tickets/'.$id.'.pdf', $pdf->output());
 

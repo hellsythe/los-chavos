@@ -13,18 +13,7 @@
     <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">
         <div>
             <div id="sale">
-                <print-button :order="{{json_encode(
-                    [
-                    'date' => $model->created_at,
-                    'order' => $model,
-                    'extra' => [
-                        'date' => $model->getRawOriginal('deadline')
-                        // 'date' => $model->deadline
-                    ],
-                    'payment' => $model->payments,
-                    'services' => $model->details
-                ]
-                )}}" />
+                <print-button ticket="{{url('storage/tickets/15.pdf')}}" />
             </div>
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
                     $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
