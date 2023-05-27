@@ -21,4 +21,9 @@ class Service extends BaseModel
             'plural' => 'Servicios',
         ];
     }
+
+    public function subservices()
+    {
+        return $this->hasMany(Subservice::class);
+    }
 }
