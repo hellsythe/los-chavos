@@ -36,6 +36,7 @@
         "vue": "^3.2"
     },
     "dependencies": {
+        "@imengyu/vue3-context-menu": "^1.2.10",
         "@tiptap/pm": "^2.0.2",
         "@tiptap/starter-kit": "^2.0.2",
         "@tiptap/vue-3": "^2.0.2"

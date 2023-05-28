@@ -38,7 +38,7 @@ class SalePointController extends Controller
             'order' => [
                 'client' => [
                     'name' => '',
-                    'phone_number' => '',
+                    'phone' => '',
                     'email' => '',
                 ],
                 'data' => [
@@ -46,10 +46,15 @@ class SalePointController extends Controller
                     'deadline' => '',
                     'created_at' => '',
                 ],
-                'services' => [],
+                'services' => [
+                    []
+                ],
                 'payments' => [
 
-                ]
+                ],
+                'detail' => [
+                    'deadline' => ''
+                ],
             ],
         ]);
     }
