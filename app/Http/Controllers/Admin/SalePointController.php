@@ -47,7 +47,11 @@ class SalePointController extends Controller
                     'created_at' => '',
                 ],
                 'services' => [
-                    []
+                    [
+                        'detail' => [
+                            'design' => []
+                        ]
+                    ]
                 ],
                 'payments' => [
 

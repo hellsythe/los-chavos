@@ -43,7 +43,6 @@ import {
 } from "@heroicons/vue/24/solid";
 
 import ServiceComponent from './Service.vue';
-// import GarmentComponent from './Garment.vue';
 import colors from './../../colors';
 
 export default {
@@ -69,13 +68,19 @@ export default {
     },
     methods: {
         addNewService() {
-            this.order.services.push({});
+            this.order.services.push({
+                detail: {
+                    design: {}
+                }
+            });
         },
         validate() {
-            let errors = false;
-            for (let index = 0; index < this.selectedServices.length; index++) {
-                errors = errors || this.$refs.services[index].validate();
-            }
+            console.log('hola');
+            console.log(this.order);
+            // let errors = false;
+            // for (let index = 0; index < this.selectedServices.length; index++) {
+            //     errors = errors || this.$refs.services[index].validate();
+            // }
         },
         onContextMenu(e, index) {
             console.log(index);

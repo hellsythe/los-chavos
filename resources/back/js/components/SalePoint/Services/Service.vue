@@ -15,6 +15,7 @@
             :availableservices="availableservices" />
         <!-- <PrintComponent :service="service" v-if="service.service.id == 2" :errors="extra.errors.services[index]" :availableservices="availableservices"/> -->
 
+        <GarmentComponent :service="service" :errors="extra.errors.services[index]" :index="index" />
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Comentarios</span></label>
             <textarea class="textarea textarea-bordered" placeholder="Comentarios"
@@ -28,6 +29,7 @@ import { resquestToApi } from '@base/js/request/resquestToApi';
 // import DesignComponent from './Design.vue';
 import EmbroideryComponent from './Embroidery/Embroidery.vue';
 // import PrintComponent from './Print.vue';
+import GarmentComponent from './Garment.vue';
 
 export default {
     name: "Service",
@@ -42,6 +44,7 @@ export default {
         // DesignComponent,
         EmbroideryComponent,
         // PrintComponent,
+        GarmentComponent,
     },
     created() {
         this.extra.errors.services[this.index] = {};
