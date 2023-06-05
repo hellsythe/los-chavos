@@ -71,6 +71,9 @@ export default {
           `));
             document.head.appendChild(newStyle);
             this.fontFamily = this.service.typography.slutname;
+        },
+        validate() {
+
         }
     },
 };

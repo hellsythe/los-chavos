@@ -5,7 +5,7 @@
             <TypeaheadInput :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors?.design }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.design }}</div>
         </div>
         <div class="mt-6">
             <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
@@ -13,10 +13,10 @@
         </div>
     </div>
     <div v-if="getDesignFileFormat() == 'pdf'" class="flex flex-col justify-end items-end">
-        <embed v-if="showPreview" :src="this.service.design.media" width="100%" height="700px" />
+        <embed v-if="showPreview" :src="this.service.detail.design.media" width="100%" height="700px" />
     </div>
     <div v-if="getDesignFileFormat() == 'png' || getDesignFileFormat() == 'jpg'" class="flex flex-col justify-end items-end">
-        <img v-if="showPreview" :src="this.service.design.media" width="100%" height="700px" />
+        <img v-if="showPreview" :src="this.service.detail.design.media" width="100%" height="700px" />
     </div>
 </template>
 
@@ -41,16 +41,17 @@ export default {
     },
     methods: {
         selectedData(value) {
-            this.service.design = {
+            this.service.detail = {};
+            this.service.detail.design = {
                 id: value.id,
                 name: value.name,
                 media: value.media,
 
             };
-            this.service.price = value.price;
+            this.service.detail.price = value.price;
         },
         getDesignFileFormat() {
-            return this.service.design?.media.split('.').pop();
+            return this.service.detail?.design?.media?.split('.').pop();
         }
     },
 };

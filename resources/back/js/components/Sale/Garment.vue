@@ -27,7 +27,8 @@ import colors from './../colors';
 export default {
     name: "Garment",
     props: {
-        order: JSON,
+        garment: JSON,
+        selectedServices: JSON,
         error: JSON,
     },
     data() {

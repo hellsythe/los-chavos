@@ -40,6 +40,7 @@ class SalePointController extends Controller
                     'name' => '',
                     'phone' => '',
                     'email' => '',
+                    'whatsapp' => '0',
                 ],
                 'data' => [
                     'id' => '',

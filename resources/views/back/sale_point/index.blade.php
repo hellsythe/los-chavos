@@ -9,8 +9,8 @@
             :orderp="{{json_encode($order)}}"
             :extrap="{{json_encode([
                 'steps' => [
-                    'client' => false,
-                    'service' => true,
+                    'client' => true,
+                    'service' => false,
                     'payment' => false,
                 ],
                 'errors' => [

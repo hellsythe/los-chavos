@@ -31,11 +31,19 @@
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.phone }}</div>
                     </div>
 
-                    <div class="form-control w-full mb-2">
+                    <div class="form-control w-full mb-2 mr-2">
                         <label class="label"><span class="label-text">Correo del cliente</span></label>
                         <input v-model="order.client.email" type="email" class="input input-bordered w-full"
                             placeholder="cliente@gmail.com">
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.email }}</div>
+                    </div>
+
+                    <div class="form-control w-full mb-2">
+                        <label for="" class="label"><span class="label-text">Enviar ticket por whatsapp</span></label>
+                        <select v-model="order.client.whatsapp" class="select w-full max-w-xs">
+                            <option value="0">No</option>
+                            <option value="1">Si</option>
+                        </select>
                     </div>
                 </div>
                 <div class="flex justify-end	">
@@ -51,7 +59,6 @@ import {
     EyeSlashIcon,
     EyeIcon,
 } from "@heroicons/vue/24/solid";
-
 
 export default {
     name: "Client",
@@ -81,11 +88,11 @@ export default {
                 this.extra.errors.client.phone = 'El Teléfono del cliente no puede estar vacio';
             }
 
-            if (this.order.detail.deadline.length === 0) {
+            if (this.order.data.deadline.length === 0) {
                 this.extra.errors.client.deadline = 'La fecha de entrega no puede estar vacia';
             }
 
-            if ( this.extra.errors.client == {}) {
+            if ( Object.keys(this.extra.errors.client).length == 0) {
                 this.extra.steps.client = false;
                 this.extra.steps.service = true;
             }

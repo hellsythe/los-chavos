@@ -36,6 +36,3 @@ Echo.private(`orders`)
     .listen('NewOrder', (e) => {
         console.log(e.order);
     });
-
-    console.log('anime');
-    console.log('anime');

@@ -75,12 +75,10 @@ export default {
             });
         },
         validate() {
-            console.log('hola');
-            console.log(this.order);
-            // let errors = false;
-            // for (let index = 0; index < this.selectedServices.length; index++) {
-            //     errors = errors || this.$refs.services[index].validate();
-            // }
+            let errors = false;
+            for (let index = 0; index < this.order.services.length; index++) {
+                errors = errors || this.$refs.services[index].validate();
+            }
         },
         onContextMenu(e, index) {
             console.log(index);

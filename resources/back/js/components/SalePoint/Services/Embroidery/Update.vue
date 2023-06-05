@@ -49,6 +49,9 @@ export default {
             reader.onload = function () {
                 that.service.updateDesign = reader.result;
             }
+        },
+        validate() {
+
         }
     },
 };

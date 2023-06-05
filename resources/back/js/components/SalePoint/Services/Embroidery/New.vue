@@ -33,6 +33,11 @@ export default {
     },
     components: {
         LoadFile
+    },
+    methods: {
+        validate() {
+
+        }
     }
 };
 </script>

@@ -18,10 +18,10 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
         </div>
     </div>
-    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" />
-    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" />
-    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" />
-    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors" />
+    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" />
+    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" />
+    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" />
+    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors.services[index]" ref="exist" />
 </template>
 
 <script>
@@ -37,6 +37,7 @@ export default {
         service: JSON,
         availableservices: JSON,
         errors: JSON,
+        index: Number,
     },
     components: {
         NewComponent,
@@ -52,5 +53,28 @@ export default {
     mounted() {
         this.availablesubservices = this.availableservices.find(element => element.id == 1).subservices;
     },
+    methods: {
+        validate() {
+            this.errors.services[this.index].embrodery = {};
+            this.errors.services[this.index].detail = {};
+            if (this.$refs.new) {
+                this.$refs.new.validate();
+            }
+
+            if (this.$refs.update) {
+                this.$refs.update.validate();
+            }
+
+            if (this.$refs.custom) {
+                this.$refs.custom.validate();
+            }
+
+            if (this.$refs.exist) {
+                if (!this.service.detail.design.id) {
+                    this.errors.services[this.index].detail.design = 'El diseño no puede estar vacio';
+                }
+            }
+        }
+    }
 };
 </script>

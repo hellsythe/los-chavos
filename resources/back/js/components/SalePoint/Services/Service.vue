@@ -11,11 +11,10 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.services[index]?.service }}</div>
         </div>
 
-        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="extra.errors.services[index]"
-            :availableservices="availableservices" />
-        <PrintComponent v-if="service.service.id == 2" :service="service" :errors="extra.errors.services[index]"/>
+        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="extra.errors" :availableservices="availableservices" :index="index"  ref="embrodery" />
+        <PrintComponent v-if="service.service.id == 2" :service="service" :errors="extra.errors" :index="index"  ref="print" />
+        <GarmentComponent :service="service" :errors="extra.errors" :index="index" ref="garment" />
 
-        <GarmentComponent :service="service" :errors="extra.errors.services[index]" :index="index" />
         <div class="form-control w-full mb-2 mt-2">
             <label for="" class="label"><span class="label-text">Comentarios</span></label>
             <textarea class="textarea textarea-bordered" placeholder="Comentarios"
@@ -25,7 +24,6 @@
 </template>
 
 <script>
-import { resquestToApi } from '@base/js/request/resquestToApi';
 import EmbroideryComponent from './Embroidery/Embroidery.vue';
 import PrintComponent from './Print/Print.vue';
 import GarmentComponent from './Garment.vue';
@@ -53,91 +51,28 @@ export default {
     methods: {
         validate() {
             this.cleanErrors();
-            this.validateExistingDesign();
             this.validateCommon();
-            this.validateNewDesign();
-            this.validateCustomDesign();
-            this.validateUpdatedDesign();
-            if (Object.keys(this.errors).length !== 0) {
-                return true;
+
+            if (this.$refs.embrodery) {
+                this.$refs.embrodery.validate();
             }
+            if (this.$refs.print) {
+                this.$refs.print.validate();
+            }
+            this.$refs.garment.validate();
+            // if (Object.keys(this.errors).length !== 0) {
+            //     return true;
+            // }
         },
         cleanErrors() {
-            this.errors = {};
+            this.extra.errors.services[this.index] = {};
         },
 
         validateCommon() {
-            if (!this.service.service_id.id) {
-                this.errors.service_id = 'El Tipo servicio no puede estar vacio';
-            };
-
-            if (!this.service.subservice_id.id) {
-                this.errors.subservice_id = 'El Tipo subservicio no puede estar vacio';
-            };
-
-            if (!this.service.hasOwnProperty('price') || this.service.price.length === 0) {
-                this.errors.price = 'El Precio por prenda no puede estar vacio';
+            if (!this.service.service.id) {
+                this.extra.errors.services[this.index].service = 'El Tipo servicio no puede estar vacio';
             };
         },
-        validateExistingDesign() {
-            if (this.service.subservice_id.id === 1) {
-                if (!this.service.hasOwnProperty('design')) {
-                    this.errors.design = 'El Diseño no puede estar vacio';
-                }
-            }
-        },
-        validateNewDesign() {
-            if (this.service.subservice_id.id === 4) {
-                if (!this.service.hasOwnProperty('new_design_name') || this.service.new_design_name === '') {
-                    this.errors.new_design_name = 'El Nombre del nuevo diseño no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('newDesign') || this.service.new_design_name === '') {
-                    this.errors.newDesign = 'El Archivo del nuevo Diseño no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('puntadas') || this.service.puntadas === '') {
-                    this.errors.puntadas = 'Las puntadas del nuevo Diseño no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('price_new') || this.service.price_new === '') {
-                    this.errors.price_new = 'El precio del nuevo Diseño no puede estar vacio';
-                }
-            }
-        },
-        validateUpdatedDesign() {
-            if (this.service.subservice_id.id === 3) {
-                if (!this.service.hasOwnProperty('updateDesign') || this.service.new_design_name === '') {
-                    this.errors.updateDesign = 'El Archivo de Diseño Modificado no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('puntadas') || this.service.puntadas === '') {
-                    this.errors.puntadas = 'Las puntadas del Diseño Modificado no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('price_update') || this.service.price_update === '') {
-                    this.errors.price_update = 'El precio por actualizar Diseño no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('design')) {
-                    this.errors.design = 'El Diseño anterior no puede estar vacio';
-                }
-            }
-        },
-        validateCustomDesign() {
-            if (this.service.subservice_id.id === 2) {
-                if (!this.service.hasOwnProperty('textsize') || this.service.textsize === '') {
-                    this.errors.textsize = 'El Tamaño del la letra no puede estar vacio';
-                }
-
-                if (!this.service.hasOwnProperty('typography') || this.service.typography === '') {
-                    this.errors.typography = 'La tipografía no puede estar vacio';
-                }
-                if (!this.service.hasOwnProperty('custom') || this.service.custom.text === '' || this.service.custom.text === '<p></p>') {
-                    this.errors.custom = 'El texto personalizado no puede estar vacio';
-                }
-            };
-        }
     },
 };
 </script>
