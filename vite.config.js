@@ -6,7 +6,7 @@ const path = require('path');
 export default defineConfig({
     // server: {
     //     hmr: {
-    //         host: '127.0.0.1',
+    //         host: 'laravel.test',
     //     },
     // },
     plugins: [
