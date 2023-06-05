@@ -11,12 +11,12 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.services[index]?.service }}</div>
         </div>
 
-        <EmbroideryComponent :service="service" v-if="service.service.id == 1" :errors="extra.errors.services[index]"
+        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="extra.errors.services[index]"
             :availableservices="availableservices" />
-        <!-- <PrintComponent :service="service" v-if="service.service.id == 2" :errors="extra.errors.services[index]" :availableservices="availableservices"/> -->
+        <PrintComponent v-if="service.service.id == 2" :service="service" :errors="extra.errors.services[index]"/>
 
         <GarmentComponent :service="service" :errors="extra.errors.services[index]" :index="index" />
-        <div class="form-control w-full mb-2">
+        <div class="form-control w-full mb-2 mt-2">
             <label for="" class="label"><span class="label-text">Comentarios</span></label>
             <textarea class="textarea textarea-bordered" placeholder="Comentarios"
                 v-model="service.comments"></textarea>
@@ -26,9 +26,8 @@
 
 <script>
 import { resquestToApi } from '@base/js/request/resquestToApi';
-// import DesignComponent from './Design.vue';
 import EmbroideryComponent from './Embroidery/Embroidery.vue';
-// import PrintComponent from './Print.vue';
+import PrintComponent from './Print/Print.vue';
 import GarmentComponent from './Garment.vue';
 
 export default {
@@ -41,9 +40,8 @@ export default {
         currentServiceIndex: Number,
     },
     components: {
-        // DesignComponent,
         EmbroideryComponent,
-        // PrintComponent,
+        PrintComponent,
         GarmentComponent,
     },
     created() {

@@ -1,26 +1,32 @@
 <template>
-    <DesignComponent text="Diseño a mofificar" :service="service" :errors="errors"></DesignComponent>
-
     <div class="flex">
-        <div class="form-control w-64 mb-2 mr-2">
-            <label for="" class="label"><span class="label-text">Selecciona nuevo ponchado</span></label>
-            <input type="file" class="file-input w-full max-w-xs" @change="handleFileUpload($event)" />
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.updateDesign }}</div>
+        <div class="mr-2">
+            <label for="" class="label"><span class="label-text">Costo por ponchado modificado</span></label>
+            <label class="input-group">
+                <span>$</span>
+                <input type="number" class="input input-bordered" v-model="service.detail.price" />
+            </label>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.price }}</div>
         </div>
-        <div class="mt-6 ml-auto">
-            <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
-            <button @click="showPreview = true" v-if="!showPreview" class="btn btn-info mt-3 mb-3">Mostrar Preview</button>
+        <div class="form-control mb-2">
+            <label for="" class="label"><span class="label-text">Puntadas</span></label>
+            <input type="number" class="input input-bordered" v-model="service.detail.design.minutes"/>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.design?.minutes }}</div>
         </div>
     </div>
+    <DesignComponent text="Diseño a mofificar" :service="service" :errors="errors"></DesignComponent>
+    <LoadFile :file="service.detail.design" :errors="errors" />
 </template>
 
 <script>
-import DesignComponent from './../../Design.vue';
+import DesignComponent from './Design.vue';
+import LoadFile from './../../LoadFile.vue';
 
 export default {
     name: "UpdateEmbroidery",
     components: {
-        DesignComponent
+        DesignComponent,
+        LoadFile,
     },
     props: {
         service: JSON,

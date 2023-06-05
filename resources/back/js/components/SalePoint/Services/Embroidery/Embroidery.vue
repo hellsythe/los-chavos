@@ -17,34 +17,19 @@
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
         </div>
-        <!-- <div class="form-control mb-2 mr-2" v-if="service.subservice.id == 3">
-            <label for="" class="label"><span class="label-text">Costo por modificar ponchado</span></label>
-            <label class="input-group">
-                <span>$</span>
-                <input type="number" class="input input-bordered" v-model="service.price_update" />
-            </label>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price_update }}</div>
-        </div>
-         -->
     </div>
-    <!-- v-if="service.subservice.id == 4" -->
     <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" />
-
-    <!-- <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors" />
-
-    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" />
-
     <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" />
-
-     -->
+    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" />
+    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors" />
 </template>
 
 <script>
 import { resquestToApi } from '@base/js/request/resquestToApi';
 import NewComponent from './New.vue';
-// import DesignComponent from './../Design.vue';
-// import CustomComponent from './EmbroideryForms/Custom.vue';
-// import UpdateComponent from './EmbroideryForms/Update.vue';
+import DesignComponent from './Design.vue';
+import CustomComponent from './Custom.vue';
+import UpdateComponent from './Update.vue';
 
 export default {
     name: "Embroidery",
@@ -55,9 +40,9 @@ export default {
     },
     components: {
         NewComponent,
-        // DesignComponent,
-        // CustomComponent,
-        // UpdateComponent,
+        UpdateComponent,
+        CustomComponent,
+        DesignComponent,
     },
     data() {
         return {
