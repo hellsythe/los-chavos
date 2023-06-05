@@ -15,7 +15,7 @@
     <div v-if="getDesignFileFormat() == 'pdf'" class="flex flex-col justify-end items-end">
         <embed v-if="showPreview" :src="this.service.design.media" width="100%" height="700px" />
     </div>
-    <div v-else class="flex flex-col justify-end items-end">
+    <div v-if="getDesignFileFormat() == 'png' || getDesignFileFormat() == 'jpg'" class="flex flex-col justify-end items-end">
         <img v-if="showPreview" :src="this.service.design.media" width="100%" height="700px" />
     </div>
 </template>
@@ -37,9 +37,6 @@ export default {
             selectedItemIds: [],
             showPreview: true,
         };
-    },
-    mounted() {
-
     },
     methods: {
         selectedData(value) {

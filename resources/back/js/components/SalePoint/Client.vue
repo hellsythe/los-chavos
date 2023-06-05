@@ -13,7 +13,7 @@
             <div v-if="extra.steps.client">
                 <div class="form-control mb-2 mr-2 w-64">
                     <label class="label"><span class="label-text">Fecha de entrega</span></label>
-                    <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.detail.deadline" class="input input-bordered w-full">
+                    <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.data.deadline" class="input input-bordered w-full">
                     <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.deadline }}</div>
                 </div>
                 <div class="lg:flex">

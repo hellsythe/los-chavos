@@ -13,8 +13,8 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.garment_amount }}</div>
         </div>
     </div>
-    <div v-show="service.garment?.data?.preview" class="mt-3">
-        <img :src="service.garment?.data?.preview" alt="" class="absolute mt-3 rounded-md">
+    <div v-show="service.garment?.preview" class="mt-3">
+        <img :src="service.garment?.preview" alt="" class="absolute mt-3 rounded-md">
         <div :id="'container'+index"></div>
     </div>
 </template>
@@ -45,8 +45,7 @@ export default {
     },
     methods: {
         selectedData(value) {
-            this.service.garment = {};
-            this.service.garment.data = {
+            this.service.garment = {
                 id: value.id,
                 name: value.name,
                 preview: value.preview,
@@ -87,7 +86,6 @@ export default {
                 strokeWidth: 1,
                 draggable: true
             });
-            circle.zIndex(99);
             this.layer.add(circle);
             circle.on('dragmove', (t) => {
                 this.service.point_x =  t.target.x();

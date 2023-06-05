@@ -56,6 +56,9 @@ class SalePointController extends Controller
                 'payments' => [
 
                 ],
+                'payment' => [
+                    'total' => ''
+                ],
                 'detail' => [
                     'deadline' => ''
                 ],
@@ -72,5 +75,34 @@ class SalePointController extends Controller
             'available_services' => Service::all(),
             'model' => $model
         ]);
+    }
+
+    private function saveOrder($request)
+    {
+        $order = new Order();
+        $order->order_number = $request['extra']['orderId'] ?? '0';
+        $order->deadline = $request['extra']['date'];
+        $order->created_by = auth()->user()->id;
+        $order->garment_id = $request['garment']['data']['id'];
+        $order->garment_amount = $request['garment']['amount'];
+        $order->client_id = $client->id;
+        $order->total = 0;
+        $order->save();
+
+        return [
+            'order' => $order,
+            'ticket' => $this->generateTicket($order)
+        ];
+    }
+
+
+    private function generateTicket($order)
+    {
+        $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
+        $pdf->setPaper([0,0,210,520]);
+
+        Storage::put('public/tickets/'.$order->id.'.pdf', $pdf->output());
+
+        return config('app.url').Storage::url('public/tickets/'.$order->id.'.pdf');
     }
 }

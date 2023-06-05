@@ -28,7 +28,8 @@
                                 <th></th>
                                 <th>Concepto</th>
                                 <th>Costo x prenda</th>
-                                <!-- <th v-if="garmentData.amount > 1">Costo x {{ garmentData.amount }} prendas</th> -->
+                                <th>Prendas</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,50 +39,44 @@
                                     <td>{{ service.service.name }} - {{ service.subservice.name }} - sobre {{
                                         service.garment?.name }}</td>
                                     <td>{{ formatter(service.price) }}</td>
-                                    <td v-if="service.garment_amount > 1">{{ formatter(service.price * garmentData.amount) }}
-                                    </td>
+                                    <td>{{ service.garment_amount }}</td>
+                                    <td>{{ formatter(service.price * service.garment_amount) }}</td>
                                 </tr>
                                 <tr v-if="service.subservice.id == 4">
                                     <td>-</td>
-                                    <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Diseño
-                                            nuevo</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
+                                    <td> <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Diseño
+                                            nuevo</label> <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
                                             prendas</strong></td>
-                                    <td :class="{ 'line-through': garmentData.amount > 6 }">{{ formatter(service.price_new)
+                                    <td :class="{ 'line-through': service.garment_amount > 6 }">{{ formatter(service.price)
                                     }}
                                     </td>
-                                    <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
-                                        {{ formatter(service.price_new) }}</td>
+                                    <td v-if="service.garment_amount > 1" :class="{ 'line-through': service.garment_amount > 6 }">
+                                        {{ formatter(service.price) }}</td>
                                 </tr>
                                 <tr v-if="service.subservice.id == 3">
                                     <td>-</td>
-                                    <td> <label :class="{ 'line-through': garmentData.amount > 6 }">Costo Por Modificar
-                                            diseño</label> <strong v-if="garmentData.amount > 6">No aplica por ser mas de 6
+                                    <td> <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Modificar
+                                            diseño</label> <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
                                             prendas</strong></td>
-                                    <td :class="{ 'line-through': garmentData.amount > 6 }">
+                                    <td :class="{ 'line-through': service.garment_amount > 6 }">
                                         {{ formatter(service.price_update) }}</td>
-                                    <td v-if="garmentData.amount > 1" :class="{ 'line-through': garmentData.amount > 6 }">
+                                    <td v-if="service.garment_amount > 1" :class="{ 'line-through': service.garment_amount > 6 }">
                                         {{ formatter(service.price_update) }}</td>
                                 </tr>
                             </template>
                         </tbody>
                         <tfoot>
-                            <!-- <tr>
-                                <th colspan="2"></th>
-                                <th v-if="garmentData.amount > 1"></th>
-                                <th class="text-end">Total Por Prenda: {{ total.neto }}</th>
+                            <tr>
+                                <th colspan="4"></th>
+                                <th class="text-end">Total: {{ total.total }}</th>
                             </tr>
-                            <tr v-if="garmentData.amount > 1">
-                                <th colspan="2"></th>
-                                <th v-if="garmentData.amount > 1"></th>
-                                <th class="text-end">Total Por {{ garmentData.amount }} Prenda: {{ total.total }}</th>
-                            </tr> -->
                         </tfoot>
                     </table>
                 </div>
-                <!-- <PaymentComponent :payment="payment" :openModal="openModal">
-                    <button v-if="!printed.value" @click="saveOrder" class="btn" :disabled="loading" >Guardar e Imprimir ticket</button>
-                    <label v-else @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
-                </PaymentComponent> -->
+                <PaymentComponent :order="order" :openModal="openModal">
+                    <button @click="saveOrder" class="btn" :disabled="loading" >Guardar e Imprimir ticket</button>
+                    <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
+                </PaymentComponent>
                 <div class="flex justify-end">
                     <label @click="registerPayment" class="btn">Registrar Pago</label>
                 </div>
@@ -96,38 +91,41 @@ import {
     EyeIcon,
 } from "@heroicons/vue/24/solid";
 import money from './../formater';
-// import PaymentComponent from "./Payment.vue";
+import PaymentComponent from "./Payment.vue";
 
 export default {
     name: "ReportSale",
     components: {
         EyeIcon,
         EyeSlashIcon,
-        // PaymentComponent,
+        PaymentComponent,
     },
     computed: {
-        // total: function () {
-        //     let sum = 0;
-        //     let extra = 0;
-        //     let that = this;
-        //     this.selectedServices.forEach(function (item) {
-        //         sum += item.price;
-        //         if (item.subservice_id.id == 4 && that.garmentData.hasOwnProperty('amount') && that.garmentData.amount <= 6) {
-        //             extra += item.price_new;
-        //         }
-        //         if (item.subservice_id.id == 3 && that.garmentData.hasOwnProperty('amount') && that.garmentData.amount <= 6) {
-        //             extra += item.price_update;
-        //         }
-        //     });
+        total: function () {
+            let sum = 0;
+            let extra = 0;
+            let total = 0;
 
-        //     this.payment.total = (sum * this.garmentData.amount) + extra;
-        //     return {
-        //         neto: this.formatter(sum),
-        //         extra: this.formatter(extra),
-        //         sum: this.formatter(sum + extra),
-        //         total: this.formatter((sum * that.garmentData.amount) + extra),
-        //     };
-        // }
+            this.order.services.forEach(function (item) {
+                sum += item.price;
+                total += item.price * item.garment_amount;
+                if (item.subservice.id == 4 && item.garment_amount <= 6) {
+                    extra += item.price;
+                }
+                if (item.subservice.id == 3 && item.garment_amount <= 6) {
+                    extra += item.price;
+                }
+            });
+
+            this.order.payment.total = (total) + extra;
+
+            return {
+                neto: this.formatter(sum),
+                extra: this.formatter(extra),
+                sum: this.formatter(sum + extra),
+                total: this.formatter((total) + extra),
+            };
+        }
     },
     props: {
         order: JSON,
@@ -135,7 +133,6 @@ export default {
     },
     data() {
         return {
-            errors: {},
             openModal: false,
             loading: false
         };
@@ -145,7 +142,8 @@ export default {
     },
     methods: {
         async saveOrder() {
-            this.loading = true;
+            // this.loading = true;
+            console.log('loggggg');
             await this.$emit('save-order');
         },
         print() {
@@ -158,15 +156,14 @@ export default {
             window.location.href = '/admin';
         },
         registerPayment() {
-            this.errors.date = '';
 
-            if (!this.extra.hasOwnProperty('date') || this.extra.date == ''|| this.extra.date == null) {
-                this.errors.date = 'La fecha de entrega no puede estar vacia';
-            }
+            // if (!this.extra.hasOwnProperty('date') || this.extra.date == ''|| this.extra.date == null) {
+            //     this.errors.date = 'La fecha de entrega no puede estar vacia';
+            // }
 
-            if (this.final_errors.client == false && this.final_errors.service  == false && this.errors.date == '') {
-                document.getElementById('payment-modal').classList.add("modal-open");
-            }
+            // if (this.final_errors.client == false && this.final_errors.service  == false && this.errors.date == '') {
+            // }
+            document.getElementById('payment-modal').classList.add("modal-open");
         }
     },
 };

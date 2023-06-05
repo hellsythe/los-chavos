@@ -48,6 +48,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('/ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
 
         Route::get('/sale-point-2', 'SalePointController@index')->name('sale.point2');
+        Route::post('/sale-save-2', 'SalePointController@saveOrder')->name('sale.point.save2');
     });
 
 

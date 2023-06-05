@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :extra="extra" :order="order" />
     <ServicesComponent :extra="extra" :order="order" :availableservices="availableservices" />
-    <!-- <ConfirmComponent :extra="extra" :order="order"/> -->
+    <ConfirmComponent :extra="extra" :order="order" @save-order="saveOrder"/>
 </template>
 
 <script>
@@ -36,7 +36,30 @@ export default {
         });
     },
     methods: {
+        async saveOrder(){
+            let response = await postToApi(`/admin/sale-save-2`, {
+                order: this.order,
+            });
 
+            this.order.data.id = response.id;
+
+            if (this.order.data.id) {
+                // await new Promise(r => setTimeout(r, 300));
+
+                // JsBarcode("#barcode", this.order.id, {
+                //     height: 25,
+                //     fontSize: 12,
+                //     displayValue: false
+                // });
+
+                // this.$refs.report.print();
+
+                // let that = this;
+                // setTimeout(function(){
+                //     that.printed.value = true
+                // }, 1000);
+            }
+        }
     },
 };
 </script>
