@@ -18,7 +18,7 @@
                             <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
                         </a>
                     </li>
-                    <li @click="addNewService">
+                    <li dusk="service-new-service" @click="addNewService">
                         <a>Añadir Servicio
                             <PlusCircleIcon class="h-4 mr-1" />
                         </a>
@@ -28,7 +28,7 @@
                     <ServiceComponent :extra="extra" :index="index" :order="order" :service="service" :ref="'services'" :currentServiceIndex="currentServiceIndex" :availableservices="availableservices" />
                 </div>
                 <div class="flex justify-end	">
-                    <button class="btn btn-info" @click="validate">Siguiente</button>
+                    <button dusk="service-next" class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
             </div>
         </div>

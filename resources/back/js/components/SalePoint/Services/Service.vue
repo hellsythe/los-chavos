@@ -2,7 +2,7 @@
     <div v-show="index == currentServiceIndex">
         <div class="form-control w-full mb-2 mt-2">
             <label><span class="label-text">Tipo de servicio</span></label>
-            <select class="select select-bordered w-full" v-model="service.service">
+            <select :dusk="`service${index}.service`" class="select select-bordered w-full" v-model="service.service">
                 <option disabled selected>Elije uno</option>
                 <option :value="{ id: service.id, name: service.name }" v-for="service in availableservices ">{{
                     service.name

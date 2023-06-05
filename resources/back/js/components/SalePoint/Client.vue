@@ -13,27 +13,27 @@
             <div v-if="extra.steps.client">
                 <div class="form-control mb-2 mr-2 w-64">
                     <label class="label"><span class="label-text">Fecha de entrega</span></label>
-                    <input type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.data.deadline" class="input input-bordered w-full">
+                    <input dusk="order-deadline" type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.data.deadline" class="input input-bordered w-full">
                     <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.deadline }}</div>
                 </div>
                 <div class="lg:flex">
                     <div class="form-control w-full mb-2 mr-2">
                         <label class="label"><span class="label-text">Nombre del cliente</span></label>
-                        <input v-model="order.client.name" type="text" class="input input-bordered w-full"
+                        <input dusk="client-name" v-model="order.client.name" type="text" class="input input-bordered w-full"
                             placeholder="John Fulanito">
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.name }}</div>
                     </div>
 
                     <div class="form-control w-full mb-2 mr-2">
                         <label class="label"><span class="label-text">Teléfono del cliente</span></label>
-                        <input v-model="order.client.phone" type="number" class="input input-bordered w-full"
+                        <input dusk="client-phone" v-model="order.client.phone" type="number" class="input input-bordered w-full"
                             placeholder="2747430512">
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.phone }}</div>
                     </div>
 
                     <div class="form-control w-full mb-2 mr-2">
                         <label class="label"><span class="label-text">Correo del cliente</span></label>
-                        <input v-model="order.client.email" type="email" class="input input-bordered w-full"
+                        <input dusk="client-email" v-model="order.client.email" type="email" class="input input-bordered w-full"
                             placeholder="cliente@gmail.com">
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.email }}</div>
                     </div>
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="flex justify-end	">
-                    <button class="btn btn-info" @click="validate">Siguiente</button>
+                    <button dusk="client-next" class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
             </div>
         </div>
