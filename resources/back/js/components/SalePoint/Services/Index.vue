@@ -83,7 +83,8 @@ export default {
                 errors = errors || this.$refs.services[index].validate();
             }
 
-            if (!getAllErrorsAsArray(this.extra.errors.services)) {
+
+            if (getAllErrorsAsArray(this.extra.errors.services).length == 0) {
                 this.extra.steps.service = false;
                 this.extra.steps.confirm = true;
             }
