@@ -2,9 +2,9 @@
     <div v-show="index == currentServiceIndex">
         <div class="form-control w-full mb-2 mt-2">
             <label><span class="label-text">Tipo de servicio</span></label>
-            <select :dusk="`service${index}.service`" class="select select-bordered w-full" v-model="service.service">
+            <select :dusk="`service${index}-service`" class="select select-bordered w-full" v-model="service.service">
                 <option disabled selected>Elije uno</option>
-                <option :value="{ id: service.id, name: service.name }" v-for="service in availableservices ">{{
+                <option :value="{ id: service.id, name: service.name }" v-for="(service, service_index) in availableservices " :dusk="`service${index}-service-option-${service_index}`">{{
                     service.name
                 }}</option>
             </select>
@@ -59,10 +59,9 @@ export default {
             if (this.$refs.print) {
                 this.$refs.print.validate();
             }
+
             this.$refs.garment.validate();
-            // if (Object.keys(this.errors).length !== 0) {
-            //     return true;
-            // }
+
         },
         cleanErrors() {
             this.extra.errors.services[this.index] = {};

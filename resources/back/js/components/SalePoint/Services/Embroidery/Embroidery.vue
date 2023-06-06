@@ -2,26 +2,26 @@
     <div class="lg:flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de Bordado</span></label>
-            <select class="select select-bordered w-full" v-model="service.subservice">
+            <select :dusk="`service${index}-subservice`" class="select select-bordered w-full" v-model="service.subservice">
                 <option disabled selected>Elije uno</option>
                 <option v-for="subservice in availablesubservices" :value="{id: subservice.id, name: subservice.name}" >{{ subservice.name }}</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.subtype }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[index].detail?.subservice }}</div>
         </div>
 
         <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="number" class="input input-bordered" v-model="service.price" />
+                <input :dusk="`service${index}-price`" type="number" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.price }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[index].detail?.price }}</div>
         </div>
     </div>
-    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" />
-    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" />
-    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" />
-    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors.services[index]" ref="exist" />
+    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" :index="index" />
+    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" :index="index" />
+    <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" :index="index" />
+    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors.services[index]" ref="exist" :index="index" />
 </template>
 
 <script>
@@ -57,6 +57,16 @@ export default {
         validate() {
             this.errors.services[this.index].embrodery = {};
             this.errors.services[this.index].detail = {};
+
+            if (!this.service.subservice?.id) {
+                console.log('anim');
+                this.errors.services[this.index].detail.subservice = 'El subservicio no puede estar vacio';
+            }
+
+            if (!this.service.price) {
+                this.errors.services[this.index].detail.price = 'El precio no puede estar vacio';
+            }
+
             if (this.$refs.new) {
                 this.$refs.new.validate();
             }

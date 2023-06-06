@@ -12,7 +12,8 @@
             </div>
             <div v-show="extra.steps.service">
                 <ul class="menu menu-vertical lg:menu-horizontal bg-base-100 rounded-box">
-                    <li @click="currentServiceIndex = index"  v-for="(service, index) in order.services"  @contextmenu="onContextMenu($event, index)">
+                    <li @click="currentServiceIndex = index" v-for="(service, index) in order.services"
+                        @contextmenu="onContextMenu($event, index)">
                         <a :class="{ active: index == currentServiceIndex }">
                             {{ service.name ?? `Servicio ${index + 1}` }}
                             <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
@@ -25,7 +26,8 @@
                     </li>
                 </ul>
                 <div v-for="(service, index) in order.services">
-                    <ServiceComponent :extra="extra" :index="index" :order="order" :service="service" :ref="'services'" :currentServiceIndex="currentServiceIndex" :availableservices="availableservices" />
+                    <ServiceComponent :extra="extra" :index="index" :order="order" :service="service" :ref="'services'"
+                        :currentServiceIndex="currentServiceIndex" :availableservices="availableservices" />
                 </div>
                 <div class="flex justify-end	">
                     <button dusk="service-next" class="btn btn-info" @click="validate">Siguiente</button>
@@ -44,6 +46,7 @@ import {
 
 import ServiceComponent from './Service.vue';
 import colors from './../../colors';
+import { getAllErrorsAsArray } from '@base/js/getErrors';
 
 export default {
     name: "Services",
@@ -79,16 +82,20 @@ export default {
             for (let index = 0; index < this.order.services.length; index++) {
                 errors = errors || this.$refs.services[index].validate();
             }
+
+            if (!getAllErrorsAsArray(this.extra.errors.services)) {
+                this.extra.steps.service = false;
+                this.extra.steps.confirm = true;
+            }
         },
         onContextMenu(e, index) {
-            console.log(index);
             e.preventDefault();
             this.$contextmenu({
                 x: e.x,
                 y: e.y,
                 items: [
                     {
-                    label: "Eliminar el ultimo servicio",
+                        label: "Eliminar el ultimo servicio",
                         onClick: () => {
                             if (index != 0) {
                                 this.order.services.pop();

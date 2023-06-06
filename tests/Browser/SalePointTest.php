@@ -25,10 +25,22 @@ class SalePointTest extends DuskTestCase
                     ->type('@client-email', $user->email)
                     ->screenshot('cliente')
                     ->click('@client-next')
-                    ->select('@service0.service', 1)
+                    ->keys('@service0-service', ['b','{enter}'])
+                    ->keys('@service0-subservice', ['{ARROW_DOWN}','{enter}'])
+                    ->type('@service0-price', 200)
+                    ->with('@service0-design', function (Browser $table) {
+                        $table->keys('input', ['esc'])
+                        ->pause(500)
+                        ->keys('input', ['{enter}']);
+                    })
+                    ->with('@service0-garment', function (Browser $table) {
+                        $table->keys('input', ['cami'])
+                        ->pause(500)
+                        ->keys('input', ['{enter}']);
+                    })
+                    ->type('@service0-garment-amount', 10)
                     ->screenshot('servicio')
                     ->click('@service-next')
-                    // ->click('@service-new-service')
                     ->assertSee('Laravel');
         });
     }

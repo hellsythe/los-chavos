@@ -11,7 +11,7 @@
                 'steps' => [
                     'client' => true,
                     'service' => false,
-                    'payment' => false,
+                    'confirm' => false,
                 ],
                 'errors' => [
                     'client' => '',

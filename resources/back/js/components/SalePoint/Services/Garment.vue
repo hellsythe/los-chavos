@@ -2,14 +2,14 @@
     <div class="lg:flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de prenda</span></label>
-            <TypeaheadInput :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
+            <TypeaheadInput :dusk="`service${index}-garment`" :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[this.index].garment?.garment }}</div>
         </div>
         <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Cantidad de prendas</span></label>
-            <input v-model="service.garment_amount" type="number" class="input input-bordered w-full">
+            <input :dusk="`service${index}-garment-amount`" v-model="service.garment_amount" type="number" class="input input-bordered w-full">
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[this.index].garment?.amount }}</div>
         </div>
     </div>
@@ -67,8 +67,14 @@ export default {
             this.layer = new Konva.Layer();
             stage.add(this.layer);
         },
-        writtePoitsByEachDesign() {garment_amount
-
+        writtePoitsByEachDesign() {
+            this.point(this.get_colors[this.index]);
+        },
+        point(color) {
+            if (!this.service.point_x) {
+                this.service.point_x = 20;
+                this.service.point_y = 20;
+            }
             let circle = new Konva.Circle({
                 x: this.service.point_x,
                 y: this.service.point_y,
