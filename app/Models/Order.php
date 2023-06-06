@@ -57,6 +57,19 @@ class Order extends BaseModel
             ->with('orderCustomDesign');
     }
 
+    public function services(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class)
+            ->with('service')
+            ->with('subservice')
+            ->with('garment')
+            ->with('orderDesignPrint')
+            ->with('orderDesign')
+            ->with('orderNewDesign')
+            ->with('orderUpdateDesign')
+            ->with('orderCustomDesign');
+    }
+
     public function garment(): BelongsTo
     {
         return $this->belongsTo(Garment::class);

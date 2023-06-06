@@ -40,13 +40,13 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('/orders-by-design', 'DashboardController@indexGrupBy')->name('dashboard.groupby');
         Route::get('/orders-by-design/{id}', 'DashboardController@ordersGroupBy')->name('dashboard.grouped');
         Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
-        Route::get('/order/update/{id}', 'OrderController@salePointEdit')->name('sale.point.edit');
 
         Route::get('/cashbox', 'CashController@report')->name('cashbox.report');
-        Route::get('/ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
 
-        Route::get('/sale-point', 'SalePointController@index')->name('sale.point');
-        Route::post('/sale-save', 'SalePointController@saveOrder')->name('sale.point.save');
+        Route::get('sale-point', 'SalePointController@index')->name('sale.point');
+        Route::get('order/update/{id}', 'SalePointController@update')->name('sale.point.edit');
+        Route::post('sale-save', 'SalePointController@saveOrder')->name('sale.point.save');
+        Route::get('ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
     });
 
 

@@ -13,7 +13,7 @@
             <div v-if="extra.steps.client">
                 <div class="form-control mb-2 mr-2 w-64">
                     <label class="label"><span class="label-text">Fecha de entrega</span></label>
-                    <input dusk="order-deadline" type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.data.deadline" class="input input-bordered w-full">
+                    <input dusk="order-deadline" type="date" placeholder="dd-mm-yyyy" :min="minDate" v-model="order.deadlinex" class="input input-bordered w-full">
                     <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.deadline }}</div>
                 </div>
                 <div class="lg:flex">
@@ -88,7 +88,7 @@ export default {
                 this.extra.errors.client.phone = 'El Teléfono del cliente no puede estar vacio';
             }
 
-            if (this.order.data.deadline.length === 0) {
+            if (this.order.deadlinex.length === 0) {
                 this.extra.errors.client.deadline = 'La fecha de entrega no puede estar vacia';
             }
 

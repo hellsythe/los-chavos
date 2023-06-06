@@ -43,6 +43,12 @@ export default {
             layer: null
         };
     },
+    mounted() {
+        console.log('sunanita');
+        if (this.service.garment) {
+            this.initCanva();
+        }
+    },
     methods: {
         selectedData(value) {
             this.service.garment = {

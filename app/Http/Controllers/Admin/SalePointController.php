@@ -36,45 +36,40 @@ class SalePointController extends Controller
         return view('back.sale_point.index', [
             'available_services' => Service::with('subservices')->get(),
             'order' => [
+                'id' => '',
+                'deadlinex' => '',
                 'client' => [
                     'name' => '',
                     'phone' => '',
                     'email' => '',
                     'whatsapp' => '0',
                 ],
-                'data' => [
-                    'id' => '',
-                    'deadline' => '',
-                    'created_at' => '',
-                ],
                 'services' => [
                     [
                         'detail' => [
                             'design' => []
-                        ]
+                        ],
+                        'service' => [],
+                        'subservice' => [],
                     ]
-                ],
-                'payments' => [
-
                 ],
                 'payment' => [
                     'total' => ''
-                ],
-                'detail' => [
-                    'deadline' => ''
-                ],
+                ]
             ],
         ]);
     }
 
-    public function salePointEdit($id)
+    public function update($id)
     {
         $this->authorize('create', new Order());
-        $model = Order::with('client')->with('details')->find($id)->toArray();
+        $model = Order::with('client')->with('services')->find($id)->toArray();
 
-        return view('back.sale.edit', [
-            'available_services' => Service::all(),
-            'model' => $model
+        // dd($model);
+        // return json_encode($model);
+        return view('back.sale_point.update', [
+            'available_services' => Service::with('subservices')->get(),
+            'order' => $model
         ]);
     }
 

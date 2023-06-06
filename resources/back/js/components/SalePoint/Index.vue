@@ -32,7 +32,7 @@ export default {
         this.order = this.orderp;
         this.extra = this.extrap;
         window.addEventListener("beforeunload", (event) => {
-        // event.returnValue = true;
+            // event.returnValue = true;
         });
     },
     methods: {

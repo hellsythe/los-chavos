@@ -29,12 +29,17 @@ class OrderDetail extends BaseModel
 
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class)->select(['id', 'name']);
     }
 
     public function subservice(): BelongsTo
     {
-        return $this->belongsTo(Subservice::class);
+        return $this->belongsTo(Subservice::class)->select(['id', 'name']);
+    }
+
+    public function garment(): BelongsTo
+    {
+        return $this->belongsTo(Garment::class);
     }
 
     public function getDetailAttribute()

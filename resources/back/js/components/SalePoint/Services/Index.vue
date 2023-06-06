@@ -26,7 +26,7 @@
                     </li>
                 </ul>
                 <div v-for="(service, index) in order.services">
-                    <ServiceComponent :extra="extra" :index="index" :order="order" :service="service" :ref="'services'"
+                    <ServiceComponent :extra="extra" :index="index" :service="service" :ref="'services'"
                         :currentServiceIndex="currentServiceIndex" :availableservices="availableservices" />
                 </div>
                 <div class="flex justify-end	">
@@ -74,7 +74,9 @@ export default {
             this.order.services.push({
                 detail: {
                     design: {}
-                }
+                },
+                service: {},
+                subservice: {},
             });
         },
         validate() {
@@ -82,7 +84,6 @@ export default {
             for (let index = 0; index < this.order.services.length; index++) {
                 errors = errors || this.$refs.services[index].validate();
             }
-
 
             if (getAllErrorsAsArray(this.extra.errors.services).length == 0) {
                 this.extra.steps.service = false;

@@ -45,8 +45,6 @@ export default {
     created() {
         this.extra.errors.services[this.index] = {};
         this.cleanErrors();
-        this.service.service = {};
-        this.service.subservice = {};
     },
     methods: {
         validate() {
@@ -66,7 +64,6 @@ export default {
         cleanErrors() {
             this.extra.errors.services[this.index] = {};
         },
-
         validateCommon() {
             if (!this.service.service.id) {
                 this.extra.errors.services[this.index].service = 'El Tipo servicio no puede estar vacio';
