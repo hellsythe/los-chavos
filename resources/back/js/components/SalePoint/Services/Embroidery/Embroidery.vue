@@ -59,7 +59,6 @@ export default {
             this.errors.services[this.index].detail = {};
 
             if (!this.service.subservice?.id) {
-                console.log('anim');
                 this.errors.services[this.index].detail.subservice = 'El subservicio no puede estar vacio';
             }
 
