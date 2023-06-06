@@ -44,8 +44,9 @@ export default {
         };
     },
     mounted() {
-        console.log('sunanita');
         if (this.service.garment) {
+            this.service.point_x = parseInt(this.service.point_x);
+            this.service.point_y = parseInt(this.service.point_y);
             this.initCanva();
         }
     },
