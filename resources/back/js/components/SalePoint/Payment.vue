@@ -7,7 +7,7 @@
                 <h3 class="font-bold text-lg">Confirmar Orden</h3>
                 <div class="flex py-2">
                     <p>Total a pagar: </p>
-                    <p class=" ml-auto">{{ formatter(order.payment.total) }}</p>
+                    <p class=" ml-auto">{{ formatter(order.total) }}</p>
                 </div>
                 <div class="flex py-2">
                     <p class="flex items-center">Anticipo: </p>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="flex py-2">
                     <p>Resta: </p>
-                    <p class="ml-auto">{{ formatter(order.payment.total - order.payment.advance) }}</p>
+                    <p class="ml-auto">{{ formatter(order.total - order.payment.advance) }}</p>
                 </div>
                 <div class="flex py-2">
                     <p class="flex items-center">Pago: </p>
@@ -58,8 +58,8 @@ export default {
         return {
         };
     },
-    mounted() {
-
+    created() {
+        this.order.payment = {};
     },
     methods: {
         formatter(amount){

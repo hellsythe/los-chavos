@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Sdkconsultoria\Core\Controllers\Traits\ApiControllerTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class SalePointController extends Controller
 {
@@ -65,40 +66,137 @@ class SalePointController extends Controller
         $this->authorize('create', new Order());
         $model = Order::with('client')->with('services')->find($id)->toArray();
 
-        // dd($model);
-        // return json_encode($model);
         return view('back.sale_point.update', [
             'available_services' => Service::with('subservices')->get(),
             'order' => $model
         ]);
     }
 
-    private function saveOrder($request)
+    public function saveOrder(Request $request)
     {
-        $order = new Order();
-        $order->order_number = $request['extra']['orderId'] ?? '0';
-        $order->deadline = $request['extra']['date'];
-        $order->created_by = auth()->user()->id;
-        $order->garment_id = $request['garment']['data']['id'];
-        $order->garment_amount = $request['garment']['amount'];
-        $order->client_id = $client->id;
-        $order->total = 0;
-        $order->save();
+        DB::beginTransaction();
+
+        $order = $this->findOrCreateOrder($request->order);
+        $this->saveServices($request->order['services'], $order);
+        $this->savePayment();
+
+        DB::commit();
 
         return [
             'order' => $order,
-            'ticket' => $this->generateTicket($order)
+            'request' => $request->order,
+            // 'ticket' => $this->generateTicket($order)
         ];
+    }
+
+    protected function findOrCreateOrder($order): Order
+    {
+        $order_model = new Order();
+        $order_model->deadline = $order['deadlinex'];
+        $order_model->total = $order['total'];
+        $order_model->created_by = auth()->user()->id;
+        $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
+        $order_model->order_number = $order['order_number'];
+        $order_model->save();
+
+        return $order_model;
+    }
+
+    protected function findOrCreateClient($client): Client
+    {
+        $clientModel = Client::where('phone', $client['phone'])->first();
+
+        if (!$clientModel) {
+            $clientModel = new Client();
+        }
+
+        $clientModel->status = Client::STATUS_ACTIVE;
+        $clientModel->name = $client['name'];
+        $clientModel->phone = $client['phone'];
+        $clientModel->email = $client['email'] ?? '';
+        $clientModel->whatsapp = $client['whatsapp'] ?? 0;
+        $clientModel->save();
+
+        return $clientModel;
+    }
+
+    protected function saveServices($services, $order)
+    {
+        foreach ($services as $service) {
+            $order_detail = $this->findOrCreateOrderDetail($service, $order);
+        }
+    }
+
+    protected function findOrCreateOrderDetail($service, $order): OrderDetail
+    {
+        $detail = new OrderDetail();
+        $detail->service_id = $service['service']['id'];
+        $detail->subservice_id = $service['subservice']['id'];
+        $detail->comments = $service['comments'];
+        $detail->garment_amount = $service['garment_amount'];
+        $detail->garment_id = $service['garment_id'];
+        $detail->point_x = $service['point_x'];
+        $detail->point_y = $service['point_y'];
+        $detail->price = $service['price'];
+        $detail->total = $service['total'];
+        $detail->order_id = $order->id;
+        $detail->save();
+
+        $this->findOrOrderDetailDetail($service, $detail);
+
+        return $detail;
+    }
+
+    protected function findOrOrderDetailDetail($service, $detail)
+    {
+        switch ($detail->subservice_id) {
+            case 1:
+                $this->saveExistingDesing($detail, $service);
+                break;
+            case 2:
+                $this->saveCustom($detail, $service);
+                break;
+            case 3:
+                $this->saveUpdateDesing($detail, $service);
+                break;
+            case 4:
+                $this->saveNewDesign($detail, $service);
+                break;
+            case 5:
+                $this->savePrintDesign($detail, $service);
+                break;
+        }
+    }
+
+    protected function saveExistingDesing($detail, $service)
+    {
+        $model = new OrderDesign();
+        $model->order_detail_id = $detail->id;
+        $model->design_id = $service['detail']['design']['id'];
+        $model->save();
+    }
+
+    protected function saveOrderInDB()
+    {
+        DB::beginTransaction();
+
+        DB::rollBack();
+
+        // DB::commit();
     }
 
 
     private function generateTicket($order)
     {
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
-        $pdf->setPaper([0,0,210,520]);
+        $pdf->setPaper([0, 0, 210, 520]);
 
-        Storage::put('public/tickets/'.$order->id.'.pdf', $pdf->output());
+        Storage::put('public/tickets/' . $order->id . '.pdf', $pdf->output());
 
-        return config('app.url').Storage::url('public/tickets/'.$order->id.'.pdf');
+        return config('app.url') . Storage::url('public/tickets/' . $order->id . '.pdf');
+    }
+
+    protected function savePayment()
+    {
     }
 }

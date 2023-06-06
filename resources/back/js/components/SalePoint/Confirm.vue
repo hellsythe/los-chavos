@@ -73,10 +73,10 @@
                         </tfoot>
                     </table>
                 </div>
-                <!-- <PaymentComponent :order="order" :openModal="openModal">
+                <PaymentComponent :order="order" :openModal="openModal">
                     <button @click="saveOrder" class="btn" :disabled="loading" >Guardar e Imprimir ticket</button>
                     <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
-                </PaymentComponent> -->
+                </PaymentComponent>
                 <div class="flex justify-end">
                     <label @click="registerPayment" class="btn">Registrar Pago</label>
                 </div>
@@ -117,7 +117,7 @@ export default {
                 }
             });
 
-            // this.order.payment.total = (total) + extra;
+            this.total = (total) + extra;
 
             return {
                 neto: this.formatter(sum),

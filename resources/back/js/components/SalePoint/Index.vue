@@ -37,7 +37,7 @@ export default {
     },
     methods: {
         async saveOrder(){
-            let response = await postToApi(`/admin/sale-save-2`, {
+            let response = await postToApi(`/admin/sale-save`, {
                 order: this.order,
             });
 

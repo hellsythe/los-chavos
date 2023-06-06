@@ -123,7 +123,7 @@ class Order extends BaseModel
 
     public function getDeadlinexAttribute(): string
     {
-        return $this->attributes['deadline'];
+        return $this->attributes['deadline'] ?? '';
     }
 
     public function getColorStatusAttribute()
