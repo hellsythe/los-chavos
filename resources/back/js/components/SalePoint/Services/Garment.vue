@@ -2,7 +2,7 @@
     <div class="lg:flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipo de prenda</span></label>
-            <TypeaheadInput :dusk="`service${index}-garment`" :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
+            <TypeaheadInput :currentValue="service.garment?.name" :dusk="`service${index}-garment`" :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[this.index].garment?.garment }}</div>

@@ -2,7 +2,7 @@
     <div class="flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">{{ text }}</span></label>
-            <TypeaheadInput :dusk="`service${index}-design`" :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
+            <TypeaheadInput :currentValue="service.detail.design?.name"  :dusk="`service${index}-design`" :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.design }}</div>
