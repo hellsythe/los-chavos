@@ -21,7 +21,7 @@
     <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" />
     <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" />
     <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" />
-    <DesignComponent v-if="service.subservice.id == 1" :service="service" text="Diseño Existente" :errors="errors" ref="exist" />
+    <DesignComponent v-if="service.subservice.id == 1" :design="service.detail.design" text="Diseño Existente" :error="errors.detail.design.id" ref="exist" />
 </template>
 
 <script>
@@ -81,7 +81,7 @@ export default {
 
             if (this.$refs.exist) {
                 if (!this.service.detail.design.id) {
-                    this.errors.detail.design.id = 'El diseño no puede estar vacio';
+                    this.errors.detail.design.id = 'El archivo no puede estar vacio';
                 }
             }
         }

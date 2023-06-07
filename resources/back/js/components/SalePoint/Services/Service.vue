@@ -72,6 +72,7 @@ export default {
         {
             this.errors.detail = {};
             this.errors.detail.design = {};
+            this.errors.detail.old_design = {};
         }
     },
 };
