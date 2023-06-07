@@ -2,10 +2,10 @@
     <div class="flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">{{ text }}</span></label>
-            <TypeaheadInput :currentValue="service.detail.design?.name"  :dusk="`service${index}-design`" :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
+            <TypeaheadInput :currentValue="service.detail.design.name" :loadFromApiUrl="'/admin/design/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.design }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.design.id }}</div>
         </div>
         <div class="mt-6">
             <button @click="showPreview = false" v-if="showPreview" class="btn btn-info mt-3 mb-3">Ocultar Preview</button>
@@ -29,7 +29,6 @@ export default {
         service: JSON,
         text: String,
         errors: JSON,
-        index: Number,
     },
     components: {
         TypeaheadInput
@@ -42,7 +41,6 @@ export default {
     },
     methods: {
         selectedData(value) {
-            this.service.detail = {};
             this.service.detail.design = {
                 id: value.id,
                 name: value.name,

@@ -76,6 +76,9 @@ export default {
             return date;
         },
     },
+    created(){
+        this.clearErrors();
+    },
     methods: {
         validate() {
             this.clearErrors();

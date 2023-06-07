@@ -8,12 +8,12 @@
                     service.name
                 }}</option>
             </select>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.services[index]?.service }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service }}</div>
         </div>
 
-        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="extra.errors" :availableservices="availableservices" :index="index"  ref="embrodery" />
-        <PrintComponent v-if="service.service.id == 2" :service="service" :errors="extra.errors" :index="index"  ref="print" />
-        <GarmentComponent :service="service" :errors="extra.errors" :index="index" ref="garment" />
+        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="errors" :availableservices="availableservices" :index="index"  ref="embrodery" />
+        <PrintComponent v-if="service.service.id == 2" :service="service" :errors="errors" ref="print" />
+        <GarmentComponent :service="service" :errors="errors" ref="garment" :index="index" />
 
         <div class="form-control w-full mb-2 mt-2">
             <label for="" class="label"><span class="label-text">Comentarios</span></label>
@@ -31,7 +31,7 @@ import GarmentComponent from './Garment.vue';
 export default {
     name: "Service",
     props: {
-        extra: JSON,
+        errors: JSON,
         service: JSON,
         availableservices: JSON,
         index: Number,
@@ -43,7 +43,9 @@ export default {
         GarmentComponent,
     },
     created() {
-        this.extra.errors.services[this.index] = {};
+        if (!this.service.detail) {
+            this.service.detail = {};
+        }
         this.cleanErrors();
     },
     methods: {
@@ -61,14 +63,16 @@ export default {
             this.$refs.garment.validate();
 
         },
-        cleanErrors() {
-            this.extra.errors.services[this.index] = {};
-        },
         validateCommon() {
             if (!this.service.service.id) {
-                this.extra.errors.services[this.index].service = 'El Tipo servicio no puede estar vacio';
+                this.errors.service = 'El Tipo servicio no puede estar vacio';
             };
         },
+        cleanErrors()
+        {
+            this.errors.detail = {};
+            this.errors.detail.design = {};
+        }
     },
 };
 </script>

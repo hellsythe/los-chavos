@@ -13,7 +13,8 @@
             <div v-if="extra.steps.confirm">
                 <div class="lg:flex">
                     <div class="form-control mb-2 mr-2 w-64">
-                        <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la prendas?</span></label>
+                        <label for="" class="label"><span class="label-text">¿Se tiene un pedido para la
+                                prendas?</span></label>
                         <select v-model="order.order_number" class="select w-full max-w-xs">
                             <option value="1">Si es un pedido</option>
                             <option value="0">No es un pedido</option>
@@ -44,23 +45,28 @@
                                 </tr>
                                 <tr v-if="service.subservice.id == 4">
                                     <td>-</td>
-                                    <td> <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Diseño
-                                            nuevo</label> <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
-                                            prendas</strong></td>
-                                    <td :class="{ 'line-through': service.garment_amount > 6 }">{{ formatter(service.price)
-                                    }}
+                                    <td colspan="3">
+                                        <label :class="{ 'line-through': service.garment_amount > 6 }">
+                                            Costo Por Diseño nuevo
+                                        </label>
+                                        <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
+                                            prendas
+                                        </strong>
                                     </td>
-                                    <td v-if="service.garment_amount > 1" :class="{ 'line-through': service.garment_amount > 6 }">
-                                        {{ formatter(service.price) }}</td>
+                                    <td :class="{ 'line-through': service.garment_amount > 6 }">
+                                        {{ formatter(service.price) }}
+                                    </td>
+
                                 </tr>
                                 <tr v-if="service.subservice.id == 3">
                                     <td>-</td>
-                                    <td> <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Modificar
-                                            diseño</label> <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
-                                            prendas</strong></td>
+                                    <td colspan="3">
+                                        <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Modificar
+                                            diseño</label>
+                                        <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
+                                            prendas</strong>
+                                    </td>
                                     <td :class="{ 'line-through': service.garment_amount > 6 }">
-                                        {{ formatter(service.price_update) }}</td>
-                                    <td v-if="service.garment_amount > 1" :class="{ 'line-through': service.garment_amount > 6 }">
                                         {{ formatter(service.price_update) }}</td>
                                 </tr>
                             </template>
@@ -74,7 +80,7 @@
                     </table>
                 </div>
                 <PaymentComponent :order="order" :openModal="openModal">
-                    <button @click="saveOrder" class="btn" :disabled="loading" >Guardar e Imprimir ticket</button>
+                    <button @click="saveOrder" class="btn" :disabled="loading">Guardar e Imprimir ticket</button>
                     <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
                 </PaymentComponent>
                 <div class="flex justify-end">
@@ -102,28 +108,23 @@ export default {
     },
     computed: {
         total: function () {
-            let sum = 0;
+            let that = this;
             let extra = 0;
             let total = 0;
 
-            this.order.services.forEach(function (item) {
-                sum += item.price;
+            this.order.services.forEach(function (item, index) {
+                that.order.services[index].total = item.price * item.garment_amount;
                 total += item.price * item.garment_amount;
-                if (item.subservice.id == 4 && item.garment_amount <= 6) {
-                    extra += item.price;
-                }
-                if (item.subservice.id == 3 && item.garment_amount <= 6) {
+
+                if ((item.subservice.id == 3 || item.subservice.id == 4) && item.garment_amount <= 6) {
                     extra += item.price;
                 }
             });
 
-            this.total = (total) + extra;
-
+            this.order.total = total + extra;
             return {
-                neto: this.formatter(sum),
                 extra: this.formatter(extra),
-                sum: this.formatter(sum + extra),
-                total: this.formatter((total) + extra),
+                total: this.formatter(this.order.total),
             };
         }
     },

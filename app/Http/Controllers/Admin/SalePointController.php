@@ -85,7 +85,7 @@ class SalePointController extends Controller
         return [
             'order' => $order,
             'request' => $request->order,
-            // 'ticket' => $this->generateTicket($order)
+            'ticket' => $this->generateTicket($order)
         ];
     }
 
@@ -132,13 +132,13 @@ class SalePointController extends Controller
         $detail = new OrderDetail();
         $detail->service_id = $service['service']['id'];
         $detail->subservice_id = $service['subservice']['id'];
-        $detail->comments = $service['comments'];
+        $detail->comments = $service['comments'] ?? null;
         $detail->garment_amount = $service['garment_amount'];
-        $detail->garment_id = $service['garment_id'];
+        $detail->garment_id = $service['garment']['id'];
         $detail->point_x = $service['point_x'];
         $detail->point_y = $service['point_y'];
         $detail->price = $service['price'];
-        $detail->total = $service['total'];
+        $detail->total = $service['total'] ?? '0';
         $detail->order_id = $order->id;
         $detail->save();
 

@@ -20,11 +20,11 @@
         <div class="form-control mb-2 mr-2" v-if="service.is_new_design && service.design_is_here">
             <label for="" class="label"><span class="label-text">Nombre del nuevo diseño de Estampado</span></label>
             <input type="text" class="input input-bordered" v-model="service.print_name" />
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[index].print?.name }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.print?.name }}</div>
         </div>
 
         <div v-show="service.is_new_design && service.design_is_here" class="form-control w-full mb-2 mr-2">
-            <LoadFile :file="service.detail.design" :errors="errors.services[index]" />
+            <LoadFile :file="service.detail.design" :errors="errors" />
         </div>
         <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
@@ -32,7 +32,7 @@
                 <span>$</span>
                 <input type="number" class="input input-bordered" v-model="service.detail.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[index].detail?.price }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.price }}</div>
         </div>
         <div v-if="service.is_new_design && !service.design_is_here" class="alert alert-warning shadow-lg mt-2">
             <div>
@@ -81,22 +81,22 @@ export default {
     },
     methods: {
         validate() {
-            this.errors.services[this.index].detail = {};
-            this.errors.services[this.index].print = {};
+            this.error.detail = {};
+            this.error.print = {};
 
             if (this.service.is_new_design && this.service.design_is_here) {
                 if (!this.service.print_name) {
-                    this.errors.services[this.index].print.name = 'El nombre del diseño no puede estar vacio';
+                    this.error.print.name = 'El nombre del diseño no puede estar vacio';
                 }
 
                 if (!this.service.detail.design?.file) {
-                    this.errors.services[this.index].detail.design = {};
-                    this.errors.services[this.index].detail.design.file = 'El archivo del diseño no puede estar vacio';
+                    this.error.detail.design = {};
+                    this.error.detail.design.file = 'El archivo del diseño no puede estar vacio';
                 }
             }
 
             if (!this.service.detail.price) {
-                this.errors.services[this.index].detail.price = 'El Costo no puede estar vacio';
+                this.error.detail.price = 'El Costo no puede estar vacio';
             }
         }
     }

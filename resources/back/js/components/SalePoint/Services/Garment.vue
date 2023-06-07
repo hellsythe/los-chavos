@@ -5,12 +5,12 @@
             <TypeaheadInput :currentValue="service.garment?.name" :dusk="`service${index}-garment`" :loadFromApiUrl="'/admin/garment/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre la prenda">
             </TypeaheadInput>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[this.index].garment?.garment }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.garment?.garment }}</div>
         </div>
         <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Cantidad de prendas</span></label>
             <input :dusk="`service${index}-garment-amount`" v-model="service.garment_amount" type="number" class="input input-bordered w-full">
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.services[this.index].garment?.amount }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.garment?.amount }}</div>
         </div>
     </div>
     <div v-show="service.garment?.preview" class="mt-3">
@@ -99,14 +99,14 @@ export default {
 
         },
         validate() {
-            this.errors.services[this.index].garment = {};
+            this.errors.garment = {};
 
             if (!this.service.garment) {
-                this.errors.services[this.index].garment.garment = 'La prenda no puede estar vacia';
+                this.errors.garment.garment = 'La prenda no puede estar vacia';
             }
 
             if (!this.service.garment_amount) {
-                this.errors.services[this.index].garment.amount = 'El numero de prendas no puede estar vacio';
+                this.errors.garment.amount = 'El numero de prendas no puede estar vacio';
             }
         }
     },
