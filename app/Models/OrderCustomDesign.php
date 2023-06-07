@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
 
@@ -20,5 +21,10 @@ class OrderCustomDesign extends BaseModel
             'singular' => 'OrderCustomDesign',
             'plural' => 'OrderCustomDesign',
         ];
+    }
+
+    public function typography(): BelongsTo
+    {
+        return $this->belongsTo(Typography::class);
     }
 }

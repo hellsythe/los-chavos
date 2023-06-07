@@ -2,7 +2,7 @@
     <div class="flex">
         <div class="form-control w-full mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Tipografía</span></label>
-            <TypeaheadInput :currentValue="service.typography?.name" :loadFromApiUrl="'/admin/typography/api?name={search}&page=1'" @selected="selectedData"
+            <TypeaheadInput :currentValue="service.detail.typography.name" :loadFromApiUrl="'/admin/typography/api?name={search}&page=1'" @selected="selectedData"
                 :ignoredList="selectedItemIds" placeholder="Escribe el nombre del diseño">
             </TypeaheadInput>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.textsize }}</div>
@@ -10,7 +10,7 @@
 
         <div class="form-control w-full mb-2">
             <label for="" class="label"><span class="label-text">Tamaño</span></label>
-            <select v-model="this.service.textsize" class="select select-bordered w-full">
+            <select v-model="this.service.detail.size" class="select select-bordered w-full">
                 <option disabled selected>Elije uno</option>
                 <option>Adulto max 10 cm de ancho</option>
                 <option>Niño max 7 cm de ancho</option>
@@ -19,9 +19,9 @@
         </div>
     </div>
 
-    <div v-if="this.service.typography" class="form-control w-full mb-2">
+    <div v-if="this.service.detail.typography" class="form-control w-full mb-2">
         <label for="" class="label"><span class="label-text">Texto a Bordar</span></label>
-        <TipTap v-model="service.custom.text" :style="{ 'font-family': fontFamily }"></TipTap>
+        <TipTap v-model="service.detail.text" :style="{ 'font-family': fontFamily }"></TipTap>
         <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.custom }}</div>
     </div>
 </template>
@@ -48,11 +48,13 @@ export default {
         };
     },
     created() {
-        this.service.custom = { text: '' }
+        if (!this.service.detail.typography) {
+            this.service.detail.typography = {};
+        }
     },
     methods: {
         selectedData(value) {
-            this.service.typography = {
+            this.service.detail.typography = {
                 id: value.id,
                 name: value.name,
                 slutname: value.name.replace(/\s+/g, ''),

@@ -176,13 +176,65 @@ class SalePointController extends Controller
         $model->save();
     }
 
+    private function saveCustom($detail, $service)
+    {
+        $model = new OrderCustomDesign();
+        $model->order_detail_id = $detail->id;
+        $model->text = $service['detail']['text'];
+        $model->typography_id = $service['detail']['typography']['id'];
+        $model->size = $service['detail']['size'];
+        $model->save();
+
+        return $model;
+    }
+
+    private function saveNewDesign($detail, $service)
+    {
+        $design = $this->createNewDesign($service['detail']);
+
+        $model = new OrderNewDesign();
+        $model->order_detail_id = $detail->id;
+        $model->design_id = $design->id;
+        $model->price = $service['detail']['price'];
+        $model->save();
+
+        return $model;
+    }
+
+    private function createNewDesign($service)
+    {
+        $design = new Design();
+        $design->created_by = auth()->user()->id;
+        $design->minutes = $service['design']['minutes'];
+        $design->price = $service['price'];
+        $design->name = $service['design']['name'];
+        $design->media = 'prueba';
+        $design->status = Design::STATUS_ACTIVE;
+        $design->save();
+        $design->media = URL::to('/storage/design/' . $design->id . '.pdf');
+        $design->save();
+        $this->saveFileDesign($service['design']['file'], $design->id);
+
+        return $design;
+    }
+
+    private function saveFileDesign($data, $id, $url = 'design', $ext = 'pdf')
+    {
+        list($type, $data) = explode(';', $data);
+        list($app, $extension) = explode('/', $type);
+        list(, $data) = explode(',', $data);
+        $data = base64_decode($data);
+
+        Storage::put('public/' . $url . '/' . $id . '.' . $ext, $data);
+    }
+
     protected function saveOrderInDB()
     {
         DB::beginTransaction();
 
         DB::rollBack();
 
-        // DB::commit();
+        DB::commit();
     }
 
 

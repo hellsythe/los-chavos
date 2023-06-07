@@ -47,6 +47,8 @@ class OrderDetail extends BaseModel
         switch ($this->subservice_id) {
             case 1:
                 return $this->orderDesign()->with('design')->first();
+            case 2:
+                return $this->orderCustomDesign()->with('typography')->first();
             case 3:
                 return $this->orderUpdateDesign()->with('design')->first();
             case 4:

@@ -71,7 +71,9 @@ export default {
     },
     created(){
         this.extra.errors.services = [];
-        this.extra.errors.services[this.currentServiceIndex] = {};
+        this.order.services.forEach((service, index) => {
+            this.extra.errors.services[index] = {};
+        });
     },
     methods: {
         addNewService() {
