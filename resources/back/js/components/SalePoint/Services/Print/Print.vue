@@ -1,40 +1,44 @@
 <template>
     <div class="form-control mb-2 mr-2">
         <div class="form-control mb-2 mr-2">
-            <label for="¿Es un Diseño Nuevo?">¿Es un Diseño Nuevo?</label>
-            <select v-model="service.is_new_design" class="select w-full max-w-xs">
+            <label>¿Es un Diseño Nuevo?</label>
+            <select v-model="service.detail.is_new_design" class="select w-full max-w-xs">
                 <option :value="false">No</option>
                 <option :value="true">Si</option>
             </select>
         </div>
-        <div v-if="service.is_new_design" class="form-control mb-2 mr-2">
-            <label for="¿Es un Diseño Nuevo?">¿El cliente cuenta con el diseño en este momento?</label>
-            <select v-model="service.design_is_here" class="select w-full max-w-xs">
+        <div v-if="service.detail.is_new_design" class="form-control mb-2 mr-2">
+            <label>¿El cliente cuenta con el diseño en este momento?</label>
+            <select v-model="service.detail.design_is_here" class="select w-full max-w-xs">
                 <option :value="false">No</option>
                 <option :value="true">Si</option>
             </select>
         </div>
 
-        <DesignPrint v-else :service="service" text="Diseño Existente" :errors="errors" />
+        <DesignPrint v-else :design="service.detail.design" :error="errors.detail.design.id" />
 
-        <div class="form-control mb-2 mr-2" v-if="service.is_new_design && service.design_is_here">
-            <label for="" class="label"><span class="label-text">Nombre del nuevo diseño de Estampado</span></label>
-            <input type="text" class="input input-bordered" v-model="service.print_name" />
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.print?.name }}</div>
+        <div v-show="service.detail.is_new_design && service.detail.design_is_here">
+            <div class="form-control mb-2 mr-2">
+                <label for="" class="label"><span class="label-text">Nombre del nuevo diseño de Estampado</span></label>
+                <input type="text" class="input input-bordered" v-model="service.detail.design.name" />
+                <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.design.name }}</div>
+            </div>
+
+            <div class="form-control w-full mb-2 mr-2">
+                <LoadFile :file="service.detail.design" :error="errors.detail.design.file" />
+            </div>
         </div>
 
-        <div v-show="service.is_new_design && service.design_is_here" class="form-control w-full mb-2 mr-2">
-            <LoadFile :file="service.detail.design" :errors="errors" />
-        </div>
         <div class="form-control mb-2 mr-2">
             <label for="" class="label"><span class="label-text">Costo por prenda</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="number" class="input input-bordered" v-model="service.detail.price" />
+                <input type="number" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.price }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.price }}</div>
         </div>
-        <div v-if="service.is_new_design && !service.design_is_here" class="alert alert-warning shadow-lg mt-2">
+        <div v-if="service.detail.is_new_design && !service.detail.design_is_here"
+            class="alert alert-warning shadow-lg mt-2">
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
                     viewBox="0 0 24 24">
@@ -44,9 +48,9 @@
                 <span>Si no se cuenta con diseño este se debera subir posteriormente</span>
             </div>
         </div>
-        <div v-if="service.design_is_here" class="form-control mb-2 mr-2">
+        <div v-if="service.detail.design_is_here" class="form-control mb-2 mr-2">
             <label for="¿Es un Diseño Nuevo?">¿Se debe guardar el diseño para usarse en otras ordenes?</label>
-            <select v-model="service.save_design" class="select w-full max-w-xs">
+            <select v-model="service.detail.save_design" class="select w-full max-w-xs">
                 <option :value="false">No</option>
                 <option :value="true">Si</option>
             </select>
@@ -68,35 +72,41 @@ export default {
     props: {
         service: JSON,
         errors: JSON,
-        index: Number,
     },
     mounted() {
-        this.service.is_new_design = true;
-        this.service.design_is_here = true;
-        this.service.save_design = false;
+        this.service.detail.is_new_design = true;
+        this.service.detail.design_is_here = true;
+        this.service.detail.save_design = false;
         this.service.subservice = {
             id: 5,
             name: 'Estampado'
         }
     },
+    created(){
+        if (this.service.detail.design_print) {
+            this.service.detail.design = this.service.detail.design_print;
+        }
+    },
     methods: {
         validate() {
-            this.error.detail = {};
-            this.error.print = {};
-
-            if (this.service.is_new_design && this.service.design_is_here) {
-                if (!this.service.print_name) {
-                    this.error.print.name = 'El nombre del diseño no puede estar vacio';
+            if (this.service.detail.is_new_design && this.service.detail.design_is_here) {
+                if (!this.service.detail.design.name) {
+                    this.errors.detail.design.name = 'El nombre del diseño no puede estar vacio';
                 }
 
-                if (!this.service.detail.design?.file) {
-                    this.error.detail.design = {};
-                    this.error.detail.design.file = 'El archivo del diseño no puede estar vacio';
+                if (!this.service.detail.design.file) {
+                    this.errors.detail.design.file = 'El archivo del diseño no puede estar vacio';
                 }
             }
 
-            if (!this.service.detail.price) {
-                this.error.detail.price = 'El Costo no puede estar vacio';
+            if (!this.service.detail.is_new_design) {
+                if (!this.service.detail.design.id) {
+                    this.errors.detail.design.id = 'El diseño a estampar no puede estar vacio';
+                }
+            }
+
+            if (!this.service.detail.design.price) {
+                this.errors.detail.price = 'El costo del diseño no puede estar vacio';
             }
         }
     }

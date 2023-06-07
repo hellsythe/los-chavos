@@ -12,10 +12,10 @@
             <button @click="showPreview = true" v-if="!showPreview" class="btn btn-info mt-3 mb-3">Mostrar Preview</button>
         </div>
     </div>
-    <div v-if="getDesignFileFormat() == 'pdf'" class="flex flex-col justify-end items-end">
+    <div v-if="fileFormat == 'pdf'" class="flex flex-col justify-end items-end">
         <embed v-if="showPreview" :src="this.design.media" width="100%" height="700px" />
     </div>
-    <div v-if="getDesignFileFormat() == 'png' || getDesignFileFormat() == 'jpg'" class="flex flex-col justify-end items-end">
+    <div v-if="fileFormat == 'png' || fileFormat == 'jpg' || fileFormat == 'jpeg'" class="flex flex-col justify-end items-end">
         <img v-if="showPreview" :src="this.design.media" width="100%" height="700px" />
     </div>
 </template>
@@ -29,6 +29,9 @@ export default {
         design: JSON,
         text: String,
         error: String,
+        detail: {
+            default: {}
+        },
     },
     components: {
         TypeaheadInput
@@ -39,16 +42,22 @@ export default {
             showPreview: true,
         };
     },
+    computed: {
+        fileFormat() {
+            return this.design?.media?.split('.').pop();
+        }
+    },
     methods: {
         selectedData(value) {
             this.design.id = value.id;
             this.design.name = value.name;
             this.design.media = value.media;
             this.design.price = value.price;
+            if (this.detail){
+                this.detail.price = value.price;
+            }
         },
-        getDesignFileFormat() {
-            return this.design?.media?.split('.').pop();
-        }
+
     },
 };
 </script>

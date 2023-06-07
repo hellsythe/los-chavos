@@ -80,7 +80,7 @@ class OrderDetail extends BaseModel
 
     public function orderDesignPrint()
     {
-        return $this->hasOne(OrderDesignPrint::class)->with('designPrint');
+        return $this->hasOne(OrderDesignPrint::class);
     }
 
     public function order()

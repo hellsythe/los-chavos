@@ -11,7 +11,7 @@
         </div>
     </div>
     <div v-show="showPreview">
-        <object style="display: none;" id="preview-selected-image" data=""
+        <object v-if="previewData" :data="previewData"
                     width="100%"
                     height="600">
             </object>
@@ -28,7 +28,7 @@ export default {
     data() {
         return {
             showPreview: true,
-            extension: '',
+            previewData: '',
         };
     },
     methods: {
@@ -48,11 +48,12 @@ export default {
             const filesLength = files.length;
             if (filesLength > 0) {
                 const imageSrc = URL.createObjectURL(files[0]);
-                const imagePreviewElement = document.querySelector("#preview-selected-image");
-                imagePreviewElement.data = imageSrc;
-                imagePreviewElement.style.display = "block";
-                const filename = event.target.files[0].name;
-                this.extension =filename.split(".").pop();
+                // const imagePreviewElement = document.querySelector("#preview-selected-image");
+                // imagePreviewElement.data = imageSrc;
+                // imagePreviewElement.style.display = "block";
+                // const filename = event.target.files[0].name;
+                // this.extension =filename.split(".").pop();
+                this.previewData = imageSrc;
             }
         }
     },

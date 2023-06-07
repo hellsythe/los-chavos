@@ -67,7 +67,7 @@
                                             prendas</strong>
                                     </td>
                                     <td :class="{ 'line-through': service.garment_amount > 6 }">
-                                        {{ formatter(service.price_update) }}</td>
+                                        {{ formatter(service.detail.design.price) }}</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -116,8 +116,14 @@ export default {
                 that.order.services[index].total = item.price * item.garment_amount;
                 total += item.price * item.garment_amount;
 
-                if ((item.subservice.id == 3 || item.subservice.id == 4) && item.garment_amount <= 6) {
-                    extra += item.price;
+                if ( item.garment_amount <= 6) {
+                    if (item.subservice.id == 3) {
+                        extra += item.detail.design.price;
+                    }
+
+                    if (item.subservice.id == 4) {
+                        extra += item.price;
+                    }
                 }
             });
 

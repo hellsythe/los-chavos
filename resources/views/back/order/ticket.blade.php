@@ -6,9 +6,8 @@
             <div style="margin-top: -20px"></div>
             <label>Folio: {{ $order->id }}</label> <br>
             <label>Fecha de orden: {{ Date::createFromDate($order->created_at)->format('d-m-Y') }}</label> <br>
-            <label>Fecha de entrega: {{ Date::createFromDate($order->getAttributes()['deadline'])->format('d-m-Y') }}</label> <br>
-            <label>Prenda: {{ $order->garment->name }}</label> <br>
-            <label>Cantidad de prendas: {{ $order->garment_amount }}</label> <br>
+            <label>Fecha de entrega: {{$order->deadline}}</label> <br>
+
             @if ($order->order_number)
                 <label>Es un pedido</label>
             @endif
@@ -21,20 +20,24 @@
                     <tr>
                         <td style="font-size: 12px; border: 1px solid; padding: 2px">
                             {{ $service->subservice->name }}
+                            <br>
                             @switch($service->subservice->id)
                                  @case(2)
-                                    {{$service->detail->text}}
+                                    Texto Personalizado: "{{Strip_tags($service->detail->text)}}"
                                     @break
 
                                 @default
-                                    {{$service->detail->design->name}}
+                                   Diseño: "{{$service->detail->design->name}}"
                             @endswitch
+                            <br>
+                            - Prenda: "{{$service->garment_amount}}"  <br>
+                            - Cantidad: "{{$service->garment->name}}"
                         </td>
                         <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: end;">
-                            ${{ number_format($service->price * $order->garment_amount, 2) }}
+                            ${{ number_format($service->price * $service->garment_amount, 2) }}
                         </td>
                     </tr>
-                    @if ($service->subservice->id == 4 && $order->garment_amount <=6)
+                    @if ($service->subservice->id == 4 && $service->garment_amount <=6)
                         <tr>
                             <td style="font-size: 12px; border: 1px solid; padding: 2px"> Costo Por Diseño nuevo</td>
                             <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: end;">
@@ -42,7 +45,7 @@
                             </td>
                         </tr>
                     @endif
-                    @if ($service->subservice->id == 3 && $order->garment_amount <=6)
+                    @if ($service->subservice->id == 3 && $service->garment_amount <=6)
                         <tr>
                             <td style="font-size: 12px; border: 1px solid; padding: 2px"> Costo Por Modificar diseño </td>
                             <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: end;">

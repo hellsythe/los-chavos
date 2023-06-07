@@ -79,8 +79,15 @@ class SalePointController extends Controller
         $order = $this->findOrCreateOrder($request->order);
         $this->saveServices($request->order['services'], $order);
         $this->savePayment();
+        $ticket = $this->generateTicket($order);
 
         DB::commit();
+
+        if ($order['client']['whatsapp'] ?? false) {
+            (new WhatsappNotification())->sendOrderTicketToClient($order);
+        }
+
+        (new WhatsappNotification())->sendNewOrder($order);
 
         return [
             'order' => $order,
@@ -188,6 +195,24 @@ class SalePointController extends Controller
         return $model;
     }
 
+    private function saveUpdateDesing($detail, $service)
+    {
+        $desingCurrent = Design::withTrashed()->where('id', $service['detail']['old_design']['id'])->first();
+        $service['detail']['design']['name'] = $desingCurrent->name;
+        $design = $this->createNewDesign($service['detail']);
+
+        $model = new OrderUpdateDesign();
+        $model->order_detail_id = $detail->id;
+        $model->price = $service['detail']['design']['price'];
+
+        $model->old_design_id = $desingCurrent->id;
+        $model->design_id = $design->id;
+        $model->save();
+        $desingCurrent->delete();
+
+        return $model;
+    }
+
     private function saveNewDesign($detail, $service)
     {
         $design = $this->createNewDesign($service['detail']);
@@ -203,29 +228,72 @@ class SalePointController extends Controller
 
     private function createNewDesign($service)
     {
+        $ext = explode(';', $service['design']['file']);
+        $ext = explode('/', $ext[0])[1];
+
         $design = new Design();
         $design->created_by = auth()->user()->id;
         $design->minutes = $service['design']['minutes'];
-        $design->price = $service['price'];
+        $design->price = $service['price'] ?? $service['design']['price'];
         $design->name = $service['design']['name'];
         $design->media = 'prueba';
         $design->status = Design::STATUS_ACTIVE;
         $design->save();
-        $design->media = URL::to('/storage/design/' . $design->id . '.pdf');
+        $design->media = URL::to('/storage/design/' . $design->id . '.' . $ext);
         $design->save();
-        $this->saveFileDesign($service['design']['file'], $design->id);
+
+        $this->saveFileDesign($service['design']['file'], $design->id, 'design');
 
         return $design;
     }
 
-    private function saveFileDesign($data, $id, $url = 'design', $ext = 'pdf')
+    private function saveFileDesign($data, $id, $url)
     {
         list($type, $data) = explode(';', $data);
         list($app, $extension) = explode('/', $type);
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
 
-        Storage::put('public/' . $url . '/' . $id . '.' . $ext, $data);
+        Storage::put('public/' . $url . '/' . $id . '.' . $extension, $data);
+    }
+
+    private function savePrintDesign($detail, $service)
+    {
+        $model = new OrderDesignPrint();
+        $model->order_detail_id = $detail->id;
+        $model->price = $service['price'];
+
+        if ($service['detail']['is_new_design']) {
+            if ($service['detail']['design_is_here']) {
+                $print = $this->createNewPrintDesign($service['detail']);
+                $model->design_print_id = $print->id;
+            }
+        } else {
+            $model->design_print_id = $service['detail']['design']['id'];
+        }
+
+        $model->save_design = $service['detail']['save_design'];
+        $model->if_new_design = $service['detail']['is_new_design'];
+        $model->save();
+    }
+
+    private function createNewPrintDesign($service)
+    {
+        $ext = explode(';', $service['design']['file']);
+        $ext = explode('/', $ext[0])[1];
+
+        $design = new DesignPrint();
+        $design->created_by = auth()->user()->id;
+        $design->price = $service['price'];
+        $design->name = $service['design']['name'];
+        $design->media = 'prueba';
+        $design->status = DesignPrint::STATUS_ACTIVE;
+        $design->save();
+        $design->media = URL::to('/storage/design-print/' . $design->id . '.' . $ext);
+        $design->save();
+        $this->saveFileDesign($service['design']['file'], $design->id, 'design-print');
+
+        return $design;
     }
 
     protected function saveOrderInDB()
@@ -240,12 +308,13 @@ class SalePointController extends Controller
 
     private function generateTicket($order)
     {
+        $size = $order->services()->count() * 80;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
-        $pdf->setPaper([0, 0, 210, 520]);
+        $pdf->setPaper([0,0,210,410 + $size]);
 
-        Storage::put('public/tickets/' . $order->id . '.pdf', $pdf->output());
+        Storage::put('public/tickets/'.$order->id.'.pdf', $pdf->output());
 
-        return config('app.url') . Storage::url('public/tickets/' . $order->id . '.pdf');
+        return config('app.url').Storage::url('public/tickets/'.$order->id.'.pdf');
     }
 
     protected function savePayment()
