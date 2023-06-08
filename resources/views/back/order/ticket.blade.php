@@ -67,7 +67,7 @@
                         <strong>Anticipo</strong>
                     </td>
                     <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;">
-                        <strong> ${{ number_format($order->total - $order->missing, 2)}}</strong></td>
+                        <strong> ${{ number_format($order->total - $order->missing_payment, 2)}}</strong></td>
                     </td>
                 </tr>
                 <tr>
@@ -75,7 +75,7 @@
                         <strong>Resta</strong>
                     </td>
                     <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: right;">
-                        <strong> ${{ number_format($order->missing, 2)}}</strong></td>
+                        <strong> ${{ number_format($order->missing_payment, 2)}}</strong></td>
                     </td>
                 </tr>
             </table>
