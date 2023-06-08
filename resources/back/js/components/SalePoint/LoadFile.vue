@@ -14,7 +14,11 @@
         <object v-if="previewData" :data="previewData"
                     width="100%"
                     height="600">
-            </object>
+        </object>
+        <object v-if="!previewData && file.media" :data="file.media"
+                    width="100%"
+                    height="600">
+        </object>
     </div>
 </template>
 
