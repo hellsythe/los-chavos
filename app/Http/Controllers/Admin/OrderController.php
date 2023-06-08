@@ -58,6 +58,18 @@ class OrderController extends ResourceController
         return $this->setPagination($query, $request);
     }
 
+    public function show(Request $request, $id)
+    {
+        $model = $this->model::findModel($id);
+        $this->authorize('create', new Order());
+
+        return view($this->view.'.show', [
+            'model' => $model,
+            'order' => Order::with('client')->with('services')->find($id)->toArray(),
+            'available_services' => Service::with('subservices')->get(),
+        ]);
+    }
+
     public function updateOrderStatus($id, $status)
     {
         $order = Order::findModel($id);
@@ -126,8 +138,8 @@ class OrderController extends ResourceController
         $order = Order::findModel($id);
         $size = $order->services()->count() * 80;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
-        $pdf->setPaper([0,0,210,410 + $size]);
-
+        $pdf->setPaper([0,0,180,430 + $size]);
+return $pdf->stream();
         Storage::put('public/tickets/'.$id.'.pdf', $pdf->output());
 
         return config('app.url').Storage::url('public/tickets/'.$id.'.pdf');

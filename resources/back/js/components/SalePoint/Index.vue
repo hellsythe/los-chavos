@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :extra="extra" :order="order" />
     <ServicesComponent :extra="extra" :order="order" :availableservices="availableservices" />
-    <ConfirmComponent :extra="extra" :order="order" @save-order="saveOrder" />
+    <ConfirmComponent v-if="!extra.readonly" :extra="extra" :order="order" @save-order="saveOrder" />
 </template>
 
 <script>
@@ -29,12 +29,16 @@ export default {
             extra: JSON,
         };
     },
-    beforeMount() {
+    created() {
         this.order = this.orderp;
         this.extra = this.extrap;
         window.addEventListener("beforeunload", (event) => {
             // event.returnValue = true;
         });
+
+        if(!this.extra.hasOwnProperty('readonly')){
+            this.extra.readonly = false;
+        }
     },
     methods: {
         async saveOrder() {

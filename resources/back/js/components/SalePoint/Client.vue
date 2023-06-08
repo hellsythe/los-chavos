@@ -47,7 +47,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="flex justify-end	">
+                <div class="flex justify-end" v-if="!extra.readonly">
                     <button dusk="client-next" class="btn btn-info" @click="validate">Siguiente</button>
                 </div>
             </div>
