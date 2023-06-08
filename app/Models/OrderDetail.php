@@ -50,7 +50,7 @@ class OrderDetail extends BaseModel
             case 2:
                 return $this->orderCustomDesign()->with('typography')->first();
             case 3:
-                return $this->orderUpdateDesign()->with('design')->first();
+                return $this->orderUpdateDesign()->with('design')->with('oldDesign')->first();
             case 4:
                 return $this->orderNewDesign()->with('design')->first();
             case 5:

@@ -26,4 +26,10 @@ class OrderUpdateDesign extends BaseModel
     {
         return $this->belongsTo(Design::class);
     }
+
+
+    public function oldDesign()
+    {
+        return $this->belongsTo(Design::class, 'old_design_id')->withTrashed();
+    }
 }
