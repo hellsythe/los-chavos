@@ -1,7 +1,7 @@
 <template>
     <ClientComponent :extra="extra" :order="order" />
     <ServicesComponent :extra="extra" :order="order" :availableservices="availableservices" />
-    <ConfirmComponent :extra="extra" :order="order" @save-order="saveOrder"/>
+    <ConfirmComponent :extra="extra" :order="order" @save-order="saveOrder" />
 </template>
 
 <script>
@@ -9,6 +9,7 @@ import { postToApi } from '@base/js/request/resquestToApi';
 import ClientComponent from './Client.vue';
 import ServicesComponent from './Services/Index.vue';
 import ConfirmComponent from './Confirm.vue';
+import printJS from 'print-js'
 
 export default {
     name: "SalePoint",
@@ -36,28 +37,20 @@ export default {
         });
     },
     methods: {
-        async saveOrder(){
+        async saveOrder() {
             let response = await postToApi(`/admin/sale-save`, {
                 order: this.order,
             });
 
-            this.order.data.id = response.id;
+            this.order.id = response.order.id;
 
-            if (this.order.data.id) {
-                // await new Promise(r => setTimeout(r, 300));
-
-                // JsBarcode("#barcode", this.order.id, {
-                //     height: 25,
-                //     fontSize: 12,
-                //     displayValue: false
-                // });
-
-                // this.$refs.report.print();
-
-                // let that = this;
-                // setTimeout(function(){
-                //     that.printed.value = true
-                // }, 1000);
+            if (this.order.id) {
+                printJS({
+                    printable: response.ticket,
+                    onPrintDialogClose: function () {
+                        window.location.href = `/admin/order/${response.order.id}`;
+                    },
+                });
             }
         }
     },

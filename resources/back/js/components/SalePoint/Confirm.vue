@@ -81,7 +81,7 @@
                 </div>
                 <PaymentComponent :order="order" :openModal="openModal" :errors="extra.errors" ref="payment">
                     <button @click="saveOrder" class="btn" :disabled="loading">Guardar e Imprimir ticket</button>
-                    <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
+                    <!-- <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label> -->
                 </PaymentComponent>
                 <div class="flex justify-end">
                     <label @click="registerPayment" class="btn">Registrar Pago</label>
@@ -155,7 +155,7 @@ export default {
             const payment_errors = getAllErrorsAsArrayFromObject(this.extra.errors.payment);
 
             if (payment_errors.length == 0) {
-                // this.loading = true;
+                this.loading = true;
                 this.order.missing_payment = this.order.total - this.order.payment.advance;
                 await this.$emit('save-order');
             }
