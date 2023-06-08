@@ -85,8 +85,7 @@
                 'readonly' => true
             ])}}"
         />
-
-        <payment-detail-component :model="{{ $model }}" />
+        </sale-point>
     </div>
 
     <div class="p-4 bg-base-200 mb-5 shadow rounded-lg">

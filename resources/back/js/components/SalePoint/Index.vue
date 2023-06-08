@@ -2,6 +2,7 @@
     <ClientComponent :extra="extra" :order="order" />
     <ServicesComponent :extra="extra" :order="order" :availableservices="availableservices" />
     <ConfirmComponent v-if="!extra.readonly" :extra="extra" :order="order" @save-order="saveOrder" />
+    <PaymentDetailComponent :model="orderp" v-if="extra.readonly" />
 </template>
 
 <script>
@@ -9,6 +10,7 @@ import { postToApi } from '@base/js/request/resquestToApi';
 import ClientComponent from './Client.vue';
 import ServicesComponent from './Services/Index.vue';
 import ConfirmComponent from './Confirm.vue';
+import PaymentDetailComponent from './../SaleDetails/PaymentDetail.vue';
 import printJS from 'print-js'
 
 export default {
@@ -22,6 +24,7 @@ export default {
         ClientComponent,
         ServicesComponent,
         ConfirmComponent,
+        PaymentDetailComponent,
     },
     data() {
         return {
@@ -33,7 +36,7 @@ export default {
         this.order = this.orderp;
         this.extra = this.extrap;
         window.addEventListener("beforeunload", (event) => {
-            // event.returnValue = true;
+            event.returnValue = true;
         });
 
         if(!this.extra.hasOwnProperty('readonly')){
