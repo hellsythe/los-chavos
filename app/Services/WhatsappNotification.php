@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 
 class WhatsappNotification
 {
@@ -15,7 +16,7 @@ class WhatsappNotification
             if ($user->phone) {
                 $this->send(
                     $user->phone,
-                    'solicitud_autorizacion_orden',
+                    'notificar_solicitud',
                     [
                         [
                             "type" => "body",
@@ -60,7 +61,7 @@ class WhatsappNotification
                                 ],
                                 [
                                     "type" => "text",
-                                    "text" => auth()->user()->name . ' '.auth()->user()->lastname
+                                    "text" => auth()->user()->name . ' ' . auth()->user()->lastname
                                 ],
                             ]
                         ],
@@ -98,17 +99,17 @@ class WhatsappNotification
                                 ],
                             ]
                         ],
-                        // [
-                        //     "type" => "button",
-                        //     "sub_type" => "url",
-                        //     "index" => "0",
-                        //     "parameters" => [
-                        //         [
-                        //             "type" => "text",
-                        //             "text" => $order->id
-                        //         ]
-                        //     ]
-                        // ]
+                        [
+                            "type" => "button",
+                            "sub_type" => "url",
+                            "index" => "0",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $order->id
+                                ]
+                            ]
+                        ]
                     ]
                 );
             }
@@ -118,6 +119,32 @@ class WhatsappNotification
 
     public function sendOrderTicketToClient($order)
     {
+        $this->send(
+            $order->client->phone,
+            'ticket_pedido',
+            [
+                [
+                    "type" => "body",
+                    "parameters" => [
+                        [
+                            "type" => "text",
+                            "text" => $order->id
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "header",
+                    "parameters" => [
+                        [
+                            "type" => "document",
+                            "document" => [
+                                "link" => URL::to('admin/ticket/'.$order->id)
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
     }
 
     protected function send($number, $template, $components = [])
