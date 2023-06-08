@@ -26,8 +26,9 @@
                     </li>
                 </ul>
                 <div v-for="(service, index) in order.services">
-                    <ServiceComponent :errors="extra.errors.services[index]" :index="index" :service="service" :ref="'services'"
-                        :currentServiceIndex="currentServiceIndex" :availableservices="availableservices" />
+                    <ServiceComponent :errors="extra.errors.services[index]" :index="index" :service="service"
+                        :ref="'services'" :currentServiceIndex="currentServiceIndex"
+                        :availableservices="availableservices" />
                 </div>
                 <div class="flex justify-end	">
                     <button dusk="service-next" class="btn btn-info" @click="validate">Siguiente</button>
@@ -69,10 +70,18 @@ export default {
             currentServiceIndex: 0,
         };
     },
-    created(){
+    created() {
         this.extra.errors.services = [];
         this.order.services.forEach((service, index) => {
             this.extra.errors.services[index] = {};
+        });
+    },
+    mounted() {
+        let that =  this;
+        window.addEventListener("dispachValidations", function (event) {
+            for (let index = 0; index < that.order.services.length; index++) {
+                that.$refs.services[index].validate();
+            }
         });
     },
     methods: {

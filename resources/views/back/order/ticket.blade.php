@@ -30,8 +30,8 @@
                                    Diseño: "{{$service->detail->design->name}}"
                             @endswitch
                             <br>
-                            - Prenda: "{{$service->garment_amount}}"  <br>
-                            - Cantidad: "{{$service->garment->name}}"
+                            - Prenda: "{{$service->garment->name}}" <br>
+                            - Cantidad: "{{$service->garment_amount}}"
                         </td>
                         <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: end;">
                             ${{ number_format($service->price * $service->garment_amount, 2) }}

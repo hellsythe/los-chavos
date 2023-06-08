@@ -78,7 +78,7 @@ class SalePointController extends Controller
 
         $order = $this->findOrCreateOrder($request->order);
         $this->saveServices($request->order['services'], $order);
-        $this->savePayment();
+        $this->savePayment($order, $request->order['payment']);
         $ticket = $this->generateTicket($order);
 
         DB::commit();
@@ -104,6 +104,7 @@ class SalePointController extends Controller
         $order_model->created_by = auth()->user()->id;
         $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
         $order_model->order_number = $order['order_number'];
+        $order_model->missing_payment = $order['missing_payment'];
         $order_model->save();
 
         return $order_model;
@@ -296,16 +297,6 @@ class SalePointController extends Controller
         return $design;
     }
 
-    protected function saveOrderInDB()
-    {
-        DB::beginTransaction();
-
-        DB::rollBack();
-
-        DB::commit();
-    }
-
-
     private function generateTicket($order)
     {
         $size = $order->services()->count() * 80;
@@ -317,7 +308,13 @@ class SalePointController extends Controller
         return config('app.url').Storage::url('public/tickets/'.$order->id.'.pdf');
     }
 
-    protected function savePayment()
+    protected function savePayment($order, $payment)
     {
+        $paymentModel = new Payment();
+        $paymentModel->created_by = auth()->user()->id;
+        $paymentModel->order_id = $order->id;
+        $paymentModel->amount = $payment['advance'];
+        $paymentModel->status = Payment::STATUS_ACTIVE;
+        $paymentModel->save();
     }
 }

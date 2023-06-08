@@ -16,6 +16,7 @@
                             <span>$</span>
                             <input type="number" v-model="order.payment.advance" class="input input-bordered"/>
                         </label>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.payment.advance }}</div>
                     </p>
                 </div>
                 <div class="flex py-2">
@@ -53,6 +54,7 @@ export default {
     },
     props: {
         order: JSON,
+        errors: JSON,
     },
     data() {
         return {
@@ -60,6 +62,7 @@ export default {
     },
     created() {
         this.order.payment = {};
+        this.errors.payment = {};
     },
     methods: {
         formatter(amount){
@@ -68,6 +71,13 @@ export default {
         closeModal()
         {
             document.getElementById('payment-modal').classList.remove("modal-open")
+        },
+        validate(){
+            this.errors.payment = {};
+
+            if (!this.order.payment.advance) {
+                this.errors.payment.advance = 'El anticipo no puede estar vacio';
+            }
         }
     },
 };

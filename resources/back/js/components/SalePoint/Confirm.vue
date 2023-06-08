@@ -79,7 +79,7 @@
                         </tfoot>
                     </table>
                 </div>
-                <PaymentComponent :order="order" :openModal="openModal">
+                <PaymentComponent :order="order" :openModal="openModal" :errors="extra.errors" ref="payment">
                     <button @click="saveOrder" class="btn" :disabled="loading">Guardar e Imprimir ticket</button>
                     <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label>
                 </PaymentComponent>
@@ -98,6 +98,8 @@ import {
 } from "@heroicons/vue/24/solid";
 import money from './../formater';
 import PaymentComponent from "./Payment.vue";
+import { getAllErrorsAsArrayFromObject } from '@base/js/getErrors';
+import Swal from "@node/sweetalert2";
 
 export default {
     name: "ReportSale",
@@ -116,7 +118,7 @@ export default {
                 that.order.services[index].total = item.price * item.garment_amount;
                 total += item.price * item.garment_amount;
 
-                if ( item.garment_amount <= 6) {
+                if (item.garment_amount <= 6) {
                     if (item.subservice.id == 3) {
                         extra += item.detail.design.price;
                     }
@@ -144,13 +146,19 @@ export default {
             loading: false
         };
     },
-    mounted() {
-
+    created() {
+        this.extra.errors.payment = {};
     },
     methods: {
         async saveOrder() {
-            // this.loading = true;
-            await this.$emit('save-order');
+            this.$refs.payment.validate();
+            const payment_errors = getAllErrorsAsArrayFromObject(this.extra.errors.payment);
+
+            if (payment_errors.length == 0) {
+                // this.loading = true;
+                this.order.missing_payment = this.order.total - this.order.payment.advance;
+                await this.$emit('save-order');
+            }
         },
         print() {
             this.$refs.ticket.print();
@@ -161,16 +169,38 @@ export default {
         goToDashboard() {
             window.location.href = '/admin';
         },
-        registerPayment() {
+        async registerPayment() {
+            window.dispatchEvent(new CustomEvent("dispachValidations"));
+            setTimeout(() => {
+                let errors = this.validate();
 
-            // if (!this.extra.hasOwnProperty('date') || this.extra.date == ''|| this.extra.date == null) {
-            //     this.errors.date = 'La fecha de entrega no puede estar vacia';
-            // }
+                if (errors) {
+                    Swal.fire({
+                        title: 'Errores en el pedido',
+                        html: errors,
+                        icon: "warning",
+                    });
+                } else {
+                    document.getElementById('payment-modal').classList.add("modal-open");
+                }
+            }, 300);
+        },
+        validate() {
+            let final_errors = '';
+            const client_errors = getAllErrorsAsArrayFromObject(this.extra.errors.client);
+            if (client_errors.length > 0) {
+                final_errors += `<strong>Errores en el cliente </strong> <br>` + client_errors.join(', <br>')
+            }
 
-            // if (this.final_errors.client == false && this.final_errors.service  == false && this.errors.date == '') {
-            // }
-            document.getElementById('payment-modal').classList.add("modal-open");
-        }
+            this.order.services.forEach((service, index) => {
+                let service_errors = getAllErrorsAsArrayFromObject(this.extra.errors.services[index]);
+                if (service_errors.length > 0) {
+                    final_errors += `<br><br><strong>Errores en el servicio #${index + 1}</strong> <br><br>` + service_errors.join(', <br>')
+                }
+            });
+
+            return final_errors;
+        },
     },
 };
 </script>
