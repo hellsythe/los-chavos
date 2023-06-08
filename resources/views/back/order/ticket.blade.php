@@ -27,7 +27,7 @@
                                     @break
 
                                 @default
-                                   Diseño: "{{$service->detail->design->name}}"
+                                   Diseño: "{{$service->detail->design->name ?? $service->detail->designPrint->name}}"
                             @endswitch
                             <br>
                             - Prenda: "{{$service->garment->name}}" <br>
