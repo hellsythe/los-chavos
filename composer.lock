@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04023c4218065aeb10a4e9ce492cf7c7",
+    "content-hash": "585f3fc94b54701b1701635626391770",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1442,16 +1442,16 @@
         },
         {
             "name": "laravel/fortify",
-            "version": "v1.17.2",
+            "version": "v1.17.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/fortify.git",
-                "reference": "fc4b9b00b0d657dd035751b286f412976596ba32"
+                "reference": "e99f7cb135bb6e05e4c49e9224c9c9a33c27cfa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/fortify/zipball/fc4b9b00b0d657dd035751b286f412976596ba32",
-                "reference": "fc4b9b00b0d657dd035751b286f412976596ba32",
+                "url": "https://api.github.com/repos/laravel/fortify/zipball/e99f7cb135bb6e05e4c49e9224c9c9a33c27cfa0",
+                "reference": "e99f7cb135bb6e05e4c49e9224c9c9a33c27cfa0",
                 "shasum": ""
             },
             "require": {
@@ -1502,7 +1502,7 @@
                 "issues": "https://github.com/laravel/fortify/issues",
                 "source": "https://github.com/laravel/fortify"
             },
-            "time": "2023-04-26T13:35:07+00:00"
+            "time": "2023-06-02T12:58:20+00:00"
         },
         {
             "name": "laravel/framework",
@@ -4237,10 +4237,16 @@
         {
             "name": "sdkconsultoria/base",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sdkconsultoria/base.git",
+                "reference": "32e810668a0ae881c89d8fbedfd60cc7ac635c00"
+            },
             "dist": {
-                "type": "path",
-                "url": "./../../projects/sdk/base",
-                "reference": "648db4d3d92db9ec48bcea54110e0a9be1d15f47"
+                "type": "zip",
+                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/32e810668a0ae881c89d8fbedfd60cc7ac635c00",
+                "reference": "32e810668a0ae881c89d8fbedfd60cc7ac635c00",
+                "shasum": ""
             },
             "require": {
                 "hybridauth/hybridauth": "^3.7",
@@ -4253,6 +4259,7 @@
             "require-dev": {
                 "laravel/pint": "^0.2.1"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -4271,6 +4278,7 @@
                     "Sdkconsultoria\\Base\\Tests\\": "tests/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4288,17 +4296,25 @@
                 "laravel",
                 "package"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/sdkconsultoria/base/issues",
+                "source": "https://github.com/sdkconsultoria/base/tree/develop"
+            },
+            "time": "2023-06-08T18:55:34+00:00"
         },
         {
             "name": "sdkconsultoria/core",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sdkconsultoria/core.git",
+                "reference": "8395517a1e1acc3db03fd8a22335e48f29b4ef38"
+            },
             "dist": {
-                "type": "path",
-                "url": "./../../projects/sdk/core",
-                "reference": "842a93fc224383dac87b9178dcb843c79ae555e9"
+                "type": "zip",
+                "url": "https://api.github.com/repos/sdkconsultoria/core/zipball/8395517a1e1acc3db03fd8a22335e48f29b4ef38",
+                "reference": "8395517a1e1acc3db03fd8a22335e48f29b4ef38",
+                "shasum": ""
             },
             "require": {
                 "intervention/image": "^2.7",
@@ -4312,6 +4328,7 @@
                 "orchestra/testbench": "^7.5",
                 "phpunit/phpunit": "^9.5"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -4328,6 +4345,7 @@
                     "Sdkconsultoria\\Core\\Tests\\": "tests/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4345,9 +4363,11 @@
                 "laravel",
                 "package"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/sdkconsultoria/core/issues",
+                "source": "https://github.com/sdkconsultoria/core/tree/develop"
+            },
+            "time": "2023-06-08T18:29:38+00:00"
         },
         {
             "name": "spatie/laravel-permission",
@@ -7274,16 +7294,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.10.0",
+            "version": "v1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "c7a01fa9bdd79819e7a2f1ba63ac1b02e6692dbc"
+                "reference": "d69f914aa347a448628b672ba90adf0b4ea0ce4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/c7a01fa9bdd79819e7a2f1ba63ac1b02e6692dbc",
-                "reference": "c7a01fa9bdd79819e7a2f1ba63ac1b02e6692dbc",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/d69f914aa347a448628b672ba90adf0b4ea0ce4a",
+                "reference": "d69f914aa347a448628b672ba90adf0b4ea0ce4a",
                 "shasum": ""
             },
             "require": {
@@ -7294,7 +7314,7 @@
                 "php": "^8.1.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.16.0",
+                "friendsofphp/php-cs-fixer": "^3.17.0",
                 "illuminate/view": "^10.5.1",
                 "laravel-zero/framework": "^10.0.2",
                 "mockery/mockery": "^1.5.1",
@@ -7336,7 +7356,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2023-04-25T14:52:30+00:00"
+            "time": "2023-06-03T15:01:17+00:00"
         },
         {
             "name": "laravel/sail",
@@ -7405,16 +7425,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.6.1",
+            "version": "1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "a8dd186f07ea667c1e3abd2176bfab0ab161ea94"
+                "reference": "13a7fa2642c76c58fa2806ef7f565344c817a191"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/a8dd186f07ea667c1e3abd2176bfab0ab161ea94",
-                "reference": "a8dd186f07ea667c1e3abd2176bfab0ab161ea94",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/13a7fa2642c76c58fa2806ef7f565344c817a191",
+                "reference": "13a7fa2642c76c58fa2806ef7f565344c817a191",
                 "shasum": ""
             },
             "require": {
@@ -7433,7 +7453,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-main": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -7477,9 +7497,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mockery/mockery/issues",
-                "source": "https://github.com/mockery/mockery/tree/1.6.1"
+                "source": "https://github.com/mockery/mockery/tree/1.6.2"
             },
-            "time": "2023-06-05T13:59:03+00:00"
+            "time": "2023-06-07T09:07:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -9277,16 +9297,16 @@
         },
         {
             "name": "spatie/ignition",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ignition.git",
-                "reference": "ad13a6792992411e05d3d3b293e26bdf9f9a7321"
+                "reference": "d8eb8ea1ed27f48a694405cff363746ffd37f13e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ignition/zipball/ad13a6792992411e05d3d3b293e26bdf9f9a7321",
-                "reference": "ad13a6792992411e05d3d3b293e26bdf9f9a7321",
+                "url": "https://api.github.com/repos/spatie/ignition/zipball/d8eb8ea1ed27f48a694405cff363746ffd37f13e",
+                "reference": "d8eb8ea1ed27f48a694405cff363746ffd37f13e",
                 "shasum": ""
             },
             "require": {
@@ -9356,7 +9376,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-25T10:19:32+00:00"
+            "time": "2023-06-06T14:14:58+00:00"
         },
         {
             "name": "spatie/laravel-ignition",
