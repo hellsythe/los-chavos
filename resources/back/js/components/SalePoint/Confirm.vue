@@ -148,6 +148,9 @@ export default {
     },
     created() {
         this.extra.errors.payment = {};
+        if (!this.order.order_number) {
+            this.order.order_number = 0;
+        }
     },
     methods: {
         async saveOrder() {

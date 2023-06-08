@@ -15,7 +15,7 @@
                 <span>$</span>
                 <input type="number" class="input input-bordered" v-model="service.price" />
             </label>
-            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail?.price }}</div>
+            <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.price_by_garment }}</div>
         </div>
     </div>
     <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" />
@@ -64,7 +64,7 @@ export default {
             }
 
             if (!this.service.price) {
-                this.errors.detail.price = 'El precio no puede estar vacio';
+                this.errors.detail.price_by_garment = 'El costo por prenda no puede estar vacio';
             }
 
             if (this.$refs.new) {
@@ -81,7 +81,7 @@ export default {
 
             if (this.$refs.exist) {
                 if (!this.service.detail.design.id) {
-                    this.errors.detail.design.id = 'El archivo no puede estar vacio';
+                    this.errors.detail.design.id = 'El Diseño no puede estar vacio';
                 }
             }
         }

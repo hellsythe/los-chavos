@@ -36,28 +36,7 @@ class SalePointController extends Controller
 
         return view('back.sale_point.index', [
             'available_services' => Service::with('subservices')->get(),
-            'order' => [
-                'id' => '',
-                'deadlinex' => '',
-                'client' => [
-                    'name' => '',
-                    'phone' => '',
-                    'email' => '',
-                    'whatsapp' => '0',
-                ],
-                'services' => [
-                    [
-                        'detail' => [
-                            'design' => []
-                        ],
-                        'service' => [],
-                        'subservice' => [],
-                    ]
-                ],
-                'payment' => [
-                    'total' => ''
-                ]
-            ],
+            'order' => [],
         ]);
     }
 
@@ -99,12 +78,24 @@ class SalePointController extends Controller
     protected function findOrCreateOrder($order): Order
     {
         $order_model = new Order();
-        $order_model->deadline = $order['deadlinex'];
+        $order_model->deadline = $order['deadline'];
         $order_model->total = $order['total'];
         $order_model->created_by = auth()->user()->id;
         $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
         $order_model->order_number = $order['order_number'];
         $order_model->missing_payment = $order['missing_payment'];
+
+        if ($order_model->total == $order['payment']['advance']) {
+            if ($order_model->order_number ?? 0 == '1') {
+                $order_model->status = Order::STATUS_WAITING_ORDER;
+            } else {
+                $order_model->status = Order::STATUS_PENDING;
+                NewOrder::dispatch($order_model);
+            }
+        } else {
+            $order_model->status = Order::STATUS_MISSING_PAYMENT;
+        }
+
         $order_model->save();
 
         return $order_model;
@@ -234,7 +225,7 @@ class SalePointController extends Controller
 
         $design = new Design();
         $design->created_by = auth()->user()->id;
-        $design->minutes = $service['design']['minutes'];
+        $design->minutes = $service['design']['minutes'] ?? 0;
         $design->price = $service['price'] ?? $service['design']['price'];
         $design->name = $service['design']['name'];
         $design->media = 'prueba';
@@ -299,7 +290,7 @@ class SalePointController extends Controller
 
     private function generateTicket($order)
     {
-        $size = $order->services()->count() * 80;
+        $size = $order->services()->count() * 85;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
         $pdf->setPaper([0,0,210,410 + $size]);
 

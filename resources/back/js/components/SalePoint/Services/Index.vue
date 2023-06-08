@@ -72,6 +72,12 @@ export default {
     },
     created() {
         this.extra.errors.services = [];
+
+        if (!this.order.services) {
+            this.order.services = [];
+            this.addNewService();
+        }
+
         this.order.services.forEach((service, index) => {
             this.extra.errors.services[index] = {};
         });
@@ -88,7 +94,8 @@ export default {
         addNewService() {
             this.order.services.push({
                 detail: {
-                    design: {}
+                    design: {},
+                    old_design: {},
                 },
                 service: {},
                 subservice: {},

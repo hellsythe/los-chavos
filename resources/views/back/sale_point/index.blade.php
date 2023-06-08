@@ -6,7 +6,6 @@
     <div id="sale">
         <sale-point
             :availableservices="{{json_encode($available_services)}}"
-            :orderp="{{json_encode($order)}}"
             :extrap="{{json_encode([
                 'steps' => [
                     'client' => true,

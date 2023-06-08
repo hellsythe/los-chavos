@@ -42,6 +42,9 @@ export default {
             if (!this.service.detail.design.name) {
                 this.errors.detail.design.name = 'El nombre del diseño no puede estar vacio';
             }
+            if (!this.service.detail.price) {
+                this.errors.detail.price = 'El costo por ponchar el nuevo diseño no puede estar vacio';
+            }
         }
     }
 };

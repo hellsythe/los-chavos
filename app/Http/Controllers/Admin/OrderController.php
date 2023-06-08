@@ -136,12 +136,10 @@ class OrderController extends ResourceController
     public function ticket($id)
     {
         $order = Order::findModel($id);
-        $size = $order->services()->count() * 80;
+        $size = $order->services()->count() * 85;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
-        $pdf->setPaper([0,0,180,430 + $size]);
-return $pdf->stream();
-        Storage::put('public/tickets/'.$id.'.pdf', $pdf->output());
+        $pdf->setPaper([0,0,210,410 + $size]);
 
-        return config('app.url').Storage::url('public/tickets/'.$id.'.pdf');
+        return $pdf->stream();
     }
 }

@@ -17,7 +17,9 @@ export default {
     name: "SalePoint",
     props: {
         availableservices: JSON,
-        orderp: JSON,
+        orderp: {
+            default: {}
+        },
         extrap: JSON,
     },
     components: {
@@ -35,12 +37,13 @@ export default {
     created() {
         this.order = this.orderp;
         this.extra = this.extrap;
-        window.addEventListener("beforeunload", (event) => {
-            event.returnValue = true;
-        });
 
-        if(!this.extra.hasOwnProperty('readonly')){
+
+        if (!this.extra.hasOwnProperty('readonly')) {
             this.extra.readonly = false;
+            if (!this.order.id) {
+                window.addEventListener("beforeunload", this.preventClose);
+            }
         }
     },
     methods: {
@@ -58,6 +61,11 @@ export default {
                         window.location.href = `/admin/order/${response.order.id}`;
                     },
                 });
+            }
+        },
+        preventClose(event) {
+            if (!this.order.id) {
+                event.returnValue = true;
             }
         }
     },
