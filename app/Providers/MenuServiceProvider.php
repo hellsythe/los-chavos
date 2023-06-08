@@ -48,7 +48,7 @@ class MenuServiceProvider extends ServiceProvider
             'extra_urls' => [],
         ], ['super-admin', 'Punto de venta']);
 
-        $service_menu->addElement(Order::makeMenu('truck'), ['super-admin', 'Punto de venta', 'Bordador']);
+        $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador']);
 
         $service_menu->addElement([
             'name' => 'Caja',
