@@ -138,7 +138,7 @@ class WhatsappNotification
                         [
                             "type" => "document",
                             "document" => [
-                                "link" => URL::to('admin/ticket/'.$order->id)
+                                "link" => URL::to('storage/tickets/'.$order->id)
                             ]
                         ]
                     ]
