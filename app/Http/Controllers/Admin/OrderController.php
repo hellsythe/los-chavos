@@ -61,7 +61,7 @@ class OrderController extends ResourceController
     public function show(Request $request, $id)
     {
         $model = $this->model::findModel($id);
-        $this->authorize('create', new Order());
+        $this->authorize('view', new Order());
 
         return view($this->view.'.show', [
             'model' => $model,
