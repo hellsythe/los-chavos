@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\CashBoxReport;
 use App\Models\DesignPrint;
 use App\Models\Typography;
 use App\Models\Garment;
@@ -34,6 +35,7 @@ class MenuServiceProvider extends ServiceProvider
     public function boot()
     {
         $service_menu = app(MenuService::class);
+        $service_menu->addElement(CashBoxReport::makeMenu('book-open'));
         $service_menu->addElement([
             'name' => 'Dashboard',
             'icon' => \Base::icon('home', ['class' => 'h-6 w-6']),
