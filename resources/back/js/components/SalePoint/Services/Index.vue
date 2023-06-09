@@ -11,20 +11,20 @@
                 </button>
             </div>
             <div v-show="extra.steps.service">
-                <ul class="menu menu-vertical lg:menu-horizontal bg-base-100 rounded-box">
-                    <li @click="currentServiceIndex = index" v-for="(service, index) in order.services"
+                <button class="join">
+                    <button :class="{ 'bg-base-100': index != currentServiceIndex, 'btn-neutral': index == currentServiceIndex }" @click="currentServiceIndex = index" v-for="(service, index) in order.services" class="btn join-item"
                         @contextmenu="onContextMenu($event, index)">
-                        <a :class="{ active: index == currentServiceIndex }">
-                            {{ service.name ?? `Servicio ${index + 1}` }}
+                        <a class="flex">
+                            {{ service.name ?? `Servicio ${index + 1}` }} &nbsp;
                             <div class="w-4 h-4 rounded-full" :style="'background-color:' + get_colors[index]"></div>
                         </a>
-                    </li>
-                    <li dusk="service-new-service" @click="addNewService" v-if="!extra.readonly">
-                        <a>Añadir Servicio
+                    </button>
+                    <button dusk="service-new-service" @click="addNewService" v-if="!extra.readonly" class="btn bg-base-100 join-item">
+                        <a class="flex">Añadir Servicio &nbsp;
                             <PlusCircleIcon class="h-4 mr-1" />
                         </a>
-                    </li>
-                </ul>
+                    </button>
+                </button>
                 <div v-for="(service, index) in order.services">
                     <ServiceComponent :errors="extra.errors.services[index]" :index="index" :service="service"
                         :ref="'services'" :currentServiceIndex="currentServiceIndex"

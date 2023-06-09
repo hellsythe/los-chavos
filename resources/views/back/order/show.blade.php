@@ -3,11 +3,6 @@
 @section('title', $model->getTranslation('showed'))
 
 @section('content')
-    @php
-        $colors = ['red', 'lime', 'black', 'fuchsia', 'darkorange', 'darkolivegreen', 'navy', 'purple', 'crimson', 'coral', 'darkseagreen', 'darkviolet', 'indigo'];
-    @endphp
-
-
     <?= Base::breadcrumb([$model->getRoute('index') => $model->getTranslation('plural'), $model->getTranslation('showed')]) ?>
 
     <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">

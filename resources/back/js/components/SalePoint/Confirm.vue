@@ -84,7 +84,7 @@
                     <!-- <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label> -->
                 </PaymentComponent>
                 <div class="flex justify-end">
-                    <label @click="registerPayment" class="btn">Registrar Pago</label>
+                    <label @click="registerPayment" class="btn btn-neutral">Registrar Pago</label>
                 </div>
             </div>
         </div>
