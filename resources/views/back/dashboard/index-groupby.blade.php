@@ -51,7 +51,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->total }}</td>
                         <td>{{ $item->design }}</td>
-                        <td>{{ $item->garments }}</td>
+                        <td>{{ $item->garment }}</td>
                         <td>
                             <a class="link link-primary"
                                 href="{{ route('dashboard.grouped', ['id' => $item->desing_id]) }}">Detalles</a>

@@ -25,7 +25,7 @@ class DashboardController extends Controller
     {
         $data = OrderDetail::select([
             DB::raw('COUNT(*) as total'),
-            DB::raw('sum(orders.garment_amount) as garments'),
+            DB::raw('SUM(order_details.garment_amount) as garment'),
             'designs.name as design',
             'designs.id as desing_id',
         ])
@@ -33,8 +33,8 @@ class DashboardController extends Controller
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
         ->join('designs', 'order_designs.design_id', '=', 'designs.id')
         ->where('orders.status', Order::STATUS_PENDING)
-        ->groupBy('order_designs.design_id')
-        ->orderBy('garments', 'DESC')
+        ->groupBy('design_id')
+        ->orderBy('garment', 'DESC')
         ->get();
 
         return view('back.dashboard.index-groupby', [

@@ -40,7 +40,7 @@
         'deadline',
         // 'detail.design_id',
         'detail.design.name',
-        'order.garment_amount',
+        'garment_amount',
     ]);
     $array_translation = array_merge($model->getFullTranslations(), [
         'service.name' => 'Servicio',
@@ -50,7 +50,7 @@
         'deadline' => 'Fecha de entrega',
         // 'detail.design_id' => 'Folio de Diseño',
         'detail.design.name' => 'Nombre del Diseño',
-        'order.garment_amount' => 'Prendas',
+        'garment_amount' => 'Prendas',
     ]);
 
     $array_search = array_merge($model->getParseSearchFilters(), [
