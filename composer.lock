@@ -1506,16 +1506,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.13.2",
+            "version": "v10.13.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "fd4619b56b56308e2c2c1840fedd0b8ebb73dfc5"
+                "reference": "03106ae9ba2ec4b36dc973b7bdca6fad81e032b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/fd4619b56b56308e2c2c1840fedd0b8ebb73dfc5",
-                "reference": "fd4619b56b56308e2c2c1840fedd0b8ebb73dfc5",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/03106ae9ba2ec4b36dc973b7bdca6fad81e032b4",
+                "reference": "03106ae9ba2ec4b36dc973b7bdca6fad81e032b4",
                 "shasum": ""
             },
             "require": {
@@ -1702,7 +1702,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-06-05T15:48:15+00:00"
+            "time": "2023-06-08T20:25:36+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -4240,12 +4240,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/base.git",
-                "reference": "32e810668a0ae881c89d8fbedfd60cc7ac635c00"
+                "reference": "adb540d19c87d1d53b9384b7d7f67c5534b3dd8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/32e810668a0ae881c89d8fbedfd60cc7ac635c00",
-                "reference": "32e810668a0ae881c89d8fbedfd60cc7ac635c00",
+                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/adb540d19c87d1d53b9384b7d7f67c5534b3dd8d",
+                "reference": "adb540d19c87d1d53b9384b7d7f67c5534b3dd8d",
                 "shasum": ""
             },
             "require": {
@@ -4300,7 +4300,7 @@
                 "issues": "https://github.com/sdkconsultoria/base/issues",
                 "source": "https://github.com/sdkconsultoria/base/tree/develop"
             },
-            "time": "2023-06-08T18:55:34+00:00"
+            "time": "2023-06-09T14:26:19+00:00"
         },
         {
             "name": "sdkconsultoria/core",
