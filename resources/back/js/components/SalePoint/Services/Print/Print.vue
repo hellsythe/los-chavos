@@ -105,7 +105,7 @@ export default {
                 }
             }
 
-            if (!this.service.detail.design.price) {
+            if (!this.service.price) {
                 this.errors.detail.price = 'El costo del diseño no puede estar vacio';
             }
         }
