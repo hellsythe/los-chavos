@@ -58,6 +58,7 @@ class SalePointController extends Controller
         $order = $this->findOrCreateOrder($request->order);
         $this->saveServices($request->order['services'], $order);
         $this->savePayment($order, $request->order['payment']);
+        $order->refresh();
         $ticket = $this->generateTicket($order);
 
         DB::commit();
@@ -83,14 +84,14 @@ class SalePointController extends Controller
         $order_model->created_by = auth()->user()->id;
         $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
         $order_model->order_number = $order['order_number'];
-        $order_model->missing_payment = $order['missing_payment'];
+        $order_model->missing_payment = $order_model->total;
 
         if ($order_model->total == $order['payment']['advance']) {
             if ($order_model->order_number ?? 0 == '1') {
                 $order_model->status = Order::STATUS_WAITING_ORDER;
             } else {
                 $order_model->status = Order::STATUS_PENDING;
-                NewOrder::dispatch($order_model);
+                // NewOrder::dispatch($order_model);
             }
         } else {
             $order_model->status = Order::STATUS_MISSING_PAYMENT;
