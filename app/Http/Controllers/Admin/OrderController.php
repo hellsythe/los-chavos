@@ -36,11 +36,10 @@ class OrderController extends ResourceController
     {
         return [
             'client' => function ($query, $value) {
-                $query->join('clients', 'clients.id', '=', 'orders.client_id');
-                return $query->where(function ($query) use ($value) {
-                    return $query->where('clients.name', 'like', '%' . $value . '%')
-                        ->orWhere('clients.phone', 'like', '%' . $value . '%');
-                });
+                $clients_id = Client::where('clients.name', 'like', '%' . $value . '%')
+                ->orWhere('clients.phone', 'like', '%' . $value . '%')->get()->pluck('id')->toArray();
+
+                return $query->whereIn('client_id', $clients_id);
             },
         ];
     }
