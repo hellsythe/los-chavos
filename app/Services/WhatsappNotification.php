@@ -49,7 +49,7 @@ class WhatsappNotification
         foreach ($this->getAllAdminis() as $user) {
             if ($user->phone) {
                 $this->send(
-                    $user->phone,
+                    '52'.$user->phone,
                     'pedido_aprobado',
                     [
                         [
