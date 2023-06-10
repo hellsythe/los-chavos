@@ -35,7 +35,6 @@ class MenuServiceProvider extends ServiceProvider
     public function boot()
     {
         $service_menu = app(MenuService::class);
-        $service_menu->addElement(CashBoxReport::makeMenu('book-open'));
         $service_menu->addElement([
             'name' => 'Dashboard',
             'icon' => \Base::icon('home', ['class' => 'h-6 w-6']),
@@ -51,6 +50,7 @@ class MenuServiceProvider extends ServiceProvider
         ], ['super-admin', 'Punto de venta']);
 
         $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador']);
+        // $service_menu->addElement(CashBoxReport::makeMenu('currency-dollar'));
 
         $service_menu->addElement([
             'name' => 'Caja',

@@ -20,8 +20,8 @@ class CashBoxReport extends BaseModel
     public function getTranslations() : array
     {
         return [
-            'singular' => 'CashBoxReport',
-            'plural' => 'CashBoxReport',
+            'singular' => 'Corte de Caja',
+            'plural' => 'Corte de Caja',
         ];
     }
 }
