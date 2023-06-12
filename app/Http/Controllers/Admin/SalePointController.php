@@ -258,7 +258,7 @@ class SalePointController extends Controller
 
         if ($service['detail']['is_new_design']) {
             if ($service['detail']['design_is_here']) {
-                $print = $this->createNewPrintDesign($service['detail']);
+                $print = $this->createNewPrintDesign($service);
                 $model->design_print_id = $print->id;
             }
         } else {
@@ -272,19 +272,19 @@ class SalePointController extends Controller
 
     private function createNewPrintDesign($service)
     {
-        $ext = explode(';', $service['design']['file']);
+        $ext = explode(';', $service['detail']['design']['file']);
         $ext = explode('/', $ext[0])[1];
 
         $design = new DesignPrint();
         $design->created_by = auth()->user()->id;
         $design->price = $service['price'];
-        $design->name = $service['design']['name'];
+        $design->name = $service['detail']['design']['name'];
         $design->media = 'prueba';
         $design->status = DesignPrint::STATUS_ACTIVE;
         $design->save();
         $design->media = URL::to('/storage/design-print/' . $design->id . '.' . $ext);
         $design->save();
-        $this->saveFileDesign($service['design']['file'], $design->id, 'design-print');
+        $this->saveFileDesign($service['detail']['design']['file'], $design->id, 'design-print');
 
         return $design;
     }
