@@ -59,9 +59,9 @@ class SalePointController extends Controller
         $this->saveServices($request->order['services'], $order);
         $this->savePayment($order, $request->order['payment']);
         $order->refresh();
-        $ticket = $this->generateTicket($order);
 
         DB::commit();
+        $ticket = $this->generateTicket($order);
 
         if ($order['client']['whatsapp'] ?? false) {
             (new WhatsappNotification())->sendOrderTicketToClient($order);
