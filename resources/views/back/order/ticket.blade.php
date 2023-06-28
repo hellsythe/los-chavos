@@ -27,10 +27,10 @@
                                     @break
 
                                 @default
-                                   Diseño: "{{$service->detail->design->name ?? $service->detail->designPrint->name}}"
+                                   Diseño: "{{$service->detail->design->name ?? $service->detail->designPrint->name ?? ''}}"
                             @endswitch
                             <br>
-                            - Prenda: "{{$service->garment->name}}" <br>
+                            - Prenda: "{{$service->garment->name ?? ''}}" <br>
                             - Cantidad: "{{$service->garment_amount}}"
                         </td>
                         <td style="font-size: 12px; border: 1px solid; padding: 2px; text-align: end;">
