@@ -31,6 +31,7 @@ class Start extends Command
      */
     public function handle(): void
     {
+        $this->createPermissions();
         $this->createServices();
         $this->createGarment();
         $this->createTypography();
@@ -199,7 +200,8 @@ class Start extends Command
 
     private function createPermissions()
     {
-        $permission = Permission::firstOrCreate(['name' => 'Corte de caja']);
+        $permission = Permission::firstOrCreate(['name' => 'cash_box_report:viewAny']);
+        $permission = Permission::firstOrCreate(['name' => 'cash_box_report:view']);
     }
 
     private function assingPermissionsToVenta()
@@ -223,6 +225,8 @@ class Start extends Command
         $role->givePermissionTo('order_detail:view');
         $role->givePermissionTo('design_print:viewAny');
         $role->givePermissionTo('design_print:view');
+        $role->givePermissionTo('cash_box_report:viewAny');
+        $role->givePermissionTo('cash_box_report:view');
     }
 
     private function assingPermissionsToBordador()

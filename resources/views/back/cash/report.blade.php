@@ -35,7 +35,10 @@
                  @endif
             </div> --}}
         @else
-            <cashbox-component :payments="{{ json_encode($payments) }}" />
+            <cashbox-component
+                :payments="{{ json_encode($payments) }}"
+                :role="{{ auth()->user()->hasRole(['super-admin']) }}"
+            />
         @endif
     </div>
 @endsection

@@ -6,24 +6,28 @@
                     <tr>
                         <td></td>
                         <td>Contado</td>
-                        <td>Calculado</td>
-                        <td>Diferencia</td>
+                        <td v-if="role=='super-admin'">Calculado</td>
+                        <td v-if="role=='super-admin'">Diferencia</td>
                     </tr>
                     <tr>
                         <td><strong>Efectivo</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="cash"></label></td>
-                        <td>
-                            <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
-                        </td>
-                        <td> <strong :class="[(cashCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cashCalculated}}</strong> </td>
+                        <template v-if="role=='super-admin'">
+                            <td>
+                                <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
+                            </td>
+                            <td> <strong :class="[(cashCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cashCalculated}}</strong> </td>
+                        </template>
                     </tr>
                     <tr>
                         <td><strong>Tarjeta</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="card"></label></td>
-                        <td>
-                            <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
-                        </td>
-                        <td> <strong :class="[(cardCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cardCalculated }}</strong> </td>
+                        <template v-if="role=='super-admin'">
+                            <td>
+                                <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
+                            </td>
+                            <td> <strong :class="[(cardCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cardCalculated }}</strong> </td>
+                        </template>
                     </tr>
                 </tbody>
             </table>
@@ -40,6 +44,7 @@ export default {
     name: "Cashbox",
     props: {
         payments: JSON,
+        role: String,
     },
     data() {
         return {
