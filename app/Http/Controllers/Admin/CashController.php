@@ -12,24 +12,26 @@ class CashController extends Controller
 {
     public function report()
     {
-        $payments = $this->getPaymentsFromLastCashBoxReportToNow();
+        $payments = $this->getPaymentsFromToday();
 
         return view('back.cash.report', [
             'payments' => $payments
         ]);
     }
 
-    protected function getPaymentsFromLastCashBoxReportToNow()
+    protected function getPaymentsFromToday()
     {
-        $last_report = CashBoxReport::where('status', CashBoxReport::STATUS_OPEN)->first();
-
-        $payments = Payment::select([DB::raw('SUM(amount) as total'), 'payment_method']);
-
-        if ($last_report) {
-            $payments = $payments->where('created_at', '>', $last_report->finish);
+        $tomorrow = date('Y-m-d', strtotime("+1 days"));
+        $now = date('Y-m-d');
+        $lastCashBox = CashBoxReport::where('status', CashBoxReport::STATUS_OPEN)->first();
+        $lastCash = 0;
+        if ($lastCashBox) {
+            $lastCash =  $lastCashBox->real_cash - $lastCashBox->out_cash;
         }
 
-        return $payments->groupBy('payment_method')->get()->toArray();
-
+        return [
+            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','cash')->sum('amount') + $lastCash,
+            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','card')->sum('amount'),
+        ];
     }
 }
