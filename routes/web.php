@@ -24,7 +24,7 @@ Route::get('/', function () {
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
     ->prefix('admin')->group(function () {
-    Route::SdkResource('cash-box-report', CashBoxReportController::class);
+        Route::SdkResource('cash-box-report', CashBoxReportController::class);
         Route::SdkResource('order-design-print', OrderDesignPrintController::class);
         Route::SdkResource('design-print', DesignPrintController::class);
         Route::SdkResource('typography', TypographyController::class);
@@ -42,7 +42,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('/orders-by-design/{id}', 'DashboardController@ordersGroupBy')->name('dashboard.grouped');
         Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
 
-        Route::get('/cashbox', 'CashController@report')->name('cashbox.report');
+        Route::get('/cash-box-report/create', 'CashController@report')->name('cash-box-report.create');
         Route::post('/cashbox/save', 'CashController@save')->name('cashbox.save');
 
         Route::get('sale-point', 'SalePointController@index')->name('sale.point');

@@ -1,5 +1,4 @@
 <template>
-    <a href="/admin/cash-box-report" class="btn btn-neutral mb-4">Reportes</a>
     <div class="p-4 bg-base-100 mb-5 shadow rounded-lg mt-2">
         <div class="overflow-x-auto">
             <table class="table">
@@ -28,17 +27,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            <div class="mt-2 mb-2 flex">
-                <div class="mr-2">
-                    <p class="mb-2">¿Cuanto Retiras de efectivo?</p>
-                    <label class="input-group"><span>$</span><input type="number" class="input input-bordered" v-model="cashout"></label>
-                </div>
-                <div>
-                    <p class="mb-2">Dinero en caja para el siguiente día</p>
-                    <label class="input-group"><span>$</span><input type="number" class="input input-bordered" :value="cashInBox" readonly></label>
-                </div>
-            </div>
             <button @click="saveCashBox" class="btn btn-neutral">Guardar</button>
         </div>
     </div>
