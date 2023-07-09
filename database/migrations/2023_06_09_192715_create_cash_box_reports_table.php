@@ -23,8 +23,8 @@ return new class extends Migration
             $table->double('calculate_card')->nullable();
             $table->double('missing_card')->nullable();
             $table->double('real_card')->nullable();
-            $table->timestamp('start');
-            $table->timestamp('finish');
+            $table->date('start');
+            $table->date('finish');
         });
     }
 

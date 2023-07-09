@@ -13,7 +13,14 @@ class CashBoxReport extends BaseModel
     protected function fields()
     {
         return[
-            TextField::make('')->label('')->rules(['required']),
+            TextField::make('start')->label('Fecha')->rules(['required']),
+            TextField::make('out_cash')->label('')->rules(['required']),
+            TextField::make('calculate_cash')->label('Efectivo Calculado')->rules(['required']),
+            TextField::make('real_cash')->label('Efectivo Contado')->rules(['required']),
+            TextField::make('missing_cash')->label('Efectivo Faltante')->rules(['required']),
+            TextField::make('calculate_card')->label('Tarjeta Calculado')->rules(['required']),
+            TextField::make('real_card')->label('Targeta Contado')->rules(['required']),
+            TextField::make('missing_card')->label('Tarjeta Faltante')->rules(['required']),
         ];
     }
 

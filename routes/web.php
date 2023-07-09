@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
-    ->prefix('admin')->group(function () { 
+    ->prefix('admin')->group(function () {
     Route::SdkResource('cash-box-report', CashBoxReportController::class);
         Route::SdkResource('order-design-print', OrderDesignPrintController::class);
         Route::SdkResource('design-print', DesignPrintController::class);
@@ -43,6 +43,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
 
         Route::get('/cashbox', 'CashController@report')->name('cashbox.report');
+        Route::post('/cashbox/save', 'CashController@save')->name('cashbox.save');
 
         Route::get('sale-point', 'SalePointController@index')->name('sale.point');
         Route::get('order/update/{id}', 'SalePointController@update')->name('sale.point.edit');

@@ -1,5 +1,5 @@
 <template>
-    <button class="btn btn-neutral mb-4">Reportes</button>
+    <a href="/admin/cash-box-report" class="btn btn-neutral mb-4">Reportes</a>
     <div class="p-4 bg-base-100 mb-5 shadow rounded-lg mt-2">
         <div class="overflow-x-auto">
             <table class="table">
@@ -13,27 +13,30 @@
                     <tr>
                         <td><strong>Efectivo</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="cash"></label></td>
-                        <td><input readonly class="input input-bordered w-full max-w-xs" type="numeric" :value="payments.cash"></td>
+                        <td>
+                            <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
+                        </td>
                         <td> <strong :class="[(cashCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cashCalculated}}</strong> </td>
                     </tr>
                     <tr>
                         <td><strong>Tarjeta</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="card"></label></td>
-                        <td><input readonly class="input input-bordered w-full max-w-xs" type="numeric"
-                                :value="payments.card"></td>
+                        <td>
+                            <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
+                        </td>
                         <td> <strong :class="[(cardCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cardCalculated }}</strong> </td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="mt-2 mb-2 flex">
-                <div>
+                <div class="mr-2">
                     <p class="mb-2">¿Cuanto Retiras de efectivo?</p>
                     <label class="input-group"><span>$</span><input type="number" class="input input-bordered" v-model="cashout"></label>
                 </div>
                 <div>
-                    <p class="mb-2">Dinero en caja</p>
-                    <label class="input-group"><span>$</span><input type="number" class="input input-bordered" readonly></label>
+                    <p class="mb-2">Dinero en caja para el siguiente día</p>
+                    <label class="input-group"><span>$</span><input type="number" class="input input-bordered" :value="cashInBox" readonly></label>
                 </div>
             </div>
             <button @click="saveCashBox" class="btn btn-neutral">Guardar</button>
@@ -43,6 +46,7 @@
 
 <script>
 import Swal from "@node/sweetalert2";
+import { postToApi } from '@base/js/request/resquestToApi';
 
 export default {
     name: "Cashbox",
@@ -63,18 +67,29 @@ export default {
         cardCalculated: function () {
             return (this.card - this.payments.card).toFixed(2);
         },
+        cashInBox: function () {
+            return (this.cash - this.cashout).toFixed(2);
+        },
     },
     methods: {
-        saveCashBox() {
+        async saveCashBox() {
             Swal.fire({
                 title: '¿Estás seguro de realizar el corte de caja? Esta acción no se puede deshacer',
                 icon: "question",
                 confirmButtonText: 'Si, Guardar',
                 cancelButtonText: 'Cancelar',
                 showCancelButton: true,
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
-                    Swal.fire('Saved!', '', 'success')
+                    await postToApi(`/admin/cashbox/save`, {
+                        cash: this.cash,
+                        card: this.card,
+                        cardCalc: this.payments.card,
+                        cashCalc: this.payments.cash,
+                        cashout: this.cashout,
+                    });
+                    // Swal.fire('Se guardo el reporte correctamente', '', 'success')
+                    window.location.href = "/admin/cash-box-report";
                 }
             });
         }
