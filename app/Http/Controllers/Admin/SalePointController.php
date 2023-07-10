@@ -306,6 +306,7 @@ class SalePointController extends Controller
         $paymentModel->created_by = auth()->user()->id;
         $paymentModel->order_id = $order->id;
         $paymentModel->amount = $payment['advance'];
+        $paymentModel->payment_method = $payment['method'];
         $paymentModel->status = Payment::STATUS_ACTIVE;
         $paymentModel->save();
     }

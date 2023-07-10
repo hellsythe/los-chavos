@@ -10,8 +10,9 @@ class Payment extends BaseModel
     protected function fields()
     {
         return[
-            TextField::make('order_id')->label('Ordern')->rules(['required']),
+            TextField::make('order_id')->label('Order')->rules(['required']),
             TextField::make('amount')->label('Abono')->rules(['required']),
+            TextField::make('payment_method')->label('Metodo de pago')->rules(['required']),
         ];
     }
 

@@ -12,24 +12,38 @@ class CashController extends Controller
 {
     public function report()
     {
-        $payments = $this->getPaymentsFromLastCashBoxReportToNow();
-
         return view('back.cash.report', [
-            'payments' => $payments
+            'payments' =>  $this->getPaymentsFromToday(),
+            'model' => CashBoxReport::where('status',CashBoxReport::STATUS_CLOSE)->where('start', date('Y-m-d'))->first()
         ]);
     }
 
-    protected function getPaymentsFromLastCashBoxReportToNow()
+    protected function getPaymentsFromToday()
     {
-        $last_report = CashBoxReport::where('status', CashBoxReport::STATUS_OPEN)->first();
+        $tomorrow = date('Y-m-d', strtotime("+1 days"));
+        $now = date('Y-m-d');
 
-        $payments = Payment::select([DB::raw('SUM(amount) as total'), 'payment_method']);
+        return [
+            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','cash')->sum('amount'),
+            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','card')->sum('amount'),
+        ];
+    }
 
-        if ($last_report) {
-            $payments = $payments->where('created_at', '>', $last_report->finish);
-        }
+    public function save(Request $request)
+    {
+        $cashbox = new CashBoxReport();
+        $cashbox->status = CashBoxReport::STATUS_CLOSE;
+        $cashbox->real_cash = $request->cash;
+        $cashbox->real_card = $request->card;
+        $cashbox->calculate_card = $request->cardCalc;
+        $cashbox->calculate_cash = $request->cashCalc;
+        $cashbox->missing_card = $request->cardCalc - $request->card;
+        $cashbox->missing_cash =  $request->cashCalc - $request->cash;
+        $cashbox->start = date('Y-m-d');
+        $cashbox->finish = date('Y-m-d');
+        $cashbox->created_by = auth()->user()->id;
+        $cashbox->save();
 
-        return $payments->groupBy('payment_method')->get()->toArray();
-
+        return ['status' => 'ok'];
     }
 }
