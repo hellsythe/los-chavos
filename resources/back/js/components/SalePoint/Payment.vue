@@ -10,6 +10,16 @@
                     <p class=" ml-auto">{{ formatter(order.total) }}</p>
                 </div>
                 <div class="flex py-2">
+                    <p class="flex items-center">Metodo de pago: </p>
+
+                    <p class="ml-auto">
+                        <select class="select select-bordered w-full" v-model="this.order.payment.method">
+                            <option value="cash">Efectivo</option>
+                            <option value="card">Tarjeta</option>
+                        </select>
+                    </p>
+                </div>
+                <div class="flex py-2">
                     <p class="flex items-center">Anticipo: </p>
                     <p class="ml-auto">
                         <label class="input-group">
@@ -61,7 +71,9 @@ export default {
         };
     },
     created() {
-        this.order.payment = {};
+        this.order.payment = {
+            method: 'cash'
+        };
         this.errors.payment = {};
     },
     methods: {

@@ -10,6 +10,16 @@
                     <p class=" ml-auto">{{ formatter(model.missing_payment) }}</p>
                 </div>
                 <div class="flex py-2">
+                    <p class="flex items-center">Metodo de pago: </p>
+
+                    <p class="ml-auto">
+                        <select class="select select-bordered w-full" v-model="payment.method">
+                            <option value="cash">Efectivo</option>
+                            <option value="card">Tarjeta</option>
+                        </select>
+                    </p>
+                </div>
+                <div class="flex py-2">
                     <p class="flex items-center">Total del nuevo abono: </p>
                     <p class="ml-auto">
                         <label class="input-group">
@@ -61,6 +71,7 @@ export default {
             payment: {
                 deposit: 0,
                 payment: 0,
+                method: 'cash',
             },
             errors: {}
         };
@@ -77,6 +88,7 @@ export default {
             await postToApi(`/admin/payment/api`, {
                 order_id: this.model.id,
                 amount: this.payment.deposit,
+                payment_method: this.payment.method,
             });
             location.reload();
         },

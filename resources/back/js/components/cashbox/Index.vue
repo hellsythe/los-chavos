@@ -6,13 +6,13 @@
                     <tr>
                         <td></td>
                         <td>Contado</td>
-                        <td v-if="role=='super-admin'">Calculado</td>
-                        <td v-if="role=='super-admin'">Diferencia</td>
+                        <td v-if="isadmin">Calculado</td>
+                        <td v-if="isadmin">Diferencia</td>
                     </tr>
                     <tr>
                         <td><strong>Efectivo</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="cash"></label></td>
-                        <template v-if="role=='super-admin'">
+                        <template v-if="isadmin">
                             <td>
                                 <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
                             </td>
@@ -22,7 +22,7 @@
                     <tr>
                         <td><strong>Tarjeta</strong></td>
                         <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="card"></label></td>
-                        <template v-if="role=='super-admin'">
+                        <template v-if="isadmin">
                             <td>
                                 <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
                             </td>
@@ -44,7 +44,7 @@ export default {
     name: "Cashbox",
     props: {
         payments: JSON,
-        role: String,
+        isadmin: String,
     },
     data() {
         return {

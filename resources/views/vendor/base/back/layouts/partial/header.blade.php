@@ -13,7 +13,7 @@
         <div class="flex items-stretch">
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost rounded-btn">{!!Base::icon('sun', ['class' => 'h-5'])!!}</label>
-                <ul tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                <ul style="z-index: 999" tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
                     @foreach (config('base.themes') as $index => $theme)
                     <li class="hover-bordered"><a href="{{request()->fullUrlWithQuery(['theme' => $index])}}">{{$theme}}</a></li>
                     @endforeach
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </label>
-                <ul tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                <ul style="z-index: 999" tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
                     <li class="hover-bordered"><a href="{{route('profile')}}">Mi Cuenta</a></li>
                     <li class="hover-bordered"><a href="#" onclick="document.getElementById('form-logout').submit()" >@lang('auth.close')</a></li>
                 </ul>
