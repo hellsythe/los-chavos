@@ -26,8 +26,8 @@ class DashboardController extends Controller
             'designs.name as design',
             'designs.id as desing_id',
         ])
-        ->join('order_designs', 'order_designs.order_detail_id', '=', 'order_details.id')
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
+        ->join('order_designs', 'order_designs.order_detail_id', '=', 'order_details.id')
         ->join('designs', 'order_designs.design_id', '=', 'designs.id');
 
 
@@ -40,6 +40,11 @@ class DashboardController extends Controller
             'model' => new OrderDetail(),
             'data' => $data
         ]));
+    }
+
+    protected function joinWithServiceType()
+    {
+
     }
 
     public function ordersGroupBy($id)
