@@ -1,6 +1,6 @@
 1.- Agregar el nombre y teléfono del cliente al ticket -- Listo
 2.- Corte de caja -- Listo
-3.- Corte de caja separadondo bordados y estamados
+3.- Corte de caja separadondo bordados y estamados, para los pagos la prioridad es para bordados
 4.- Separar Tipos de ordenes, bordador solo vera bordados, estampador solo estampados y administrador vera todos
 5.- Rol para Estampado -- listo
 6.- Que el Rol de bordados pueda ver los diseños -- Listo
@@ -18,3 +18,4 @@
 18.- Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 19.- Responsive celular diseño
 20.- ticketFecha en grande
+21.- Bug al eliminar Ordenes

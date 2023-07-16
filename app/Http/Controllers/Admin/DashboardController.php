@@ -12,13 +12,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('back.dashboard.index', [
-            'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
-            'order_ready' => Order::where('status', Order::STATUS_READY)->count(),
-            'order_pending' => Order::where('status', Order::STATUS_PENDING)->count(),
+        return view('back.dashboard.index',  array_merge($this->getMetrics(), [
             'missing_auth' => Order::where('status', Order::STATUS_WAITING_AUTH)->count(),
             'model' => new OrderDetail()
-        ]);
+        ]));
     }
 
     public function indexGrupBy()
@@ -33,21 +30,16 @@ class DashboardController extends Controller
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
         ->join('designs', 'order_designs.design_id', '=', 'designs.id');
 
-        // $this->filterByRol($data);
 
         $data = $data->where('orders.status', Order::STATUS_PENDING)
         ->groupBy('design_id')
         ->orderBy('garment', 'DESC')
         ->get();
 
-        return view('back.dashboard.index-groupby', [
-            'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
-            'order_ready' => Order::where('status', Order::STATUS_READY)->count(),
-            'order_pending' => Order::where('status', Order::STATUS_PENDING)->count(),
-            'missing_auth' => Order::where('status', Order::STATUS_WAITING_AUTH)->count(),
+        return view('back.dashboard.index-groupby', array_merge($this->getMetrics(), [
             'model' => new OrderDetail(),
             'data' => $data
-        ]);
+        ]));
     }
 
     public function ordersGroupBy($id)
@@ -57,10 +49,8 @@ class DashboardController extends Controller
             'orders.id',
         ])
         ->join('order_designs', 'order_designs.order_detail_id', '=', 'order_details.id')
-        ->join('orders', 'orders.id', '=', 'order_details.order_id')
-        ->join('designs', 'order_designs.design_id', '=', 'designs.id');
-
-        // $this->filterByRol($data);
+        ->join('designs', 'order_designs.design_id', '=', 'designs.id')
+        ->join('orders', 'orders.id', '=', 'order_details.order_id');
 
         $data = $data->where('orders.status', Order::STATUS_PENDING)
         ->where('designs.id', $id)
@@ -83,5 +73,15 @@ class DashboardController extends Controller
         if (auth()->user()->hasRole('Estampador')) {
             $data = $data->where('order_details.service_id', 2);
         }
+    }
+
+    protected function getMetrics()
+    {
+        return [
+            'order_missing_payment' => Order::where('status', Order::STATUS_MISSING_PAYMENT)->count(),
+            'order_ready' => Order::where('status', Order::STATUS_READY)->count(),
+            'order_pending' => Order::where('status', Order::STATUS_PENDING)->count(),
+            'missing_auth' => Order::where('status', Order::STATUS_WAITING_AUTH)->count(),
+        ];
     }
 }
