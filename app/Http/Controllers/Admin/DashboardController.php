@@ -31,8 +31,11 @@ class DashboardController extends Controller
         ])
         ->join('order_designs', 'order_designs.order_detail_id', '=', 'order_details.id')
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
-        ->join('designs', 'order_designs.design_id', '=', 'designs.id')
-        ->where('orders.status', Order::STATUS_PENDING)
+        ->join('designs', 'order_designs.design_id', '=', 'designs.id');
+
+        // $this->filterByRol($data);
+
+        $data = $data->where('orders.status', Order::STATUS_PENDING)
         ->groupBy('design_id')
         ->orderBy('garment', 'DESC')
         ->get();
@@ -55,8 +58,11 @@ class DashboardController extends Controller
         ])
         ->join('order_designs', 'order_designs.order_detail_id', '=', 'order_details.id')
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
-        ->join('designs', 'order_designs.design_id', '=', 'designs.id')
-        ->where('orders.status', Order::STATUS_PENDING)
+        ->join('designs', 'order_designs.design_id', '=', 'designs.id');
+
+        // $this->filterByRol($data);
+
+        $data = $data->where('orders.status', Order::STATUS_PENDING)
         ->where('designs.id', $id)
         ->get()->pluck('id')->toArray();
 
@@ -66,5 +72,16 @@ class DashboardController extends Controller
             'model' => Design::findModel($id),
             'models' => $orders
         ]);
+    }
+
+    protected function filterByRol(&$data)
+    {
+        if (auth()->user()->hasRole('Bordador')) {
+            $data = $data->where('order_details.service_id', 1);
+        }
+
+        if (auth()->user()->hasRole('Estampador')) {
+            $data = $data->where('order_details.service_id', 2);
+        }
     }
 }

@@ -18,6 +18,15 @@ class OrderDetailController extends ResourceController
         $this->authorize('viewAny', $model);
 
         $query = $model::select(['order_details.*', 'orders.deadline'])->where('orders.status', '=', Order::STATUS_PENDING);
+
+        if (auth()->user()->hasRole('Bordador')) {
+            $query = $query->where('order_details.service_id', 1);
+        }
+
+        if (auth()->user()->hasRole('Estampador')) {
+            $query = $query->where('order_details.service_id', 2);
+        }
+
         $query = $this->searchable($query, $request)->leftJoin('orders', 'orders.id', '=', 'order_id');
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
         $query = $query->with('service', 'subservice', 'order');

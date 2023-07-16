@@ -1,18 +1,20 @@
-11.- Corte de caja
-12.- Las órdenes se puedan editar una vez creadas por previa autorización de un administrador, ahorita solo los admin pueden hacerlo
-14.- Mostrar solo las ordenes pendientes
-16.- Agrupar por fechas las ordenes se debe poner una fecha de inicio y una fecha de fin
-20.- Cuando termines de llenar pase al siguiente campo
-22.- Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
-23.- Responsive celular diseño
-24.- ticketFecha en grande
-26.- Rol para Estampado
-27.- Separar Tipos de ordenes
-1.- agregar el nombre y teléfono del cliente al ticket
-2.-separar estampados de bordados
-3.- reparar el botón de solicitar autorización porque no están llegando los mensajes l
-Camilo buen día, espero te encuentres bien oye nos gustaría si es posible tener un historial de las órdenes, que nos duren por lo menos 1 mes y que de ahí se borren porque si ocupamos revisar aveces pedidos que ya han sido entregados
---Que tal Camilo buena tarde, espero estés bien, oye preguntando cuándo quedaría el tema del arqueo de caja y otra cosa que nos gustaría agregar al programa en la sección de órdenes, que nos agregues dos columnas donde podamos ver cuáles ordenes ya están terminadas (por la bordadora) y cuáles ya han sido entregadas(por el cajero) esta opción es bastante importante porque así tendremos en tiempo real cuáles órdenes faltan, y cuáles ya tenemos
----
-Hola Camilo oye otra modificación fíjate que está orden de realizó con autorización del administrador porque no se cubrió el total del bordado, pero al momento de entregarle al cliente no nos sale ningún aviso o alerta de que aún debe dinero el cliente, no se si poniendo el botón de realizar abono ahí arriba alado del de “ver ticket” porque si está peligroso que den entregado aun debiendo
-- Busquedas por clientess
+1.- Agregar el nombre y teléfono del cliente al ticket -- Listo
+2.- Corte de caja -- Listo
+3.- Corte de caja separadondo bordados y estamados
+4.- Separar Tipos de ordenes, bordador solo vera bordados, estampador solo estampados y administrador vera todos
+5.- Rol para Estampado -- listo
+6.- Que el Rol de bordados pueda ver los diseños -- Listo
+7.- Agrupar por fechas las ordenes se debe poner una fecha de inicio y una fecha de fin
+8.- Costo de ponchado nuevo debe ser fijo y debería de ser $150
+9.- Para que el ponchado sea gratis debe ser mayor o igual a 6 piezas
+10.- Mostrar solo las ordenes pendientes por defecto
+11.- Historial de ordenes
+12.- Mostrar advertencia al entregar prenda si esta no esta pagada al 100%
+13.- Permitir buscar clientes
+14.- En la seccion de ordenes mostrar el estado de la orden, entregada por cajero/bordador.
+15.- reparar el botón de solicitar autorización porque no están llegando los mensajes
+16.- Las órdenes se puedan editar una vez creadas por previa autorización de un administrador, ahorita solo los admin pueden hacerlo
+17.- Cuando termines de llenar pase al siguiente campo
+18.- Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
+19.- Responsive celular diseño
+20.- ticketFecha en grande
