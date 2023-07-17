@@ -29,7 +29,11 @@ class DashboardController extends Controller
         }
 
         if (auth()->user()->hasRole('super-admin')) {
-            $data = $this->groupDesign();
+            if ($request->input('type') == 'print') {
+                $data = $this->groupDesignPrint();
+            } else {
+                $data = $this->groupDesign();
+            }
         }
 
         $data = $data
