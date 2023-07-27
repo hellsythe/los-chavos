@@ -26,6 +26,7 @@
 
             <div class="form-control w-full mb-2 mr-2">
                 <LoadFile :file="service.detail.design" :error="errors.detail.design.file" />
+                <a target="_blank" class="btn btn-neutral" :href="service.detail.design_print.media.replace('https://los-chavos.site', '')" download> Descargar Archivo  </a>
             </div>
         </div>
 

@@ -8,6 +8,7 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Date;
+
 class Order extends BaseModel
 {
     public const STATUS_MISSING_PAYMENT = 40;
@@ -151,5 +152,16 @@ class Order extends BaseModel
                 return 'Warning';
                 break;
         }
+    }
+
+    protected static function booted(): void
+    {
+        static::deleted(function (ORder $order) {
+            $order_details = OrderDetail::where('order_id', $order->id)->get();
+
+            foreach ($order_details as $detail) {
+                $detail->delete();
+            }
+        });
     }
 }
