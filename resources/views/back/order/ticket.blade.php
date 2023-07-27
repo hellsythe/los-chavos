@@ -6,9 +6,9 @@
             <div style="margin-top: -20px"></div>
             <label>Folio: {{ $order->id }}</label> <br>
             <label>Fecha de orden: {{ Date::createFromDate($order->created_at)->format('d-m-Y') }}</label> <br>
-            <label>Entrega: {{$order->deadline}}</label> <br>
             <label>Cliente: {{$order->client->name}}</label> <br>
             <label>Teléfono : {{$order->client->phone}}</label> <br>
+            <label style="font-size: 19px">Entrega: {{$order->deadline}}</label> <br>
 
             @if ($order->order_number)
                 <label>Es un pedido</label>

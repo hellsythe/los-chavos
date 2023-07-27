@@ -17,7 +17,7 @@
 17.- Cuando termines de llenar pase al siguiente campo
 18.- Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 19.- Responsive celular diseño
-20.- ticketFecha en grande
+20.- ticketFecha en grande -- Listo
 21.- Bug al eliminar Ordenes -- Listo
 22.- Poder Descargar las imagenes del estampado -- Listo
 23.- Que aquí en órdenes te diga el diseño del bordado o estampado a lado de la Columna del cliente y que te marque con una palomita cuando la bordadora la marque como “terminado”
