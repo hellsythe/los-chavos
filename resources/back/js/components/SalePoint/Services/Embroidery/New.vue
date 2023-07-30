@@ -9,7 +9,7 @@
             <label for="" class="label"><span class="label-text">Costo por ponchado nuevo</span></label>
             <label class="input-group">
                 <span>$</span>
-                <input type="number" class="input input-bordered" v-model="service.detail.price" />
+                <input type="number" class="input input-bordered" v-model="service.detail.price" readonly />
             </label>
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.price }}</div>
         </div>
@@ -33,6 +33,9 @@ export default {
     },
     components: {
         LoadFile
+    },
+    mounted() {
+        this.service.detail.price = 150;
     },
     methods: {
         validate() {

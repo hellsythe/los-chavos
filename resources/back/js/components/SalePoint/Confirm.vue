@@ -46,14 +46,14 @@
                                 <tr v-if="service.subservice.id == 4">
                                     <td>-</td>
                                     <td colspan="3">
-                                        <label :class="{ 'line-through': service.garment_amount > 6 }">
+                                        <label :class="{ 'line-through': service.garment_amount > 5 }">
                                             Costo Por Diseño nuevo
                                         </label>
-                                        <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
+                                        <strong v-if="service.garment_amount > 5">No aplica por ser mas de 6
                                             prendas
                                         </strong>
                                     </td>
-                                    <td :class="{ 'line-through': service.garment_amount > 6 }">
+                                    <td :class="{ 'line-through': service.garment_amount > 5 }">
                                         {{ formatter(service.price) }}
                                     </td>
 
@@ -61,12 +61,12 @@
                                 <tr v-if="service.subservice.id == 3">
                                     <td>-</td>
                                     <td colspan="3">
-                                        <label :class="{ 'line-through': service.garment_amount > 6 }">Costo Por Modificar
+                                        <label :class="{ 'line-through': service.garment_amount > 5 }">Costo Por Modificar
                                             diseño</label>
-                                        <strong v-if="service.garment_amount > 6">No aplica por ser mas de 6
+                                        <strong v-if="service.garment_amount > 5">No aplica por ser mas de 6
                                             prendas</strong>
                                     </td>
-                                    <td :class="{ 'line-through': service.garment_amount > 6 }">
+                                    <td :class="{ 'line-through': service.garment_amount > 5 }">
                                         {{ formatter(service.detail.design.price) }}</td>
                                 </tr>
                             </template>
@@ -118,7 +118,7 @@ export default {
                 that.order.services[index].total = item.price * item.garment_amount;
                 total += item.price * item.garment_amount;
 
-                if (item.garment_amount <= 6) {
+                if (item.garment_amount < 6) {
                     if (item.subservice.id == 3) {
                         extra += item.detail.design.price;
                     }
