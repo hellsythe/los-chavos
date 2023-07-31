@@ -20,9 +20,11 @@
                 <div class="lg:flex">
                     <div class="form-control w-full mb-2 mr-2">
                         <label class="label"><span class="label-text">Nombre del cliente</span></label>
-                        <TypeaheadInput :currentValue="order.client.phone"  :loadFromApiUrl="'/admin/client/api?name={search}&page=1'" @selected="selectedData"
+                        <input dusk="client-name" v-model="order.client.name" type="text"
+                            class="input input-bordered w-full" placeholder="John Fulanito">
+                        <!-- <TypeaheadInput :currentValue="order.client.phone"  :loadFromApiUrl="'/admin/client/api?name={search}&page=1'" @selected="selectedData"
                             :ignoredList="selectedItemIds" placeholder="Nombre del cliente">
-                        </TypeaheadInput>
+                        </TypeaheadInput> -->
                         <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.name }}</div>
                     </div>
 
