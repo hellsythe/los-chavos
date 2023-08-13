@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class CashController extends Controller
 {
-    public function report()
+    public function report(Request $request)
     {
         return view('back.cash.report', [
             'payments' =>  $this->getPaymentsFromToday(),
-            'model' => CashBoxReport::where('status',CashBoxReport::STATUS_CLOSE)->where('start', date('Y-m-d'))->first()
+            'model' => CashBoxReport::where('status', CashBoxReport::STATUS_CLOSE)->where('start', date('Y-m-d'))->first(),
+            'type' => $request->type ?? 'bordado',
         ]);
     }
 
@@ -24,8 +25,8 @@ class CashController extends Controller
         $now = date('Y-m-d');
 
         return [
-            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','cash')->sum('amount'),
-            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method','card')->sum('amount'),
+            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'cash')->sum('amount'),
+            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'card')->sum('amount'),
         ];
     }
 
@@ -33,6 +34,7 @@ class CashController extends Controller
     {
         $cashbox = new CashBoxReport();
         $cashbox->status = CashBoxReport::STATUS_CLOSE;
+        $cashbox->type = $request->type;
         $cashbox->real_cash = $request->cash;
         $cashbox->real_card = $request->card;
         $cashbox->calculate_card = $request->cardCalc;

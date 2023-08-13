@@ -11,22 +11,28 @@
                     </tr>
                     <tr>
                         <td><strong>Efectivo</strong></td>
-                        <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="cash"></label></td>
+                        <td><label class="input-group"><span>$</span><input type="number"
+                                    class="input input-bordered w-full max-w-xs" v-model="cash"></label></td>
                         <template v-if="isadmin">
                             <td>
-                                <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
+                                <label class="input-group"><span>$</span><input type="number"
+                                        class="input input-bordered w-full max-w-xs" :value="payments.cash"></label>
                             </td>
-                            <td> <strong :class="[(cashCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cashCalculated}}</strong> </td>
+                            <td> <strong :class="[(cashCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{
+                                cashCalculated }}</strong> </td>
                         </template>
                     </tr>
                     <tr>
                         <td><strong>Tarjeta</strong></td>
-                        <td><label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" v-model="card"></label></td>
+                        <td><label class="input-group"><span>$</span><input type="number"
+                                    class="input input-bordered w-full max-w-xs" v-model="card"></label></td>
                         <template v-if="isadmin">
                             <td>
-                                <label class="input-group"><span>$</span><input type="number" class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
+                                <label class="input-group"><span>$</span><input type="number"
+                                        class="input input-bordered w-full max-w-xs" :value="payments.card"></label>
                             </td>
-                            <td> <strong :class="[(cardCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{ cardCalculated }}</strong> </td>
+                            <td> <strong :class="[(cardCalculated == 0) ? 'text-green-600' : 'text-red-600']">${{
+                                cardCalculated }}</strong> </td>
                         </template>
                     </tr>
                 </tbody>
@@ -66,6 +72,7 @@ export default {
     },
     methods: {
         async saveCashBox() {
+            const urlParams = new URLSearchParams(window.location.search);
             Swal.fire({
                 title: '¿Estás seguro de realizar el corte de caja? Esta acción no se puede deshacer',
                 icon: "question",
@@ -80,6 +87,7 @@ export default {
                         cardCalc: this.payments.card,
                         cashCalc: this.payments.cash,
                         cashout: this.cashout,
+                        type: urlParams.get('type'),
                     });
                     // Swal.fire('Se guardo el reporte correctamente', '', 'success')
                     window.location.href = "/admin/cash-box-report";
