@@ -4,7 +4,7 @@
 
         @for ($x = 1; $x <= $service->garment_amount; $x++)
             <label>Fecha de entrega: {{ $order->deadline }}</label> <br>
-            <label>{{ $service->garment->name }} #{{$x}}</label> <br>
+            <label>{{ $service->garment->name }} #{{$x}}/{{$service->garment_amount}}</label> <br>
             <center>
                 @php
                     $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
