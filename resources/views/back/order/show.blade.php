@@ -8,8 +8,10 @@
     <div class=" mb-2 mr-2 flex justify-between sm:flex-col lg:flex-row flex-wrap">
         <div class="flex">
             <div class="tooltip w-full lg:w-64 mr-1" data-tip="Genera el ticket">
-                <a href="{{ URL::to('admin/ticket/'.$model->id) }}"
-                    class="btn btn-active mt-1 w-full lg:w-64">Ver ticket</a>
+                <a href="{{ URL::to('admin/ticket/' . $model->id) }}" class="btn btn-active mt-1 w-full lg:w-64">Ver ticket</a>
+            </div>
+            <div class="tooltip w-full lg:w-64 mr-1" data-tip="Genera el ticket">
+                <a href="{{ URL::to('admin/etiquetas/' . $model->id) }}" class="btn btn-active mt-1 w-full lg:w-64">Ver Etiquetas</a>
             </div>
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) &&
                     $model->getRawOriginal('status') == $model::STATUS_WAITING_ORDER)
@@ -28,7 +30,8 @@
             @if (auth()->user()->hasRole(['super-admin']) &&
                     ($model->getRawOriginal('status') == $model::STATUS_MISSING_PAYMENT ||
                         $model->getRawOriginal('status') == $model::STATUS_WAITING_AUTH))
-                <div class="tooltip w-full lg:w-64 mr-1" data-tip="Este orden no tiene el pago 100%, pero se puede autorizar a que se realize">
+                <div class="tooltip w-full lg:w-64 mr-1"
+                    data-tip="Este orden no tiene el pago 100%, pero se puede autorizar a que se realize">
                     <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_PENDING]) }}"
                         class="btn btn-active mt-1 w-full lg:w-64 mr-1">Autorizar orden para su realización</a>
                 </div>
@@ -59,7 +62,8 @@
             </div>
             <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Estado</span></label>
-                <input type="text" class="input input-bordered w-full bg-{{$model->color_status}}" value="{{ $model->status }}" readonly>
+                <input type="text" class="input input-bordered w-full bg-{{ $model->color_status }}"
+                    value="{{ $model->status }}" readonly>
             </div>
             <div class="form-control w-full mb-2">
                 <label class="label"><span class="label-text">Estado de la orden</span></label>
@@ -69,10 +73,8 @@
     </div>
 
     <div id="sale">
-        <sale-point
-            :availableservices="{{json_encode($available_services)}}"
-            :orderp="{{json_encode($order)}}"
-            :extrap="{{json_encode([
+        <sale-point :availableservices="{{ json_encode($available_services) }}" :orderp="{{ json_encode($order) }}"
+            :extrap="{{ json_encode([
                 'steps' => [
                     'client' => true,
                     'service' => true,
@@ -82,9 +84,8 @@
                     'client' => '',
                     'services' => [],
                 ],
-                'readonly' => true
-            ])}}"
-        />
+                'readonly' => true,
+            ]) }}" />
         </sale-point>
     </div>
 
