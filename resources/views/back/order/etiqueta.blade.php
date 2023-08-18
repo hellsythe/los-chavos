@@ -11,7 +11,7 @@
                     echo '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($order->id, $generator::TYPE_CODE_128)) . '">';
                 @endphp
             </center>
-            <label style="font-size: 10px">Folio: {{ $service->id }}</label> <br>
+            <label style="font-size: 10px">Folio: {{ $order->id }}</label> <br>
             <label>{{ $service->detail->design->name ?? ($service->detail->designPrint->name ?? '') }}</label>
             <label></label><br>
         @endfor
