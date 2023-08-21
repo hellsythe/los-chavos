@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
+use Date;
 
 class PaymentController extends ResourceController
 {
@@ -37,8 +37,8 @@ class PaymentController extends ResourceController
         }
         $pdf = Pdf::loadView('back.payment.report', [
             'payments' => $payments->get(),
-            'start' => Carbon::parse($request->start)->format('l j F Y H:i'),
-            'end' => Carbon::parse($request->end)->format('l j F Y H:i'),
+            'start' => Date::parse($request->start)->format('l j F Y H:i'),
+            'end' => Date::parse($request->end)->format('l j F Y H:i'),
             'method' => $this->getMethod($request->method),
             'total' => $payments->sum('amount'),
         ]);
