@@ -50,6 +50,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::post('sale-save', 'SalePointController@saveOrder')->name('sale.point.save');
         Route::get('ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
         Route::get('etiquetas/{id}', 'OrderController@etiqueta')->name('sale.etiqueta');
+        Route::get('payment/report/pdf', 'PaymentController@report')->name('payment.report');
     });
 
 

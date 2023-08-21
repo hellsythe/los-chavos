@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class PaymentController extends ResourceController
 {
@@ -26,17 +28,38 @@ class PaymentController extends ResourceController
         ];
     }
 
-    // public function viewAny(Request $request)
-    // {
-    //     $model = new $this->model;
-    //     $this->authorize('viewAny', $model);
+    public function report(Request $request)
+    {
+        $payments = $this->model::whereBetween('created_at', [$request->start, $request->end]);
 
-    //     $query = $model::where('orders.status', '>', $model::STATUS_ACTIVE);
-    //     $query = $model::where('orders.status', '<', $model::STATUS_FINISH);
-    //     $query = $this->searchable($query, $request);
-    //     $query = $this->customFilters($query, $request);
-    //     $query = $this->applyOrderByToQuery($query, $request->input('order'));
+        if ($request->method) {
+            $payments = $payments->where('payment_method', $request->method);
+        }
+        $pdf = Pdf::loadView('back.payment.report', [
+            'payments' => $payments->get(),
+            'start' => Carbon::parse($request->start)->format('l j F Y H:i'),
+            'end' => Carbon::parse($request->end)->format('l j F Y H:i'),
+            'method' => $this->getMethod($request->method),
+            'total' => $payments->sum('amount'),
+        ]);
 
-    //     return $this->setPagination($query, $request);
-    // }
+        return $pdf->download();
+    }
+
+    protected function getMethod($method)
+    {
+        switch ($method) {
+            case 'cash':
+                return 'Efectivo';
+                break;
+
+            case 'card':
+                return 'Tarjeta';
+                break;
+
+            default:
+                return 'Cualquiera';
+                break;
+        }
+    }
 }

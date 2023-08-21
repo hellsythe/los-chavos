@@ -24,6 +24,8 @@
                 'update' => false,
                 'delete' => false,
                 'show' => false,
-            ]) }}" />
+            ]) }}" >
+                <custom-link link="/admin/payment/report/pdf" class="btn btn-primary ml-2">Descargar Reporte PDF</custom-link>
+        </grid-view>
     </div>
 @endsection

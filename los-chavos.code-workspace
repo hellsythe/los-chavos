@@ -1,13 +1,16 @@
 {
 	"folders": [
 		{
+			"name": "los-chavos",
 			"path": "."
 		},
 		{
-			"path": "../core"
+			"name": "base",
+			"path": "../base"
 		},
 		{
-			"path": "../base"
+			"name": "core",
+			"path": "../core"
 		}
 	],
 	"settings": {}

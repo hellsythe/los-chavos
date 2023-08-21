@@ -53,18 +53,18 @@ class Payment extends BaseModel
         return $this->belongsToMany(Order::class);
     }
 
-    // public function getPaymentMethodAttribute($value): string
-    // {
-    //     switch ($value) {
-    //         case 'cash':
-    //             return 'Efectivo';
-    //             break;
+    public function getPaymentMethodAttribute($value): string
+    {
+        switch ($value) {
+            case 'cash':
+                return 'Efectivo';
+                break;
 
-    //         default:
-    //             return 'Tarjeta';
-    //             break;
-    //     }
-    // }
+            default:
+                return 'Tarjeta';
+                break;
+        }
+    }
 
     // public function getAmountAttribute($value): string
     // {
