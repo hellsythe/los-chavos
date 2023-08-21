@@ -4340,12 +4340,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/base.git",
-                "reference": "115a766d03b9e2dae1a95669a68994e625884463"
+                "reference": "e2c8be7f78ee070750eb7b92c390a9ef6f6069e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/115a766d03b9e2dae1a95669a68994e625884463",
-                "reference": "115a766d03b9e2dae1a95669a68994e625884463",
+                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/e2c8be7f78ee070750eb7b92c390a9ef6f6069e1",
+                "reference": "e2c8be7f78ee070750eb7b92c390a9ef6f6069e1",
                 "shasum": ""
             },
             "require": {
@@ -4400,7 +4400,7 @@
                 "issues": "https://github.com/sdkconsultoria/base/issues",
                 "source": "https://github.com/sdkconsultoria/base/tree/develop"
             },
-            "time": "2023-08-21T19:25:01+00:00"
+            "time": "2023-08-21T22:56:46+00:00"
         },
         {
             "name": "sdkconsultoria/core",
@@ -4408,12 +4408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/core.git",
-                "reference": "6f2c1c65afe6491c877cbafd22c9cc79d0023df5"
+                "reference": "5476fbec6573caf25db6c4c0e2037e79a036e0cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/core/zipball/6f2c1c65afe6491c877cbafd22c9cc79d0023df5",
-                "reference": "6f2c1c65afe6491c877cbafd22c9cc79d0023df5",
+                "url": "https://api.github.com/repos/sdkconsultoria/core/zipball/5476fbec6573caf25db6c4c0e2037e79a036e0cc",
+                "reference": "5476fbec6573caf25db6c4c0e2037e79a036e0cc",
                 "shasum": ""
             },
             "require": {
@@ -4467,7 +4467,7 @@
                 "issues": "https://github.com/sdkconsultoria/core/issues",
                 "source": "https://github.com/sdkconsultoria/core/tree/develop"
             },
-            "time": "2023-08-21T19:25:12+00:00"
+            "time": "2023-08-21T23:13:13+00:00"
         },
         {
             "name": "spatie/laravel-permission",
