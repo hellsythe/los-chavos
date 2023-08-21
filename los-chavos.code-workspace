@@ -4,10 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "../sdk/base"
+			"path": "../core"
 		},
 		{
-			"path": "../sdk/core"
+			"path": "../base"
 		}
 	],
 	"settings": {}
