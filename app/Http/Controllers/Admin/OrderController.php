@@ -32,6 +32,14 @@ class OrderController extends ResourceController
 
     protected $model = \App\Models\Order::class;
 
+    protected function customFilters($query, $request)
+    {
+        if (!$request->id) {
+            $query = $query->where('orders.status', '>', $this->model::STATUS_ACTIVE);
+            return $query->where('orders.status', '<', $this->model::STATUS_FINISH);
+        }
+    }
+
     protected function filters(): array
     {
         return [
@@ -48,9 +56,8 @@ class OrderController extends ResourceController
     {
         $model = new $this->model;
         $this->authorize('viewAny', $model);
-
-        $query = $model::where('orders.status', '>', $model::STATUS_ACTIVE);
-        $query = $model::where('orders.status', '<', $model::STATUS_FINISH);
+        $query  = new $model;
+        $query = $this->customFilters($query, $request);
         $query = $this->searchable($query, $request)->with('client');
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
 

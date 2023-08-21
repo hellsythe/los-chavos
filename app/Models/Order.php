@@ -32,6 +32,7 @@ class Order extends BaseModel
     {
         return [
             TextField::make('id')->label('Folio')->rules(['required']),
+            TextField::make('status')->label('Estado')->rules(['required']),
         ];
     }
 
@@ -89,10 +90,10 @@ class Order extends BaseModel
                 return 'Pedido LLego';
                 break;
             case self::STATUS_PENDING:
-                return 'Pendiente';
+                return 'Sin realizar por Bordador/Estampador';
                 break;
             case self::STATUS_READY:
-                return 'Listo';
+                return 'Listo Para ser entregado';
                 break;
             case self::STATUS_FINISH:
                 return 'Entregado';

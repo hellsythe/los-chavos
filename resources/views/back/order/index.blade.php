@@ -7,7 +7,7 @@
         $model->getTranslation('plural')
     ]) ?>
 <?php
-$array = array_merge($model->getIndexFields(), ['client.name', 'deadline']);
+$array = array_merge([], ['id', 'client.name', 'deadline', 'status']);
 $array_translation = array_merge($model->getFullTranslations(), ['client.name' => 'Cliente', 'client' => 'Cliente', 'deadline' => 'Fecha de entrega']);
 $array_search = array_merge($model->getParseSearchFilters(), [['field' => 'client']]);
 ?>
