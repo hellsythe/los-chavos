@@ -9,14 +9,15 @@ class Payment extends BaseModel
 {
     protected function fields()
     {
-        return[
-            TextField::make('order_id')->label('Order')->rules(['required']),
+        return [
+            TextField::make('order_id')->label('Folio de orden')->rules(['required']),
             TextField::make('amount')->label('Abono')->rules(['required']),
             TextField::make('payment_method')->label('Metodo de pago')->rules(['required']),
+            TextField::make('created_at')->label('Fecha de creación')->rules(['required']),
         ];
     }
 
-    public function getTranslations() : array
+    public function getTranslations(): array
     {
         return [
             'singular' => 'Pago',
@@ -50,5 +51,23 @@ class Payment extends BaseModel
     public function order()
     {
         return $this->belongsToMany(Order::class);
+    }
+
+    public function getPaymentMethodAttribute($value): string
+    {
+        switch ($value) {
+            case 'cash':
+                return 'Efectivo';
+                break;
+
+            default:
+                return 'Tarjeta';
+                break;
+        }
+    }
+
+    public function getAmountAttribute($value): string
+    {
+        return '$'.number_format($value,2);
     }
 }
