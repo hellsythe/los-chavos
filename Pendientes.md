@@ -12,5 +12,4 @@ Las órdenes se puedan editar una vez creadas por previa autorización de un adm
 Cuando termines de llenar pase al siguiente campo
 Que aquí en órdenes te diga el diseño del bordado o estampado a lado de la Columna del cliente -- No se puede
 que te marque con una palomita cuando la bordadora la marque como “terminado”
-Etiquetas para pegar sobre las prendas
 Estados por servicios

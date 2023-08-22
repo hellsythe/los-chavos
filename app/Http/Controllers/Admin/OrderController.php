@@ -51,6 +51,9 @@ class OrderController extends ResourceController
 
                 return $query->whereIn('client_id', $clients_id);
             },
+            'id' => function ($query, $value) {
+                return $query->where('id', $value);
+            },
         ];
     }
 
