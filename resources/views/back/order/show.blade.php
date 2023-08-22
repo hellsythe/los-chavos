@@ -49,7 +49,7 @@
             @endif
 
         </div>
-        <div class="flex justify-end flex-col text-right">
+        <div class="flex justify-end flex-col text-right w-full" >
             <strong class="text-3xl text-right">Folio de venta: &nbsp;#{{ $model->id }}</strong>
             <strong class="text-3xl text-right">Fecha de entrega: &nbsp;{{ $model->deadline }}</strong>
         </div>

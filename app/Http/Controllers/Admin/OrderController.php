@@ -47,12 +47,15 @@ class OrderController extends ResourceController
         return [
             'client' => function ($query, $value) {
                 $clients_id = Client::where('clients.name', 'like', '%' . $value . '%')
-                ->orWhere('clients.phone', 'like', '%' . $value . '%')->get()->pluck('id')->toArray();
+                    ->orWhere('clients.phone', 'like', '%' . $value . '%')->get()->pluck('id')->toArray();
 
                 return $query->whereIn('client_id', $clients_id);
             },
             'id' => function ($query, $value) {
                 return $query->where('id', $value);
+            },
+            'status' => function ($query, $value) {
+                return $query->where('status', $value);
             },
         ];
     }
@@ -74,7 +77,7 @@ class OrderController extends ResourceController
         $model = $this->model::findModel($id);
         $this->authorize('view', new Order());
 
-        return view($this->view.'.show', [
+        return view($this->view . '.show', [
             'model' => $model,
             'order' => Order::with('client')->with('services')->find($id)->toArray(),
             'available_services' => Service::with('subservices')->get(),
@@ -149,7 +152,7 @@ class OrderController extends ResourceController
         $order = Order::findModel($id);
         $size = $order->services()->count() * 95;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
-        $pdf->setPaper([0,0,210,420 + $size]);
+        $pdf->setPaper([0, 0, 210, 420 + $size]);
 
         return $pdf->stream();
     }
@@ -158,7 +161,7 @@ class OrderController extends ResourceController
     {
         $order = Order::findModel($id);
         $pdf = Pdf::loadView('back.order.etiqueta', ['order' => $order]);
-        $pdf->setPaper([0,0,300, 100]);
+        $pdf->setPaper([0, 0, 300, 100]);
 
         return $pdf->stream();
     }
