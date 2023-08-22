@@ -120,7 +120,7 @@ class WhatsappNotification
     public function sendOrderTicketToClient($order)
     {
         $this->send(
-            '52'.$order->client->phone,
+            '52' . $order->client->phone,
             'ticket_pedido',
             [
                 [
@@ -138,7 +138,7 @@ class WhatsappNotification
                         [
                             "type" => "document",
                             "document" => [
-                                "link" => URL::to('storage/tickets/'.$order->id). '.pdf'
+                                "link" => URL::to('storage/tickets/' . $order->id) . '.pdf'
                             ]
                         ]
                     ]
@@ -151,7 +151,7 @@ class WhatsappNotification
     {
         $request = Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
             "messaging_product" => "whatsapp",
-            "to" => $number,
+            "to" => '52' . $number,
             "type" => "template",
             "template" => [
                 "name" => $template,
