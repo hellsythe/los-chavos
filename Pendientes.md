@@ -1,3 +1,5 @@
+Boton para notificar que el servicio esta listo -- Listo
+Boton para notificar que el PEDIDO FUE entregado -- Listo
 Que aquí en órdenes te diga el diseño del bordado o estampado a lado de la Columna del cliente -- No se puede
 Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 Corte de caja separadondo bordados y estamados, para los pagos la prioridad es para bordados
@@ -7,6 +9,6 @@ Las órdenes se puedan editar una vez creadas por previa autorización de un adm
 Cuando termines de llenar pase al siguiente campo
 que te marque con una palomita cuando la bordadora la marque como “terminado”
 Estados por servicios
-Boton para notificar que el servicio esta listo
-Boton para notificar que el PEDIDO FUE entregado
+Aumentar el tamaño del texto
+Texto personalizado en etiqueta -ticket
 Responsive celular diseño

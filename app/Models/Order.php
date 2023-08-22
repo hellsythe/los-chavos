@@ -137,6 +137,11 @@ class Order extends BaseModel
         return  Date::createFromDate($value)->format('l j F Y');
     }
 
+    public function getWhatsappNotificationAttribute($value): string
+    {
+        return  Date::createFromDate($value)->format('l j F Y');
+    }
+
     public function getDeadlinexAttribute(): string
     {
         return $this->attributes['deadline'] ?? '';

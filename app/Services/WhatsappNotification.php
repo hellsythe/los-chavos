@@ -116,6 +116,44 @@ class WhatsappNotification
         }
     }
 
+    public function sendOrderIsReadyNotification($order)
+    {
+        $this->send(
+            $order->client->phone,
+            'servicio_listo_para_entregar',
+            [
+                [
+                    "type" => "body",
+                    "parameters" => [
+                        [
+                            "type" => "text",
+                            "text" => $order->id
+                        ],
+                    ]
+                ],
+            ]
+        );
+    }
+
+    public function sendOrderIsDeliveryNotification($order)
+    {
+        $this->send(
+            $order->client->phone,
+            'pedido_entregado',
+            [
+                [
+                    "type" => "body",
+                    "parameters" => [
+                        [
+                            "type" => "text",
+                            "text" => $order->id
+                        ],
+                    ]
+                ],
+            ]
+        );
+    }
+
 
     public function sendOrderTicketToClient($order)
     {

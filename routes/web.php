@@ -41,6 +41,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('/orders-by-design', 'DashboardController@indexGrupBy')->name('dashboard.groupby');
         Route::get('/orders-by-design/{id}', 'DashboardController@ordersGroupBy')->name('dashboard.grouped');
         Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
+        Route::get('/api-order/whatsapp/{id}', 'OrderController@notifyClientByWhatsapp')->name('order.notify.whatsapp');
 
         Route::get('/cash-box-report/create', 'CashController@report')->name('cash-box-report.create');
         Route::post('/cashbox/save', 'CashController@save')->name('cashbox.save');
@@ -64,23 +65,3 @@ Route::namespace('\Sdkconsultoria\Core\Http\Controllers')
     ->prefix('admin/v1')->group(function () {
         Route::SdkApi('role', 'RoleController');
     });
-
-
-
-// Route::get('/test', function () {
-
-//     // $request = Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
-//     //     "messaging_product" => "whatsapp",
-//     //     "to" => "522213428198",
-//     //     "type" => "template",
-//     //     "template" => [
-//     //         "name" => "notificar_solicitud",
-//     //         "language" => ["code" => "es_MX"],
-
-//     //     ],
-//     // ]);
-//     // dd($request->body());
-//     $order = Order::first();
-//     (new WhatsappNotification())->sendRequestNotification($order);
-//     dd('holis');
-// });

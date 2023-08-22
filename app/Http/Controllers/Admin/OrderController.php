@@ -104,6 +104,7 @@ class OrderController extends ResourceController
                 if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
                     abort(403);
                 }
+                // (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);
                 break;
             case Order::STATUS_READY:
                 if (!auth()->user()->hasRole(['super-admin', 'Bordador'])) {
@@ -163,5 +164,18 @@ class OrderController extends ResourceController
         $pdf->setPaper([0, 0, 300, 100]);
 
         return $pdf->stream();
+    }
+
+    public function notifyClientByWhatsapp($id)
+    {
+        $order = Order::findModel($id);
+
+        if ($order->client->phone) {
+            (new WhatsappNotification())->sendOrderIsReadyNotification($order);
+            $order->whatsapp_notification = now();
+            $order->save();
+        }
+
+        return redirect('admin/order/' . $id);
     }
 }
