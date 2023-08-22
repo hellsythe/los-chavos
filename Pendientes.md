@@ -1,5 +1,5 @@
 Mostrar advertencia al entregar prenda si esta no esta pagada al 100% -- Listo
-Reparar el botón de solicitar autorización porque no están llegando los mensajes
+Reparar el botón de solicitar autorización porque no están llegando los mensajes --  si funcionan
 Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 Responsive celular diseño
 Corte de caja separadondo bordados y estamados, para los pagos la prioridad es para bordados

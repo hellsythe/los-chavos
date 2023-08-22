@@ -120,7 +120,7 @@ class WhatsappNotification
     public function sendOrderTicketToClient($order)
     {
         $this->send(
-            '52' . $order->client->phone,
+            $order->client->phone,
             'ticket_pedido',
             [
                 [
