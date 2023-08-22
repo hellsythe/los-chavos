@@ -8,4 +8,5 @@ Cuando termines de llenar pase al siguiente campo
 que te marque con una palomita cuando la bordadora la marque como “terminado”
 Estados por servicios
 Boton para notificar que el servicio esta listo
+Boton para notificar que el PEDIDO FUE entregado
 Responsive celular diseño
