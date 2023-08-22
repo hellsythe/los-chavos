@@ -1,8 +1,3 @@
-Mostrar advertencia al entregar prenda si esta no esta pagada al 100% -- Listo
-Reparar el botón de solicitar autorización porque no están llegando los mensajes --  si funcionan
-Historial de ordenes - Agreggando filtros -- Listo
-En la seccion de ordenes mostrar el estado de la orden, entregada por cajero/bordador -- Listo.
-Mostrar solo las ordenes pendientes por defecto -- Listo
 Que aquí en órdenes te diga el diseño del bordado o estampado a lado de la Columna del cliente -- No se puede
 Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 Corte de caja separadondo bordados y estamados, para los pagos la prioridad es para bordados
