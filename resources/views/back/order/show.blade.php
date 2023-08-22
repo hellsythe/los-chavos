@@ -20,7 +20,8 @@
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) && $model->getRawOriginal('status') == $model::STATUS_READY)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH]) }}"
-                    class="btn btn-active mt-1 w-full lg:w-64 mr-1">Marcar como Entregado</a>
+                    {!! $model->missing_payment>0 ? 'data-question="¿Este pedido tiene saldo pendiente de $'.number_format($model->missing_payment, 2).', desea marcarlo como entregado de todas formas?"':'' !!}
+                    class="btn btn-active mt-1 w-full lg:w-64 mr-1 question">Marcar como Entregado</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Bordador']) && $model->getRawOriginal('status') == $model::STATUS_PENDING)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_READY]) }}"
