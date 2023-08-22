@@ -13,7 +13,7 @@ class Payment extends BaseModel
             TextField::make('order_id')->label('Folio de orden')->rules(['required']),
             TextField::make('amount')->label('Abono')->rules(['required']),
             TextField::make('payment_method')->label('Metodo de pago')->rules(['required']),
-            TextField::make('created_at')->label('Fecha de creación')->rules(['required']),
+            TextField::make('created_at')->label('Fecha de creación')->rules(['nullable']),
         ];
     }
 
