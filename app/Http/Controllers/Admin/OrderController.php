@@ -34,10 +34,12 @@ class OrderController extends ResourceController
 
     protected function customFilters($query, $request)
     {
-        if (!$request->id) {
+        if (!$request->id && !$request->status && !$request->client) {
             $query = $query->where('orders.status', '>', $this->model::STATUS_ACTIVE);
             return $query->where('orders.status', '<', $this->model::STATUS_FINISH);
         }
+
+        return  $query;
     }
 
     protected function filters(): array

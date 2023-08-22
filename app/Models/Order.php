@@ -79,6 +79,7 @@ class Order extends BaseModel
 
     public function getStatusAttribute($value)
     {
+        return $this->statusMapping()[$value] ?? 'unkown';
         switch ($value) {
             case self::STATUS_MISSING_PAYMENT:
                 return 'Pago pendiente';
@@ -102,6 +103,19 @@ class Order extends BaseModel
                 return 'Esperando autorización';
                 break;
         }
+    }
+
+    public function statusMapping(): array
+    {
+        return [
+            self::STATUS_MISSING_PAYMENT => 'Pago pendiente',
+            self::STATUS_WAITING_ORDER => 'Esperando el pedido',
+            self::STATUS_ORDER_ARRIVED => 'Pedido LLego',
+            self::STATUS_PENDING => 'Sin realizar por Bordador/Estampador',
+            self::STATUS_READY => 'Listo Para ser entregado',
+            self::STATUS_FINISH => 'Entregado',
+            self::STATUS_WAITING_AUTH => 'Esperando autorización',
+        ];
     }
 
     public function getOrderStatusAttribute($value)

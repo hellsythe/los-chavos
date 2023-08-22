@@ -11,8 +11,8 @@
         ['type' => 'date', 'field' => 'start'],
         ['type' => 'date', 'field' => 'end'],
         ['type' => 'select', 'field' => 'method', 'options' => [
-            ['value' => 'cash', 'label'=>'Efectivo'],
-            ['value' => 'card', 'label'=>'Tarjeta'],
+            'cash'=>'Efectivo',
+            'label'=>'Tarjeta',
         ]]
     ]);
     ?>
