@@ -1,5 +1,5 @@
 <html>
-<div style="text-align: center; font-size: 16px">
+<div style="text-align: center; font-size: 15px">
     @foreach ($order->details as $service)
 
         @for ($x = 1; $x <= $service->garment_amount; $x++)
@@ -21,7 +21,7 @@
 </html>
 <style>
     html {
-        margin: 8px 0;
+        margin: 4px 0;
     }
 
     img {
