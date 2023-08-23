@@ -1,5 +1,21 @@
 <html>
-<div style="text-align: center; font-size: 15px">
+
+@php
+    function truncate($string, $length = 54, $append = "...")
+    {
+        $string = trim($string);
+
+        if(strlen($string) > $length)
+        {
+            $string = wordwrap($string, $length);
+            $string = explode("\n", $string, 2);
+            $string = $string[0] . $append;
+        }
+
+        return $string;
+    }
+@endphp
+<div style="text-align: center; font-size: 16px">
     @foreach ($order->details as $service)
 
         @for ($x = 1; $x <= $service->garment_amount; $x++)
@@ -12,7 +28,7 @@
                 @endphp
             </center>
             <label style="font-size: 16px">Folio: {{ $order->id }}</label> <br>
-            <label>{{ $service->detail->design->name ?? ($service->detail->designPrint->name ?? '') }}</label>
+            <label>{{ truncate($service->detail->design->name ?? ($service->detail->designPrint->name ?? '')) }}</label>
             <label></label><br>
         @endfor
     @endforeach
@@ -21,7 +37,7 @@
 </html>
 <style>
     html {
-        margin: 4px 0;
+        margin: 8px 0;
     }
 
     img {
