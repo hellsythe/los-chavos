@@ -25,7 +25,7 @@ class Order extends BaseModel
 
     public const STATUS_FINISH = 90;
 
-    protected $appends = ['deadlinex', 'desings'];
+    protected $appends = ['deadlinex', 'desings', 'service_type'];
 
 
     protected function fields()
@@ -194,5 +194,28 @@ class Order extends BaseModel
         }
 
         return implode(', ', $designs);
+    }
+
+
+    public function getServiceTypeAttribute()
+    {
+        $types = [];
+
+        foreach ($this->details as $detail) {
+            switch ($detail->service_id) {
+                case '1':
+                    if (!in_array($detail->service->name, $types)) {
+                        $types[] = $detail->service->name;
+                    }
+                    break;
+                case '2':
+                    if (!in_array($detail->service->name, $types)) {
+                        $array[] = $detail->service->name;
+                    }
+                    break;
+            };
+        }
+        $types = array_unique($types);
+        return implode(', ', $types);
     }
 }

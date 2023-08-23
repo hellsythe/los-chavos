@@ -7,8 +7,8 @@
         $model->getTranslation('plural')
     ]) ?>
     <?php
-    $array = array_merge([], ['id', 'client.name', 'deadline', 'status', 'desings']);
-    $array_translation = array_merge($model->getFullTranslations(), ['client.name' => 'Cliente', 'client' => 'Cliente', 'deadline' => 'Fecha de entrega', 'desings' => 'Diseños']);
+    $array = array_merge([], ['id', 'client.name', 'deadline', 'status', 'desings', 'service_type']);
+    $array_translation = array_merge($model->getFullTranslations(), ['client.name' => 'Cliente', 'client' => 'Cliente', 'deadline' => 'Fecha de entrega', 'desings' => 'Diseños', 'service_type' => 'Tipo de servicio', 'status' => 'Estado']);
     $array_search = array_merge([], [
         ['field' => 'id'],
         ['field' => 'client'],

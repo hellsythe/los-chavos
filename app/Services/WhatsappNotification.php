@@ -85,34 +85,62 @@ class WhatsappNotification
     public function sendNewOrder($order)
     {
         foreach ($this->getAllAdminis() as $user) {
-            if ($user->phone) {
-                $this->send(
-                    $user->phone,
-                    'nuevo_pedido',
+            $this->notifyNewOrderToUser($user, $order);
+        }
+
+        if(strpos($order->service_type, 'Bordado') !== false)
+        {
+            foreach ($this->getAllEmbroideries() as $user) {
+                $this->notifyNewOrderToUser($user, $order);
+            }
+        }
+
+        if(strpos($order->service_type, 'Estampado') !== false)
+        {
+            foreach ($this->getAllPrinters() as $user) {
+                $this->notifyNewOrderToUser($user, $order);
+            }
+        }
+
+        if(strpos($order->service_type, 'Estampado') !== false && strpos($order->service_type, 'Bordado') !== false){
+            foreach ($this->getAllPrinters() as $user) {
+                $this->notifyNewOrderToUser($user, $order);
+            }
+            foreach ($this->getAllEmbroideries() as $user) {
+                $this->notifyNewOrderToUser($user, $order);
+            }
+        }
+    }
+
+    protected function notifyNewOrderToUser($user, $order)
+    {
+        if ($user->phone) {
+            $this->send(
+                $user->phone,
+                'nuevo_pedido',
+                [
                     [
-                        [
-                            "type" => "body",
-                            "parameters" => [
-                                [
-                                    "type" => "text",
-                                    "text" => $order->id
-                                ],
-                            ]
-                        ],
-                        [
-                            "type" => "button",
-                            "sub_type" => "url",
-                            "index" => "0",
-                            "parameters" => [
-                                [
-                                    "type" => "text",
-                                    "text" => $order->id
-                                ]
+                        "type" => "body",
+                        "parameters" => [
+                            [
+                                "type" => "text",
+                                "text" => $order->id
+                            ],
+                        ]
+                    ],
+                    [
+                        "type" => "button",
+                        "sub_type" => "url",
+                        "index" => "0",
+                        "parameters" => [
+                            [
+                                "type" => "text",
+                                "text" => $order->id
                             ]
                         ]
                     ]
-                );
-            }
+                ]
+            );
         }
     }
 
@@ -120,7 +148,7 @@ class WhatsappNotification
     {
         $this->send(
             $order->client->phone,
-            'servicio_listo_para_entregar',
+            'notificar_pedido_listo',
             [
                 [
                     "type" => "body",
@@ -203,6 +231,20 @@ class WhatsappNotification
     {
         return User::whereHas("roles", function ($q) {
             $q->where("name", "super-admin");
+        })->get();
+    }
+
+    protected function getAllEmbroideries()
+    {
+        return User::whereHas("roles", function ($q) {
+            $q->where("name", "Bordador");
+        })->get();
+    }
+
+    protected function getAllPrinters()
+    {
+        return User::whereHas("roles", function ($q) {
+            $q->where("name", "Estampador");
         })->get();
     }
 }
