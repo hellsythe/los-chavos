@@ -6,4 +6,3 @@ Separar Tipos de ordenes, bordador solo vera bordados, estampador solo estampado
 Agrupar por fechas las ordenes se debe poner una fecha de inicio y una fecha de fin
 Las órdenes se puedan editar una vez creadas por previa autorización de un administrador, ahorita solo los admin pueden hacerlo
 Estados por servicios
-Responsive celular diseño
