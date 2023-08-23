@@ -28,7 +28,7 @@
                 @endphp
             </center>
             <label style="font-size: 16px">Folio: {{ $order->id }}</label> <br>
-            <label>{{ truncate($service->detail->design->name ?? ($service->detail->designPrint->name ?? '')) }}</label>
+            <label>{{ truncate($service->design_name) }}</label>
             <label></label><br>
         @endfor
     @endforeach

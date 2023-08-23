@@ -92,4 +92,9 @@ class OrderDetail extends BaseModel
     {
         return $this->order->deadline;
     }
+
+    public function getDesignNameAttribute(): string
+    {
+        return ($this->detail->design->name ?? ($this->detail->designPrint->name ?? 'Diseño personalizado'));
+    }
 }

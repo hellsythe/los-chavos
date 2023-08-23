@@ -1,4 +1,3 @@
-Texto personalizado en etiqueta y enticket
 Que aquí en órdenes te diga el diseño del bordado o estampado a lado de la Columna del cliente -- No se puede
 Notificar a todos - a bordadores y estampadores solo las ordenes que les interesan
 Corte de caja separadondo bordados y estamados, para los pagos la prioridad es para bordados
