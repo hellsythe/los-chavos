@@ -30,9 +30,11 @@
             <div class="stat-value">{{ number_format($missing_auth) }}</div>
         </div>
     </div>
-    <div class="mt-4">
-        <a href="{{route('dashboard.groupby')}}" class="btn btn-active">Agrupar por Diseños iguales</a>
-    </div>
+    @if (auth()->user()->hasRole(['super-admin', 'Bordador']))
+        <div class="mt-4">
+            <a href="{{route('dashboard.groupby')}}" class="btn btn-active">Agrupar por Diseños iguales</a>
+        </div>
+    @endif
     <?php
     $array = array_merge($model->getIndexFields(), [
         'service.name',
