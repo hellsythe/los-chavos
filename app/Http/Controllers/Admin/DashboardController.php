@@ -39,8 +39,13 @@ class DashboardController extends Controller
         $data = $data
         ->join('orders', 'orders.id', '=', 'order_details.order_id')
         ->where('orders.status', Order::STATUS_PENDING)
-        ->orderBy('garment', 'DESC')
-        ->get();
+        ->orderBy('garment', 'DESC');
+
+        if ($request->start && $request->end){
+            $data = $data->whereBetween('deadline', [$request->start, $request->end]);
+        }
+
+        $data = $data->get();
 
         return view('back.dashboard.index-groupby', array_merge($this->getMetrics(), [
             'model' => new OrderDetail(),

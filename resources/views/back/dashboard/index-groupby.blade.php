@@ -34,6 +34,12 @@
         <a href="{{ route('dashboard') }}" class="btn btn-active">Ver toda la lista de Ordenes</a>
     </div>
 
+    <form action="" class="mt-2 mb-2">
+        <input class="input input-bordered" min="{{date('Y-m-d')}}" type="date" name="start" value="{{ request()->get('start') }}">
+        <input class="input input-bordered" min="{{date('Y-m-d')}}" type="date" name="end" value="{{ request()->get('end') }}">
+        <a class="btn btn-warning" href="/admin/orders-by-design"> Limpiar </a>
+        <button class="btn btn-primary" type="submit">Agrupar por fecha de entrega</button>
+    </form>
     <div class="overflow-x-auto">
         <table class="table w-full mt-3 mb-3">
             <thead>
