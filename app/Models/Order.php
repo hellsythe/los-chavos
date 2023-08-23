@@ -25,7 +25,7 @@ class Order extends BaseModel
 
     public const STATUS_FINISH = 90;
 
-    protected $appends = ['deadlinex'];
+    protected $appends = ['deadlinex', 'desings'];
 
 
     protected function fields()
@@ -183,5 +183,16 @@ class Order extends BaseModel
                 $detail->delete();
             }
         });
+    }
+
+    public function getDesingsAttribute()
+    {
+        $designs = [];
+
+        foreach ($this->details as $detail) {
+            $designs[] = $detail->design_name;
+        }
+
+        return implode(', ', $designs);
     }
 }
