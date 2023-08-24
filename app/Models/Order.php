@@ -176,11 +176,17 @@ class Order extends BaseModel
 
     protected static function booted(): void
     {
-        static::deleted(function (ORder $order) {
+        static::deleted(function (Order $order) {
             $order_details = OrderDetail::where('order_id', $order->id)->get();
 
             foreach ($order_details as $detail) {
                 $detail->delete();
+            }
+
+            $payments = Payment::where('order_id', $order->id)->get();
+
+            foreach ($payments as $payment) {
+                $payment->delete();
             }
         });
     }
