@@ -68,8 +68,8 @@
             :fields="{{ json_encode($array) }}" :filters={{ json_encode($array_search) }}
             :translations='{!! json_encode($array_translation) !!}'
             :template_actions="{{ json_encode([
-                'update' => auth()->user()->hasRole(['super-admin']) || $model->editable,
-                'delete' => auth()->user()->hasRole(['super-admin']),
+                'update' => false,
+                'delete' => false,
                 'show' => true,
             ]) }}" />
     </div>
