@@ -27,9 +27,8 @@ class Payment extends BaseModel
 
     public function save(array $options = [])
     {
-        parent::save($options);
-
         $this->updateOrderMissingPayment();
+        parent::save($options);
     }
 
     protected function updateOrderMissingPayment()
@@ -57,16 +56,19 @@ class Payment extends BaseModel
 
         if ($order->missing_embroidery > 0) {
             if ($payment_available > $order->missing_embroidery) {
+                $this->total_embroidery = $order->missing_embroidery;
                 $payment_available -= $order->missing_embroidery;
                 $order->missing_embroidery = 0;
             } else {
                 $order->missing_embroidery -= $payment_available;
+                $this->total_embroidery = $payment_available;
                 $payment_available = 0;
             }
         }
 
         if ($payment_available > 0) {
             $order->missing_print -= $payment_available;
+            $this->total_print = $payment_available;
         }
 
         $order->save();
