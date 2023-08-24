@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('orders', function (Blueprint $table) {
             $table->double('total_print')->default(0);
             $table->double('total_embroidery')->default(0);
+            $table->double('missing_print')->default(0);
+            $table->double('missing_embroidery')->default(0);
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('orders', function (Blueprint $table) {
             //
         });
     }

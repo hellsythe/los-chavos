@@ -57,8 +57,9 @@ class SalePointController extends Controller
 
         $order = $this->findOrCreateOrder($request->order);
         $this->saveServices($request->order['services'], $order);
-        $this->savePayment($order, $request->order['payment']);
+        $order->setTotalByServiceType();
         $order->refresh();
+        $this->savePayment($order, $request->order['payment']);
 
         DB::commit();
         $ticket = $this->generateTicket($order);

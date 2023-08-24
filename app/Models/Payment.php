@@ -45,6 +45,30 @@ class Payment extends BaseModel
             }
         }
 
+        $this->updateMissingPayment();
+        $order->save();
+    }
+
+    protected function updateMissingPayment()
+    {
+        $payment_available = $this->amount;
+
+        $order = Order::findModel($this->order_id);
+
+        if ($order->missing_embroidery > 0) {
+            if ($payment_available > $order->missing_embroidery) {
+                $payment_available -= $order->missing_embroidery;
+                $order->missing_embroidery = 0;
+            } else {
+                $order->missing_embroidery -= $payment_available;
+                $payment_available = 0;
+            }
+        }
+
+        if ($payment_available > 0) {
+            $order->missing_print -= $payment_available;
+        }
+
         $order->save();
     }
 

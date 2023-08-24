@@ -218,4 +218,29 @@ class Order extends BaseModel
         $types = array_unique($types);
         return implode(', ', $types);
     }
+
+    public function setTotalByServiceType(): void
+    {
+        $total = [
+            'embrodery' => 0,
+            'print' => 0,
+        ];
+
+        foreach ($this->details as $detail) {
+            switch ($detail->service_id) {
+                case '1':
+                    $total['embrodery'] += $detail->total;
+                    break;
+                case '2':
+                    $total['print'] += $detail->total;
+                    break;
+            };
+        }
+
+        $this->total_embroidery = $total['embrodery'];
+        $this->total_print = $total['print'];
+        $this->missing_embroidery = $total['embrodery'];
+        $this->missing_print = $total['print'];
+        $this->save();
+    }
 }
