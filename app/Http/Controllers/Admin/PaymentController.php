@@ -27,6 +27,9 @@ class PaymentController extends ResourceController
             'method' => function ($query, $value) {
                 return $query->where('payment_method', $value);
             },
+            'service_type' => function ($query, $value) {
+                return $query->where($value, '>' , 0);
+            },
         ];
     }
 
@@ -40,12 +43,22 @@ class PaymentController extends ResourceController
         if ($request->method) {
             $payments = $payments->where('payment_method', $request->method);
         }
+
+        $type = 'Cualquiera';
+        if ($request->service_type) {
+            $payments = $payments->where($request->service_type, '>' , 0);
+            $type = $request->service_type == 'total_embroidery' ? 'Bordado' : 'Estampado';
+        }
+
         $pdf = Pdf::loadView('back.payment.report', [
             'payments' => $payments->get(),
             'start' => Date::parse($request->start)->format('l j F Y H:i'),
             'end' => Date::parse($request->end)->format('l j F Y H:i'),
             'method' => $this->getMethod($request->method),
             'total' => $payments->sum('amount'),
+            'total_embroidery' => $payments->sum('total_embroidery'),
+            'total_print' => $payments->sum('total_print'),
+            'type' => $type
         ]);
 
         return $pdf->download();

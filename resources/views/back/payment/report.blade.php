@@ -2,7 +2,10 @@
 <h3>Desde: {{$start}}</h3>
 <h3>Hasta: {{$end}}</h3>
 <h3>Metodo de pago: {{$method}}</h3>
+<h3>Tipo de reporte: {{$type}}</h3>
 <h3>Total: ${{number_format($total, 2)}}</h3>
+<h3>Total de bordado: ${{number_format($total_embroidery, 2)}}</h3>
+<h3>Total de estampado: ${{number_format($total_print, 2)}}</h3>
 <table>
     <tr>
         <th>Orden</th>
