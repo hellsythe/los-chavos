@@ -31,7 +31,7 @@ class Payment extends BaseModel
         parent::save($options);
     }
 
-    protected function updateOrderMissingPayment()
+    public function updateOrderMissingPayment()
     {
         $order = Order::findModel($this->order_id);
         $order->missing_payment -= $this->amount;
@@ -91,9 +91,4 @@ class Payment extends BaseModel
                 break;
         }
     }
-
-    // public function getAmountAttribute($value): string
-    // {
-    //     return '$'.number_format($value,2);
-    // }
 }

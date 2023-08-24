@@ -59,10 +59,12 @@ class SalePointController extends Controller
         $this->saveServices($request->order['services'], $order);
         $order->setTotalByServiceType();
         $order->refresh();
-        $this->savePayment($order, $request->order['payment']);
+
+        if ($request->order['payment']['advance'] ?? false) {
+            $this->savePayment($order, $request->order['payment']);
+        }
 
         DB::commit();
-        $ticket = $this->generateTicket($order);
 
         if ($order['client']['whatsapp'] ?? false) {
             (new WhatsappNotification())->sendOrderTicketToClient($order);
@@ -79,26 +81,33 @@ class SalePointController extends Controller
 
     protected function findOrCreateOrder($order): Order
     {
-        $order_model = new Order();
+        $order_model = Order::find($order['id']??0);
+
+        if ($order_model) {
+            $order_details = OrderDetail::where('order_id', $order_model->id)->get();
+
+            foreach ($order_details as $detail) {
+                $detail->delete();
+            }
+        } else {
+            $order_model = new Order();
+        }
+
         $order_model->deadline = $order['deadline'];
         $order_model->total = $order['total'];
         $order_model->created_by = auth()->user()->id;
         $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
         $order_model->order_number = $order['order_number'];
         $order_model->missing_payment = $order_model->total;
-
-        if ($order_model->total == $order['payment']['advance']) {
-            if ($order_model->order_number ?? 0 == '1') {
-                $order_model->status = Order::STATUS_WAITING_ORDER;
-            } else {
-                $order_model->status = Order::STATUS_PENDING;
-                // NewOrder::dispatch($order_model);
-            }
-        } else {
-            $order_model->status = Order::STATUS_MISSING_PAYMENT;
-        }
-
+        $order_model->status = Order::STATUS_MISSING_PAYMENT;
         $order_model->save();
+
+        if ($order['id']??false) {
+            $order_payments = Payment::where('order_id', $order_model->id)->get();
+            foreach ($order_payments as $payment) {
+                $payment->updateOrderMissingPayment();
+            }
+        }
 
         return $order_model;
     }

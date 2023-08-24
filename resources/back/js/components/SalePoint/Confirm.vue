@@ -84,7 +84,8 @@
                     <!-- <label @click="goToDashboard" class="btn btn-primary">Guardado correcto ir al Dashboard</label> -->
                 </PaymentComponent>
                 <div class="flex justify-end">
-                    <label @click="registerPayment" class="btn btn-neutral">Registrar Pago</label>
+                    <label v-if="order.id > 0" @click="updateOrder" class="btn btn-neutral">Guardar Cambios</label>
+                    <label v-else @click="registerPayment" class="btn btn-neutral">Registrar Pago</label>
                 </div>
             </div>
         </div>
@@ -170,6 +171,23 @@ export default {
         },
         goToDashboard() {
             window.location.href = '/admin';
+        },
+        async updateOrder()
+        {
+            window.dispatchEvent(new CustomEvent("dispachValidations"));
+            setTimeout(async () => {
+                let errors = this.validate();
+
+                if (errors) {
+                    Swal.fire({
+                        title: 'Errores en el pedido',
+                        html: errors,
+                        icon: "warning",
+                    });
+                } else {
+                    await this.$emit('save-order');
+                }
+            }, 300);
         },
         async registerPayment() {
             window.dispatchEvent(new CustomEvent("dispachValidations"));
