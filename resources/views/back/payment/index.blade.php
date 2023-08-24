@@ -23,8 +23,8 @@
             '' => 'Todos'
         ]],
         ['type' => 'select', 'field' => 'service_type', 'options' => [
-            'total_print'=>'Bordado',
-            'total_embroidery'=>'Estampado',
+            'total_embroidery'=>'Bordado',
+            'total_print'=>'Estampado',
             '' => 'Todos'
         ]]
     ]);
