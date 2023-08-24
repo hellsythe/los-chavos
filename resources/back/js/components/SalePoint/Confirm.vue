@@ -119,12 +119,11 @@ export default {
                 total += item.price * item.garment_amount;
 
                 if (item.garment_amount < 6) {
-                    if (item.subservice.id == 3) {
+                    if (item.subservice.id == 3) { //ponchado mofidicado
                         extra += item.detail.design.price;
                     }
-
-                    if (item.subservice.id == 4) {
-                        extra += item.price;
+                    if (item.subservice.id == 4) { //ponchado nuevo
+                        extra += item.detail.price;
                     }
                 }
             });
