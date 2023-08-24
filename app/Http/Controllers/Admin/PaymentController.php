@@ -15,6 +15,8 @@ class PaymentController extends ResourceController
 
     protected function customFilters($query, $request)
     {
+        $request->start = $request->start ?? Date::now()->format('Y-m-d 00:00:00');
+        $request->end = $request->end ?? Date::now()->format('Y-m-d 23:59');
         $query = $query->orderBy('id', 'DESC');
         return $query->whereBetween('created_at', [$request->start, $request->end]);
     }
@@ -30,6 +32,9 @@ class PaymentController extends ResourceController
 
     public function report(Request $request)
     {
+        $request->start = $request->start ?? Date::now()->format('Y-m-d 00:00:00');
+        $request->end = $request->end ?? Date::now()->format('Y-m-d 23:59');
+
         $payments = $this->model::whereBetween('created_at', [$request->start, $request->end]);
 
         if ($request->method) {
