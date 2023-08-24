@@ -6,7 +6,9 @@
 <table>
     <tr>
         <th>Orden</th>
-        <th>Importe</th>
+        <th>Importe total</th>
+        <th>Importe bordado</th>
+        <th>Importe estampado</th>
         <th>Metodo de pago</th>
         <th>Fecha</th>
     </tr>
@@ -14,6 +16,8 @@
         <tr>
             <td>{{ $payment->order_id }}</td>
             <td>${{ number_format($payment->amount, 2) }}</td>
+            <td>${{ number_format($payment->total_embroidery, 2) }}</td>
+            <td>${{ number_format($payment->total_print, 2) }}</td>
             <td>{{ $payment->payment_method }}</td>
             <td>{{ $payment->created_at }}</td>
         </tr>
