@@ -18,6 +18,7 @@ class CashBoxReportController extends ResourceController
         $this->authorize('viewAny', $model);
 
         $query = $model::where('status', $model::STATUS_CLOSE);
+        $query = $model->orderBy('id', 'desc');
         $query = $this->searchable($query, $request);
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
 

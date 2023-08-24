@@ -13,20 +13,20 @@ class CashController extends Controller
     public function report(Request $request)
     {
         return view('back.cash.report', [
-            'payments' =>  $this->getPaymentsFromToday(),
-            'model' => CashBoxReport::where('status', CashBoxReport::STATUS_CLOSE)->where('start', date('Y-m-d'))->first(),
-            'type' => $request->type ?? 'bordado',
+            'payments' =>  $this->getPaymentsFromToday($request->type ?? 'total_embroidery'),
+            'model' => CashBoxReport::where('status', CashBoxReport::STATUS_CLOSE)->where('type', $request->type == 'total_embroidery' ? 'Bordado':'Estampado')->where('start', date('Y-m-d'))->first(),
+            'type' => $request->type == 'total_embroidery' ? 'Bordado':'Estampado',
         ]);
     }
 
-    protected function getPaymentsFromToday()
+    protected function getPaymentsFromToday($type)
     {
         $tomorrow = date('Y-m-d', strtotime("+1 days"));
         $now = date('Y-m-d');
 
         return [
-            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'cash')->sum('amount'),
-            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'card')->sum('amount'),
+            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'cash')->sum($type),
+            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'card')->sum($type),
         ];
     }
 
@@ -44,6 +44,7 @@ class CashController extends Controller
         $cashbox->start = date('Y-m-d');
         $cashbox->finish = date('Y-m-d');
         $cashbox->created_by = auth()->user()->id;
+        $cashbox->type = ($request->type == 'total_embroidery' ? 'Bordado':'Estampado');
         $cashbox->save();
 
         return ['status' => 'ok'];

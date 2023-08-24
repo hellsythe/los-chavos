@@ -17,6 +17,7 @@ class CashBoxReport extends BaseModel
     {
         return[
             TextField::make('start')->label('Fecha')->rules(['required']),
+            TextField::make('type')->label('Tipo de corte')->rules(['required']),
             TextField::make('calculate_cash')->label('Efectivo Calculado')->rules(['required']),
             TextField::make('real_cash')->label('Efectivo Contado')->rules(['required']),
             TextField::make('missing_cash')->label('Efectivo Faltante')->rules(['required']),
