@@ -63,6 +63,7 @@ class SalePointController extends Controller
         if ($request->order['payment']['advance'] ?? false) {
             $this->savePayment($order, $request->order['payment']);
         }
+        $ticket = $this->generateTicket($order);
 
         DB::commit();
 
@@ -75,7 +76,7 @@ class SalePointController extends Controller
         return [
             'order' => $order,
             'request' => $request->order,
-            'ticket' => $this->generateTicket($order)
+            'ticket' => $ticket
         ];
     }
 
