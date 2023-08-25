@@ -104,7 +104,7 @@ class OrderController extends ResourceController
                 if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
                     abort(403);
                 }
-                // (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);
+                (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);
                 break;
             case Order::STATUS_READY:
                 if (!auth()->user()->hasRole(['super-admin', 'Bordador'])) {
@@ -150,7 +150,7 @@ class OrderController extends ResourceController
     public function ticket($id)
     {
         $order = Order::findModel($id);
-        $size = $order->services()->count() * 90.;
+        $size = $order->services()->count() * 90;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
         $pdf->setPaper([0, 0, 210, 430 + $size]);
 

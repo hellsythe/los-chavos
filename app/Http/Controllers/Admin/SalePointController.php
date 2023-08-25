@@ -63,6 +63,8 @@ class SalePointController extends Controller
         if ($request->order['payment']['advance'] ?? false) {
             $this->savePayment($order, $request->order['payment']);
         }
+        $order->refresh();
+
         $ticket = $this->generateTicket($order);
 
         DB::commit();
@@ -302,7 +304,7 @@ class SalePointController extends Controller
 
     private function generateTicket($order)
     {
-        $size = $order->services()->count() * 85;
+        $size = $order->services()->count() * 90;
         $pdf = Pdf::loadView('back.order.ticket', ['order' => $order]);
         $pdf->setPaper([0,0,210,420 + $size]);
 
