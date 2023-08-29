@@ -56,6 +56,10 @@ class OrderController extends ResourceController
             'status' => function ($query, $value) {
                 return $query->where('status', $value);
             },
+            'garment' => function ($query, $value) {
+                $details = OrderDetail::where('garment_id', $value)->get()->pluck('order_id')->toArray();
+                return $query->whereIn('id', $details);
+            },
         ];
     }
 

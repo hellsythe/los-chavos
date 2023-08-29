@@ -2,6 +2,11 @@
 
 @section('title', $model->getTranslation('plural'))
 
+@php
+    $garment = \App\Models\Garment::all();
+    $garment = $garment->keyBy('id')->pluck('name', 'id')->toArray();
+    $garment[''] = 'Cualquier Prenda';
+@endphp
 @section('content')
     <?= Base::breadcrumb([
         $model->getTranslation('plural')
@@ -12,7 +17,8 @@
     $array_search = array_merge([], [
         ['field' => 'id'],
         ['field' => 'client'],
-        ['field' => 'status', 'options' => $model->statusMapping(), 'type' => 'select']
+        ['field' => 'status', 'options' => $model->statusMapping(), 'type' => 'select'],
+        ['field' => 'garment', 'options' => $garment, 'type' => 'select'],
     ]);
     ?>
     <div id=app>
