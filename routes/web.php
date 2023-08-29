@@ -53,9 +53,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('etiquetas/{id}', 'OrderController@etiqueta')->name('sale.etiqueta');
         Route::get('payment/report/pdf', 'PaymentController@report')->name('payment.report');
     });
-
-
-
+Route::get('aviso-privacidad', '\App\Http\Controllers\StaticSiteController@privacy');
 Route::get('/', function () {
     return redirect('admin');
 });
