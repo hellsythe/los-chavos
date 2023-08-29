@@ -12,6 +12,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/front/css/app.css',
+                'resources/front/js/app.js',
                 'resources/back/css/app.css',
                 'resources/back/js/app.js',
             ],
