@@ -15,10 +15,10 @@
     }
 @endphp
 <div style="text-align: center; font-size: 16px">
-    @foreach ($order->details as $service)
+    @foreach ($order->details as $index => $service)
         @for ($x = 1; $x <= $service->garment_amount; $x++)
             <label>Fecha de entrega: {{ $order->deadline }}</label> <br>
-            <label>{{ $service->garment->name }} #{{ $x }}/{{ $service->garment_amount }}</label> <br>
+            <label>{{ $service->garment->name }} #{{ $x }}/{{ $service->garment_amount }}</label>  -- Servicio {{$index+1}} de {{count($order->details)}}<br>
             <table cellspacing="0" cellpadding="0">
                 <tr>
                     <td style="font-size: 30px; text-align: center;">{{ $order->id }}</td>
