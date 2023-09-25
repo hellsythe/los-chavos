@@ -216,7 +216,7 @@ class Order extends BaseModel
                     break;
                 case '2':
                     if (!in_array($detail->service->name, $types)) {
-                        $array[] = $detail->service->name;
+                        $types[] = $detail->service->name;
                     }
                     break;
             };
