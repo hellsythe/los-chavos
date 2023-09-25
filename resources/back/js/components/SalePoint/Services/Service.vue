@@ -17,7 +17,7 @@
 
         <div class="form-control w-full mb-2 mt-2">
             <label for="" class="label"><span class="label-text">Comentarios</span></label>
-            <textarea class="textarea textarea-bordered" placeholder="Comentarios"
+            <textarea class="textarea textarea-bordered h-40" placeholder="Comentarios"
                 v-model="service.comments"></textarea>
         </div>
     </div>
