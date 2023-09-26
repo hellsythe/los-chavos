@@ -5,7 +5,7 @@
 @section('content')
     <?= Base::breadcrumb([$model->getTranslation('plural')]) ?>
     <?php
-    $array = ['id', 'amount', 'total_embroidery', 'total_print', 'payment_method', 'created_at'];
+    $array = ['id', 'order_id', 'amount', 'total_embroidery', 'total_print', 'payment_method', 'created_at'];
     $array_translation = array_merge($model->getFullTranslations(), [
         'start' => 'Fecha de inicio',
         'end' => 'Fecha de fin',
@@ -13,6 +13,7 @@
         'service_type' => 'Tipo de servicio',
         'total_print' => 'Pago por estampado',
         'total_embroidery' => 'Pago por bordado',
+        'order_id' => 'Orden',
     ]);
     $array_search = array_merge([], [
         ['type' => 'date', 'field' => 'start'],
