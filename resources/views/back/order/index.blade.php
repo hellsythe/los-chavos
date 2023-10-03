@@ -26,7 +26,7 @@
         ['field' => 'id'],
         ['field' => 'client'],
         ['field' => 'design'],
-        ['field' => 'status', 'options' => array_merge($model->statusMapping(), ['' => 'Cualquier estado']), 'type' => 'select'],
+        ['field' => 'status', 'options' => $model->statusMapping(), 'type' => 'select'],
         ['field' => 'garment', 'options' => $garment, 'type' => 'select'],
     ]);
     ?>
