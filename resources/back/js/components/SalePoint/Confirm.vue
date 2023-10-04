@@ -54,7 +54,7 @@
                                         </strong>
                                     </td>
                                     <td :class="{ 'line-through': service.garment_amount > 5 }">
-                                        {{ formatter(service.price) }}
+                                        {{ formatter(service.detail.price) }}
                                     </td>
 
                                 </tr>

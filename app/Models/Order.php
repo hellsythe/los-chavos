@@ -235,7 +235,7 @@ class Order extends BaseModel
         foreach ($this->details as $detail) {
             switch ($detail->service_id) {
                 case '1':
-                    $total['embrodery'] += $detail->total;
+                    $total['embrodery'] += $detail->total + $this->loadExtraCost($detail);
                     break;
                 case '2':
                     $total['print'] += $detail->total;
@@ -248,5 +248,22 @@ class Order extends BaseModel
         $this->missing_embroidery = $total['embrodery'];
         $this->missing_print = $total['print'];
         $this->save();
+    }
+
+    public function loadExtraCost($detail): int
+    {
+        if ($detail->garment_amount > 5) {
+            return 0;
+        }
+
+        switch ($detail->subservice_id) {
+            case 3:
+                return 45;
+                break;
+            case 4:
+                return 150;
+                break;
+        }
+        return 0;
     }
 }
