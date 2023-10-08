@@ -54,6 +54,9 @@ class OrderController extends ResourceController
                 return $query->where('id', $value);
             },
             'status' => function ($query, $value) {
+                if ($value == '99999') {
+                    return $query;
+                }
                 return $query->where('status', $value);
             },
             'design' => function ($query, $value) {
@@ -66,6 +69,9 @@ class OrderController extends ResourceController
             'garment' => function ($query, $value) {
                 $details = OrderDetail::where('garment_id', $value)->get()->pluck('order_id')->toArray();
                 return $query->whereIn('id', $details);
+            },
+            'deadline' => function ($query, $value) {
+                return $query->where('deadline', $value);
             },
         ];
     }
