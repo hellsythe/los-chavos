@@ -90,6 +90,10 @@ export default {
             if (!this.order.payment.advance) {
                 this.errors.payment.advance = 'El anticipo no puede estar vacio';
             }
+
+            if (this.order.payment.advance > this.order.total) {
+                this.errors.payment.advance = 'El anticipo no puede ser mayor al total';
+            }
         }
     },
 };
