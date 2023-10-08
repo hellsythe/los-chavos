@@ -33,6 +33,7 @@ class Order extends BaseModel
         return [
             TextField::make('id')->label('Folio')->rules(['required']),
             TextField::make('status')->label('Estado')->rules(['required']),
+            TextField::make('deadline')->label('Fecha de entrega')->rules(['required']),
         ];
     }
 

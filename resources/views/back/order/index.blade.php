@@ -26,6 +26,7 @@
         ['field' => 'id'],
         ['field' => 'client'],
         ['field' => 'design'],
+        ['field' => 'deadline'],
         ['field' => 'status', 'options' => $model->statusMapping(), 'type' => 'select'],
         ['field' => 'garment', 'options' => $garment, 'type' => 'select'],
     ]);
