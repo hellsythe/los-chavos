@@ -118,7 +118,7 @@ class OrderController extends ResourceController
                 (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);
                 break;
             case Order::STATUS_READY:
-                if (!auth()->user()->hasRole(['super-admin', 'Bordador'])) {
+                if (!auth()->user()->hasRole(['super-admin', 'Bordador', 'Estampador'])) {
                     abort(403);
                 }
                 break;

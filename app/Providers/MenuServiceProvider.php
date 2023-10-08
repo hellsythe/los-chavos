@@ -50,7 +50,7 @@ class MenuServiceProvider extends ServiceProvider
             'extra_urls' => [],
         ], ['super-admin', 'Punto de venta']);
 
-        $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador']);
+        $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador', 'Estampador']);
         $service_menu->addElement(CashBoxReport::makeMenu('currency-dollar'), ['super-admin', 'Punto de venta']);
 
         // $service_menu->addElement([
@@ -70,6 +70,6 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
-        $service_menu->addElement(Setting::makeMenu('book-open'));
+        $service_menu->addElement(Setting::makeMenu('book-open'), ['super-admin']);
     }
 }
