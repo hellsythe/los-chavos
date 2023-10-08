@@ -11,7 +11,7 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.service }}</div>
         </div>
 
-        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="errors" :availableservices="availableservices" :index="index"  ref="embrodery" />
+        <EmbroideryComponent v-if="service.service.id == 1"  :service="service" :errors="errors" :availableservices="availableservices" :index="index"  ref="embrodery" :cost="cost"/>
         <PrintComponent v-if="service.service.id == 2" :service="service" :errors="errors" ref="print" />
         <GarmentComponent :service="service" :errors="errors" ref="garment" :index="index" />
 
@@ -34,6 +34,7 @@ export default {
         errors: JSON,
         service: JSON,
         availableservices: JSON,
+        cost: JSON,
         index: Number,
         currentServiceIndex: Number,
     },

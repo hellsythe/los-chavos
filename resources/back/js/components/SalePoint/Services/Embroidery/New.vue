@@ -30,12 +30,13 @@ export default {
     props: {
         service: JSON,
         errors: JSON,
+        cost: JSON,
     },
     components: {
         LoadFile
     },
     mounted() {
-        this.service.detail.price = 150;
+        this.service.detail.price = this.cost.new_embroidery_price;
     },
     methods: {
         validate() {

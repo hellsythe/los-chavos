@@ -15,6 +15,10 @@
                 'errors' => [
                     'client' => '',
                     'services' => [],
+                ],
+                'cost' => [
+                    'update_embroidery_price' => $update_embroidery_price,
+                    'new_embroidery_price' => $new_embroidery_price,
                 ]
             ])}}"
         />

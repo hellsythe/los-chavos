@@ -18,8 +18,8 @@
             <div class="text-red-500 text-xs font-semibold mt-1">{{ errors.detail.price_by_garment }}</div>
         </div>
     </div>
-    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" />
-    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" />
+    <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" :cost="cost"/>
+    <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" :cost="cost" />
     <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" />
     <DesignComponent v-if="service.subservice.id == 1" :design="service.detail.design" text="Diseño Existente" :detail="service" :error="errors.detail.design.id" ref="exist" />
 </template>
@@ -37,6 +37,7 @@ export default {
         availableservices: JSON,
         errors: JSON,
         index: Number,
+        cost: JSON,
     },
     components: {
         NewComponent,

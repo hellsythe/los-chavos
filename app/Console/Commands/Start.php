@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Service;
 use App\Models\Subservice;
 use App\Models\Garment;
+use App\Models\Setting;
 use App\Models\Typography;
 use Illuminate\Console\Command;
 use Sdkconsultoria\Core\Models\Role;
@@ -40,6 +41,7 @@ class Start extends Command
         $this->assingPermissionsToVenta();
         $this->assingPermissionsToBordador();
         $this->assingPermissionsToEstampador();
+        $this->setDefaultConfig();
     }
 
     private function createServices()
@@ -259,5 +261,31 @@ class Start extends Command
         $role->givePermissionTo('order_detail:view');
         $role->givePermissionTo('design_print:viewAny');
         $role->givePermissionTo('design_print:view');
+    }
+
+    private function setDefaultConfig()
+    {
+        $model = Setting::where('name', 'new_embroidery_price')->first();
+
+        if (!$model) {
+            $model = new Setting();
+            $model->name = 'new_embroidery_price';
+            $model->label = 'Costo por nuevo bordado';
+            $model->value = '200';
+            $model->status = Setting::STATUS_ACTIVE;
+            $model->save();
+        }
+
+        $model = Setting::where('name', 'update_embroidery_price')->first();
+
+        if(!$model)
+        {
+            $model = new Setting();
+            $model->name = 'update_embroidery_price';
+            $model->label = 'Costo por actualizar bordado';
+            $model->value = '45';
+            $model->status = Setting::STATUS_ACTIVE;
+            $model->save();
+        }
     }
 }

@@ -19,6 +19,7 @@ use App\Models\OrderCustomDesign;
 use App\Models\OrderDesignPrint;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 use App\Models\Service;
+use App\Models\Setting;
 use App\Services\WhatsappNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -37,6 +38,8 @@ class SalePointController extends Controller
         return view('back.sale_point.index', [
             'available_services' => Service::with('subservices')->get(),
             'order' => [],
+            'update_embroidery_price' => (int) Setting::where('name', 'update_embroidery_price')->first()->value,
+            'new_embroidery_price' => (int) Setting::where('name', 'new_embroidery_price')->first()->value,
         ]);
     }
 
@@ -47,7 +50,9 @@ class SalePointController extends Controller
 
         return view('back.sale_point.update', [
             'available_services' => Service::with('subservices')->get(),
-            'order' => $model
+            'order' => $model,
+            'update_embroidery_price' => (int) Setting::where('name', 'update_embroidery_price')->first()->value,
+            'new_embroidery_price' => (int) Setting::where('name', 'new_embroidery_price')->first()->value,
         ]);
     }
 

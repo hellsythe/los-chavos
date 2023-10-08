@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\Setting;
 use App\Models\CashBoxReport;
 use App\Models\DesignPrint;
 use App\Models\Typography;
@@ -69,5 +70,6 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
+        $service_menu->addElement(Setting::makeMenu('book-open'));
     }
 }

@@ -32,9 +32,10 @@ export default {
     props: {
         service: JSON,
         errors: JSON,
+        cost: JSON,
     },
     mounted() {
-        this.service.detail.design.price = 45;
+        this.service.detail.design.price = this.cost.update_embroidery_price;
     },
     data() {
         return {

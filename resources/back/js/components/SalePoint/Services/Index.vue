@@ -27,7 +27,7 @@
                 </button>
                 <div v-for="(service, index) in order.services">
                     <ServiceComponent :errors="extra.errors.services[index]" :index="index" :service="service"
-                        :ref="'services'" :currentServiceIndex="currentServiceIndex"
+                        :ref="'services'" :currentServiceIndex="currentServiceIndex" :cost="extra.cost"
                         :availableservices="availableservices" />
                 </div>
                 <div class="flex justify-end" v-if="!extra.readonly">

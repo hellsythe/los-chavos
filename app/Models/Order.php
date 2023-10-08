@@ -258,10 +258,10 @@ class Order extends BaseModel
 
         switch ($detail->subservice_id) {
             case 3:
-                return 45;
+                return Setting::where('name', 'update_embroidery_price')->first()->value;
                 break;
             case 4:
-                return 150;
+                return Setting::where('name', 'new_embroidery_price')->first()->value;
                 break;
         }
         return 0;
