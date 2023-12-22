@@ -229,6 +229,8 @@ class Start extends Command
         $role->givePermissionTo('design_print:view');
         $role->givePermissionTo('cash_box_report:viewAny');
         $role->givePermissionTo('cash_box_report:view');
+        $role->givePermissionTo('client:viewAny');
+        $role->givePermissionTo('client:view');
     }
 
     private function assingPermissionsToBordador()
@@ -261,6 +263,8 @@ class Start extends Command
         $role->givePermissionTo('order_detail:view');
         $role->givePermissionTo('design_print:viewAny');
         $role->givePermissionTo('design_print:view');
+        $role->givePermissionTo('client:viewAny');
+        $role->givePermissionTo('client:view');
     }
 
     private function setDefaultConfig()
