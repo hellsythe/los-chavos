@@ -14,7 +14,7 @@
         $model->getTranslation('plural')
     ]) ?>
     <?php
-    $array = array_merge([], ['id', 'client.name', 'deadline', 'status', 'desings', 'service_type']);
+    $array = array_merge([], ['id', 'client.name', 'deadline', 'status', 'desings', 'service_type', 'services']);
     $array_translation = array_merge($model->getFullTranslations(), [
         'client.name' => 'Cliente',
         'client' => 'Cliente',
@@ -23,6 +23,7 @@
         'service_type' => 'Tipo de servicio',
         'status' => 'Estado',
         'design' => 'Diseño',
+        'services' => 'Total de servicios',
     ]);
     $array_search = array_merge([], [
         ['field' => 'id'],

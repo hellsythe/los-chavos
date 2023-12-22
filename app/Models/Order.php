@@ -25,7 +25,7 @@ class Order extends BaseModel
 
     public const STATUS_FINISH = 90;
 
-    protected $appends = ['deadlinex', 'desings', 'service_type'];
+    protected $appends = ['deadlinex', 'desings', 'service_type', 'services'];
 
 
     protected function fields()
@@ -203,6 +203,10 @@ class Order extends BaseModel
         return implode(', ', $designs);
     }
 
+    public function getServicesAttribute()
+    {
+        return count($this->details);
+    }
 
     public function getServiceTypeAttribute()
     {
