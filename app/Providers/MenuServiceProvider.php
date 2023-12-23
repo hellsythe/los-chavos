@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\Employee;
 use App\Models\EmbroideryStatistics;
 use App\Models\Setting;
 use App\Models\CashBoxReport;
@@ -63,6 +64,7 @@ class MenuServiceProvider extends ServiceProvider
         // ], ['super-admin']);
 
         $service_menu->addElement(Payment::makeMenu('currency-dollar'), ['super-admin']);
+        $service_menu->addElement(Employee::makeMenu('identification'));
 
         $service_menu->addElement(EmbroideryStatistics::makeMenu('chart-bar'), ['super-admin']);
 
