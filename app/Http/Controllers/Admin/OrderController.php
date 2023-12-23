@@ -121,18 +121,17 @@ class OrderController extends ResourceController
                 if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
                     abort(403);
                 }
+                $order->delivery_at = date('Y-m-d');
+
                 (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);
                 break;
             case Order::STATUS_READY:
                 if (!auth()->user()->hasRole(['super-admin', 'Bordador', 'Estampador'])) {
                     abort(403);
                 }
+                $order->finished_at = date('Y-m-d');
                 break;
-            case Order::STATUS_READY:
-                if (!auth()->user()->hasRole(['super-admin', 'Bordador',  'Estampador'])) {
-                    abort(403);
-                }
-                break;
+
             case Order::STATUS_WAITING_AUTH:
                 if (!auth()->user()->hasRole(['super-admin', 'Bordador', 'Punto de venta'])) {
                     abort(403);
