@@ -29,6 +29,8 @@ class MigrateStatisticsEmbrodery extends Command
     {
         $this->migrateFromStatusReadyToFinishedAt();
         $this->migrateFromStatusFinishToFinishedAt();
+
+        $this->info('Estadisticas de bordado migradas correctamente');
     }
 
     private function migrateFromStatusReadyToFinishedAt()

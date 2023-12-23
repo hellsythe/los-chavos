@@ -34,6 +34,8 @@ class LoadStatisticsEmbrodeiry extends Command
             $date = $this->argument('date') ?? date('Y-m-d');
             $this->getStatisticsFromDate($date);
         }
+
+        $this->info('Estadisticas de bordado cargadas correctamente');
     }
 
     private function getStatisticsFromAllOrders()
