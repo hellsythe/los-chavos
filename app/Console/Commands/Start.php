@@ -42,6 +42,8 @@ class Start extends Command
         $this->assingPermissionsToBordador();
         $this->assingPermissionsToEstampador();
         $this->setDefaultConfig();
+
+        $this->info('Configuraciones basicas creadas correctamente');
     }
 
     private function createServices()
