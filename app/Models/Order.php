@@ -34,6 +34,7 @@ class Order extends BaseModel
             TextField::make('id')->label('Folio')->rules(['required']),
             TextField::make('status')->label('Estado')->rules(['required']),
             TextField::make('deadline')->label('Fecha de entrega')->rules(['required']),
+            //TextField::make('finished_at')->label('Fecha de finalización')->rules(['required']),
         ];
     }
 

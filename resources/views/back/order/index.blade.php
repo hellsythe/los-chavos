@@ -24,12 +24,14 @@
         'status' => 'Estado',
         'design' => 'Diseño',
         'services' => 'Total de servicios',
+        'finished_at' => 'Fecha de finalización',
     ]);
     $array_search = array_merge([], [
         ['field' => 'id'],
         ['field' => 'client'],
         ['field' => 'design'],
         ['field' => 'deadline', 'type' => 'date-only'],
+        ['field' => 'finished_at', 'type' => 'date-only'],
         ['field' => 'status', 'options' => $status, 'type' => 'select'],
         ['field' => 'garment', 'options' => $garment, 'type' => 'select'],
     ]);

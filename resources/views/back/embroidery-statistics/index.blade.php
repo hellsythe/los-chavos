@@ -17,7 +17,7 @@
             :template_actions="{{json_encode([
                 'update' => false,
                 'delete' => false,
-                'show' => false,
+                'show' => true,
             ])}}"
         />
     </div>

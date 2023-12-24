@@ -4,15 +4,6 @@
 
 @section('content')
     <?= Base::breadcrumb([$model->getRoute('index') => $model->getTranslation('plural'), $model->getTranslation('showed')]) ?>
-    <div id=app>
-
-        <div class="mb-2 flex flex-row">
-            <a type="button" href="{{ $model->getRoute('update', $model->getKeyId()) }}" class="btn btn-primary">
-                {!! $model->getTranslation('edit') !!} </a>
-            <delete-model :translations='{!! json_encode($model->getFullTranslations()) !!}' :routes='{{ json_encode($model->getIndexRoutes()) }}'
-                :model_id='{{ $model->id }}' />
-        </div>
-    </div>
 
     <div class="flex flex-col">
         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -27,6 +18,14 @@
                                         <td class="p-2"> {{ $model->{$field['name']} }} </td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <th class="text-gray-700 p-2"> Ordenes </th>
+                                    <td class="p-2">
+                                        <a href="{{ route('order.index') }}?finished_at=2023-12-23&status=80&garment=" class="link link-info" >
+                                            Ir al detalle
+                                        </a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -34,6 +33,8 @@
             </div>
         </div>
     </div>
+
+
 
     @yield('model')
 @endsection

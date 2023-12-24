@@ -73,6 +73,9 @@ class OrderController extends ResourceController
             'deadline' => function ($query, $value) {
                 return $query->where('deadline', $value);
             },
+            'finished_at' => function ($query, $value) {
+                return $query->where('finished_at', $value);
+            },
         ];
     }
 

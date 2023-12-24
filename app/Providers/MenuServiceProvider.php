@@ -66,7 +66,7 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Payment::makeMenu('currency-dollar'), ['super-admin']);
         $service_menu->addElement(Employee::makeMenu('identification'), ['super-admin']);
 
-        $service_menu->addElement(EmbroideryStatistics::makeMenu('chart-bar'), ['super-admin']);
+        $service_menu->addElement(EmbroideryStatistics::makeMenu('chart-bar', [], '-date'), ['super-admin']);
 
         $service_menu->addElement(Design::makeMenu('puzzle-piece'), ['super-admin', 'Punto de venta', 'Bordador']);
         $service_menu->addElement(DesignPrint::makeMenu('puzzle-piece'),['super-admin', 'Punto de venta', 'Estampador']);
