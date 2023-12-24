@@ -16,7 +16,8 @@
                 'errors' => [
                     'client' => '',
                     'services' => [],
-                ]
+                ],
+                'employees' => $employees,
             ])}}"
         />
     </div>

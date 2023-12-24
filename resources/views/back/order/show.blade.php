@@ -72,6 +72,10 @@
                 <input type="text" class="input input-bordered w-full" value="{{ $model->createdBy->email }}" readonly>
             </div>
             <div class="form-control w-full mb-2 mr-2">
+                <label class="label"><span class="label-text">Vendedor</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ $model->employee->name ?? '-' }}" readonly>
+            </div>
+            <div class="form-control w-full mb-2 mr-2">
                 <label class="label"><span class="label-text">Estado</span></label>
                 <input type="text" class="input input-bordered w-full bg-{{ $model->color_status }}"
                     value="{{ $model->status }}" readonly>

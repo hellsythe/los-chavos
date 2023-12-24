@@ -50,6 +50,11 @@ class Order extends BaseModel
         return $this->belongsTo(Client::class);
     }
 
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
     public function details(): HasMany
     {
         return $this->hasMany(OrderDetail::class)

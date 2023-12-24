@@ -17,10 +17,18 @@
                         v-model="order.deadline" class="input input-bordered w-full">
                     <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.deadline }}</div>
                 </div>
-                <div>
-                    <TypeaheadInput :currentValue="null"  :loadFromApiUrl="'/admin/client/api?name={search}&page=1'" @selected="selectedData"
+                <div class="lg:flex">
+                    <TypeaheadInput class="form-control mb-2 mr-2" :currentValue="null"  :loadFromApiUrl="'/admin/client/api?name={search}&page=1'" @selected="selectedData"
                         :ignoredList="selectedItemIdsx" placeholder="Buscar cliente existente">
                     </TypeaheadInput>
+                    <div class="form-control mb-2 mr-2">
+                        <select class="select w-full" v-model="order.employee_id">
+                            <option value="" disabled selected>Selecciona el nombre del vendedor</option>
+                            <option :value="employee.id" v-for="employee in extra.employees">{{ employee.name }}</option>
+                        </select>
+                        <div class="text-red-500 text-xs font-semibold mt-1">{{ extra.errors.client.employee_id }}</div>
+                    </div>
+
                 </div>
                 <div class="lg:flex">
 
@@ -104,6 +112,10 @@ export default {
             this.order.deadline = '';
         }
 
+        if (!this.order.employee_id) {
+            this.order.employee_id = '';
+        }
+
         if (this.order.deadlinex) {
             this.order.deadline = this.order.deadlinex;
         }
@@ -141,6 +153,10 @@ export default {
 
             if (this.order.deadline.length === 0) {
                 this.extra.errors.client.deadline = 'La fecha de entrega no puede estar vacia';
+            }
+
+            if (this.order.employee_id.length === 0) {
+                this.extra.errors.client.employee_id = 'El vendedor no puede estar vacio';
             }
         },
         clearErrors() {

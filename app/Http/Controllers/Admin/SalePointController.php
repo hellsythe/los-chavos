@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Design;
 use App\Models\DesignPrint;
+use App\Models\Employee;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
@@ -40,6 +41,7 @@ class SalePointController extends Controller
             'order' => [],
             'update_embroidery_price' => (int) Setting::where('name', 'update_embroidery_price')->first()->value,
             'new_embroidery_price' => (int) Setting::where('name', 'new_embroidery_price')->first()->value,
+            'employees' => Employee::all(),
         ]);
     }
 
@@ -53,6 +55,7 @@ class SalePointController extends Controller
             'order' => $model,
             'update_embroidery_price' => (int) Setting::where('name', 'update_embroidery_price')->first()->value,
             'new_embroidery_price' => (int) Setting::where('name', 'new_embroidery_price')->first()->value,
+            'employees' => Employee::all(),
         ]);
     }
 
@@ -102,6 +105,8 @@ class SalePointController extends Controller
         }
 
         $order_model->deadline = $order['deadline'];
+        $order_model->employee_id = $order['employee_id'];
+
         $order_model->total = $order['total'];
         $order_model->created_by = auth()->user()->id;
         $order_model->client_id = $this->findOrCreateClient($order['client'])->id;
