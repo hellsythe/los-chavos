@@ -52,42 +52,20 @@ class LoadStatisticsEmbrodeiry extends Command
     {
         $embroderies = 0;
         $minutes = 0;
+        $services = 0;
 
         $orders = Order::where('finished_at', $date)->get();
 
         foreach ($orders as $order) {
-            $statistics = $this->getStatisticsFromOrder($order);
-
-            if ($statistics) {
-                $embroderies += $statistics['embroderies'];
-                $minutes += $statistics['minutes'];
-            }
+            $embroderies += $order->garment_total;
+            $minutes += $order->minutes_total;
+            $services += count($order->details);
         }
 
-        $this->setStatisticsModelFromDate($date, $embroderies, $minutes);
+        $this->setStatisticsModelFromDate($date, $embroderies, $minutes, $services, count($orders));
     }
 
-    private function getStatisticsFromOrder(Order $order)
-    {
-        foreach ($order->details as $detail) {
-            if ($detail->service_id == 1) {
-                $minutes = 0;
-
-                if($detail->detail->design){
-                    $minutes = $detail->detail->design->minutes;
-                }
-
-                return [
-                    'embroderies' => $detail->garment_amount,
-                    'minutes' => $minutes,
-                ];
-            }
-
-            return false;
-        }
-    }
-
-    private function setStatisticsModelFromDate(string $date, $embroderies, $minutes)
+    private function setStatisticsModelFromDate(string $date, $embroderies, $minutes, $services, $orders)
     {
         if($embroderies == 0){
             return;
@@ -102,6 +80,8 @@ class LoadStatisticsEmbrodeiry extends Command
 
         $statistics->embroderies = $embroderies;
         $statistics->minutes = $minutes;
+        $statistics->services = $services;
+        $statistics->orders = $orders;
         $statistics->status = EmbroideryStatistics::STATUS_ACTIVE;
         $statistics->save();
 

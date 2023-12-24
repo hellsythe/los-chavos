@@ -25,7 +25,7 @@ class Order extends BaseModel
 
     public const STATUS_FINISH = 90;
 
-    protected $appends = ['deadlinex', 'desings', 'service_type', 'services'];
+    protected $appends = ['deadlinex', 'desings', 'service_type', 'servicesx', 'garment_total'];
 
 
     protected function fields()
@@ -209,9 +209,40 @@ class Order extends BaseModel
         return implode(', ', $designs);
     }
 
-    public function getServicesAttribute()
+    public function getServicesxAttribute()
     {
         return count($this->details);
+    }
+
+    public function getGarmentTotalAttribute()
+    {
+        $total = 0;
+        foreach ($this->details as $detail) {
+            $total +=  $detail->garment_amount;
+        }
+
+        return $total;
+    }
+
+    public function getMinutesTotalAttribute()
+    {
+        $total = 0;
+        foreach ($this->details as $detail) {
+            if ($detail->service_id == 1) {
+                $minutes = 0;
+                if($detail->detail->design){
+                    $minutes = $detail->detail->design->minutes;
+                }
+
+                if($detail->subservice_id == 2){
+                    $minutes = 7000;
+                }
+
+                $total += $minutes * $detail->garment_amount;
+            }
+        }
+
+        return $total;
     }
 
     public function getServiceTypeAttribute()

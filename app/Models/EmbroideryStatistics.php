@@ -11,7 +11,9 @@ class EmbroideryStatistics extends BaseModel
     {
         return[
             TextField::make('date')->label('Fecha')->rules(['required']),
-            TextField::make('embroderies')->label('Total de bordados')->rules(['required']),
+            TextField::make('orders')->label('Total de ordenes')->rules(['required']),
+            TextField::make('services')->label('Servicios')->rules(['required']),
+            TextField::make('embroderies')->label('Total de prendas')->rules(['required']),
             TextField::make('minutes')->label('Puntadas')->rules(['required']),
 
         ];
