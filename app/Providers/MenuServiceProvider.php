@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\Planning;
 use App\Models\Employee;
 use App\Models\EmbroideryStatistics;
 use App\Models\Setting;
@@ -51,6 +52,8 @@ class MenuServiceProvider extends ServiceProvider
             'crud' => '',
             'extra_urls' => [],
         ], ['super-admin', 'Punto de venta']);
+
+        $service_menu->addElement(Planning::makeMenu('calendar'), ['super-admin', 'Bordador']);
 
         $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador', 'Estampador']);
         $service_menu->addElement(CashBoxReport::makeMenu('currency-dollar'), ['super-admin', 'Punto de venta']);

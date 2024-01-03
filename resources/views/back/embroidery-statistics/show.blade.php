@@ -21,7 +21,7 @@
                                 <tr>
                                     <th class="text-gray-700 p-2"> Ordenes </th>
                                     <td class="p-2">
-                                        <a href="{{ route('order.index') }}?finished_at=2023-12-23&status=99999&garment=" class="link link-info" >
+                                        <a href="{{ route('order.index') }}?finished_at={{$model->date}}&status=99999&garment=" class="link link-info" >
                                             Ir al detalle
                                         </a>
                                     </td>
