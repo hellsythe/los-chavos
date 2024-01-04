@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Design;
+use App\Models\OrderDesign;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DesignFactory extends Factory
+class OrderDesignFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Design::class;
+    protected $model = OrderDesign::class;
 
     /**
      * Define the model's default state.
@@ -22,9 +22,6 @@ class DesignFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
-            'minutes' => $this->faker->numberBetween(100, 500),
-            'price' => $this->faker->numberBetween(50, 500),
             'status' => $this->model::STATUS_ACTIVE,
         ];
     }

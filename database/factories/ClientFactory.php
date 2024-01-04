@@ -22,7 +22,7 @@ class ClientFactory extends Factory
     public function definition()
     {
         return [
-            'status' => $this->model::STATUS_ACTIVE,
+            'status' => Client::STATUS_ACTIVE,
             'name' => $this->faker->name(). ' '.$this->faker->lastName(),
             'email' => $this->faker->email(),
             'phone' => $this->faker->phoneNumber(),

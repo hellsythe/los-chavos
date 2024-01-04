@@ -23,6 +23,10 @@ class OrderDetailFactory extends Factory
     {
         return [
             'status' => $this->model::STATUS_ACTIVE,
+            'service_id' => 1,
+            'subservice_id' => 1,
+            'garment_id' => 1,
+            'garment_amount' => $this->faker->numberBetween(1, 10),
         ];
     }
 }
