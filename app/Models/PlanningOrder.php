@@ -7,6 +7,16 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class PlanningOrder extends BaseModel
 {
+    public const STATUS_PENDING = 200;
+    public const STATUS_READY = 300;
+    public const STATUS_MISSING = 400;
+
+    protected $fillable = [
+        'order_id',
+        'planning_id',
+        'status',
+    ];
+
     protected function fields()
     {
         return[

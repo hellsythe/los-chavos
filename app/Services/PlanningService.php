@@ -7,12 +7,13 @@ use App\Models\Planning;
 class PlanningService
 {
     protected Order $order;
+    protected Planning $planning;
 
     public function addOrder(Order $order): void
     {
         $this->order = $order;
         $planning = $this->getLastPlanningAvailable();
-        dd($planning);
+        $planning->addOrder($order);
     }
 
     protected function getLastPlanningAvailable(): Planning
@@ -42,8 +43,10 @@ class PlanningService
         return Planning::create([
             'date' => $date,
             'minutes_available' => $this->getMinutesAvailable(),
+            'minutes_max' => $this->getMinutesAvailable(),
             'minutes_missing' => 0,
             'minutes_used' => 0,
+            'minutes_scheduled' => 0,
             'status' => Planning::STATUS_ACTIVE,
         ]);
     }
