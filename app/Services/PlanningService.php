@@ -1,8 +1,10 @@
 <?php
 namespace App\Services;
 
+use App\Models\EmbroideryStatistics;
 use App\Models\Order;
 use App\Models\Planning;
+use Carbon\Carbon;
 
 class PlanningService
 {
@@ -21,6 +23,9 @@ class PlanningService
         $planning = Planning::where('date', '>=', date('Y-m-d'))->where('minutes_available', '>' ,0)->first();
 
         if ($planning) {
+            if ($planning->minutes_available < $this->order->minutes_total) {
+                return $this->createNewPlanning();
+            }
             return $planning;
         }
 
@@ -29,7 +34,7 @@ class PlanningService
 
     protected function createNewPlanning(): Planning
     {
-        $planning = Planning::orderBy('date', 'desc')->first();
+        $planning = Planning::latest('date')->first();
 
         if ($planning) {
             return $this->createPlanning($planning->date->addDay());
@@ -40,10 +45,12 @@ class PlanningService
 
     protected function createPlanning($date): Planning
     {
+        $minutes_average = $this->getAverageForDay($date);
+
         return Planning::create([
             'date' => $date,
-            'minutes_available' => $this->getMinutesAvailable(),
-            'minutes_max' => $this->getMinutesAvailable(),
+            'minutes_available' => $minutes_average,
+            'minutes_max' => $minutes_average,
             'minutes_missing' => 0,
             'minutes_used' => 0,
             'minutes_scheduled' => 0,
@@ -51,8 +58,10 @@ class PlanningService
         ]);
     }
 
-    protected function getMinutesAvailable(): int
+    public function getAverageForDay(string $date): int
     {
-        return 1000;
+        $initial_date = new Carbon($date);
+        $initial_date = $initial_date->subDays(10)->toDateString();
+        return (int) EmbroideryStatistics::where('date', '>', $initial_date)->avg('minutes');
     }
 }

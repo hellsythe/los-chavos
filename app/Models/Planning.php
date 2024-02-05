@@ -43,6 +43,7 @@ class Planning extends BaseModel
 
     public function addOrder(Order $order): void
     {
+        $this->minutes_available -= $order->minutes_total;
         $this->minutes_scheduled += $order->minutes_total;
         $this->save();
 
@@ -50,6 +51,7 @@ class Planning extends BaseModel
             'order_id' => $order->id,
             'planning_id' => $this->id,
             'status' => PlanningOrder::STATUS_PENDING,
+            'order' => PlanningOrder::where('planning_id', $this->id)->count(),
         ]);
     }
 }
