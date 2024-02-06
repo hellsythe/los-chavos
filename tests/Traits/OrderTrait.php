@@ -7,11 +7,13 @@ use App\Models\OrderDesign;
 use App\Models\OrderDetail;
 
 trait OrderTrait {
-    protected function createOrder()
+    protected function createOrder(array $factory = [])
     {
-        $order = Order::factory()->create([
+        $factory = array_merge([
             'status' => Order::STATUS_PENDING,
-        ]);
+        ], $factory);
+
+        $order = Order::factory()->create($factory);
 
         $this->addDetailToOrder($order);
 

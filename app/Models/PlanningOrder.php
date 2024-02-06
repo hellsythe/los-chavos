@@ -15,6 +15,8 @@ class PlanningOrder extends BaseModel
         'order_id',
         'planning_id',
         'status',
+        'order',
+        'deadline',
     ];
 
     protected function fields()

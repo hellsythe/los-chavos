@@ -20,7 +20,7 @@ class PlanningService
 
     protected function getLastPlanningAvailable(): Planning
     {
-        $planning = Planning::where('date', '>=', date('Y-m-d'))->where('minutes_available', '>' ,0)->first();
+        $planning = Planning::latest('date')->where('minutes_available', '>' ,0)->first();
 
         if ($planning) {
             if ($planning->minutes_available < $this->order->minutes_total) {

@@ -53,7 +53,15 @@ class MenuServiceProvider extends ServiceProvider
             'extra_urls' => [],
         ], ['super-admin', 'Punto de venta']);
 
-        $service_menu->addElement(Planning::makeMenu('calendar'), ['super-admin', 'Bordador']);
+        $service_menu->addElement([
+            'name' => 'Plan de trabajo',
+            'icon' => Base::icon('calendar', ['class' => 'h-6 w-6']),
+            'url' =>  'embrodery.calendar',
+            'crud' => '',
+            'extra_urls' => [],
+        ], ['super-admin']);
+
+        // $service_menu->addElement(Planning::makeMenu('calendar'), ['super-admin', 'Bordador']);
 
         $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador', 'Estampador']);
         $service_menu->addElement(CashBoxReport::makeMenu('currency-dollar'), ['super-admin', 'Punto de venta']);

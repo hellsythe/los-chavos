@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
-    ->prefix('admin')->group(function () { 
+    ->prefix('admin')->group(function () {
     Route::SdkResource('planning', PlanningController::class);
     Route::SdkResource('embroidery-statistics', EmbroideryStatisticsController::class);
     Route::SdkResource('setting', SettingController::class);
@@ -55,6 +55,8 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('ticket/{id}', 'OrderController@ticket')->name('sale.ticket');
         Route::get('etiquetas/{id}', 'OrderController@etiqueta')->name('sale.etiqueta');
         Route::get('payment/report/pdf', 'PaymentController@report')->name('payment.report');
+
+        Route::get('embrodery/calendar', 'PaymentController@report')->name('embrodery.calendar');
     });
 Route::get('aviso-privacidad', '\App\Http\Controllers\StaticSiteController@privacy');
 Route::get('/', function () {

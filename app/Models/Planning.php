@@ -51,7 +51,8 @@ class Planning extends BaseModel
             'order_id' => $order->id,
             'planning_id' => $this->id,
             'status' => PlanningOrder::STATUS_PENDING,
-            'order' => PlanningOrder::where('planning_id', $this->id)->count(),
+            'order' => (PlanningOrder::where('planning_id', $this->id)->count() + 1),
+            'deadline' => $order->getRawOriginal('deadline'),
         ]);
     }
 }
