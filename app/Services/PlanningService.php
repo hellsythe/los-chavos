@@ -1,67 +1,52 @@
 <?php
 namespace App\Services;
 
-use App\Models\EmbroideryStatistics;
 use App\Models\Order;
 use App\Models\Planning;
-use Carbon\Carbon;
+use App\Services\Planning\GetLastPlanningAvailable;
 
 class PlanningService
 {
-    protected Order $order;
-    protected Planning $planning;
-
     public function addOrder(Order $order): void
     {
-        $this->order = $order;
-        $planning = $this->getLastPlanningAvailable();
-        $planning->addOrder($order);
+        $planning = resolve(GetLastPlanningAvailable::class);
+        // $planning = $planning->get($order)->addOrder($order);
+
+        $planning = $planning->get($order); //->addOrder($order)
+        $this->addToQueue($order, $planning);
     }
 
-    protected function getLastPlanningAvailable(): Planning
+    private function addToQueue(Order $order, Planning $lastPlanning): void
     {
-        $planning = Planning::latest('date')->where('minutes_available', '>' ,0)->first();
+        $planningDate = $lastPlanning->date->format('Y-m-d');
+        $today = date('Y-m-d');
+        $newDate = date('Y-m-d', strtotime( $planningDate . ' - 1 days'));
 
-        if ($planning) {
-            if ($planning->minutes_available < $this->order->minutes_total) {
-                return $this->createNewPlanning();
+        if($planningDate == $today || $newDate == $today)
+        {
+            $lastPlanning->addOrder($order);
+        } else {
+            $this->findPositionInPlaning($order, $lastPlanning);
+        }
+
+    }
+
+    private function findPositionInPlaning(Order $order, Planning $planning)
+    {
+        if ($planning->orders->isEmpty()) {
+            $planning->addOrder($order);
+            return;
+        }
+
+        foreach ($planning->orders as $orderInArray) {
+            $date = $order->getAttribute('deadlinex');
+            if ($date < $orderInArray->deadline){
+                $current = $planning->addOrder($order);
+                $planning->reorder($current, $orderInArray->order);
+                return;
             }
-            return $planning;
         }
 
-        return $this->createNewPlanning();
-    }
-
-    protected function createNewPlanning(): Planning
-    {
-        $planning = Planning::latest('date')->first();
-
-        if ($planning) {
-            return $this->createPlanning($planning->date->addDay());
-        }
-
-        return $this->createPlanning(date('Y-m-d'));
-    }
-
-    protected function createPlanning($date): Planning
-    {
-        $minutes_average = $this->getAverageForDay($date);
-
-        return Planning::create([
-            'date' => $date,
-            'minutes_available' => $minutes_average,
-            'minutes_max' => $minutes_average,
-            'minutes_missing' => 0,
-            'minutes_used' => 0,
-            'minutes_scheduled' => 0,
-            'status' => Planning::STATUS_ACTIVE,
-        ]);
-    }
-
-    public function getAverageForDay(string $date): int
-    {
-        $initial_date = new Carbon($date);
-        $initial_date = $initial_date->subDays(10)->toDateString();
-        return (int) EmbroideryStatistics::where('date', '>', $initial_date)->avg('minutes');
+        $planning->addOrder($order);
     }
 }

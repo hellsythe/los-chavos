@@ -5,6 +5,7 @@ namespace Tests\Feature\Services;
 use App\Models\Order;
 use App\Models\Planning;
 use App\Models\PlanningOrder;
+use App\Services\Planning\GetLastPlanningAvailable;
 use App\Services\PlanningService;
 use Tests\TestCase;
 use Tests\Traits\OrderTrait;
@@ -19,12 +20,13 @@ class PlanningServiceTest extends TestCase
         PlanningOrder::truncate();
         Planning::truncate();
 
-        $this->partialMock(PlanningService::class, function (MockInterface $mock) {
+        $this->partialMock(GetLastPlanningAvailable::class, function (MockInterface $mock) {
             $mock->shouldReceive('getAverageForDay')->once()->andReturn(10000);
         });
 
         $order = $this->createOrder();
-        resolve(PlanningService::class)->addOrder($order);
+        $planning = resolve(PlanningService::class);
+        $planning->addOrder($order);
 
         $this->assertDatabaseCount('plannings', 1);
         $this->assertDatabaseHas('plannings', [
@@ -42,8 +44,9 @@ class PlanningServiceTest extends TestCase
     {
         PlanningOrder::truncate();
         Planning::truncate();
+        // $m = \Mockery::mock(ScanEpisode::class, [ 'episode' => 1])->makePartial();
 
-        $this->partialMock(PlanningService::class, function (MockInterface $mock) {
+        $this->partialMock(GetLastPlanningAvailable::class, function (MockInterface $mock) {
             $mock->shouldReceive('getAverageForDay')->once()->andReturn(10000);
         });
 
@@ -79,7 +82,7 @@ class PlanningServiceTest extends TestCase
             'status' => Planning::STATUS_ACTIVE,
         ]);
 
-        $this->partialMock(PlanningService::class, function (MockInterface $mock) {
+        $this->partialMock(GetLastPlanningAvailable::class, function (MockInterface $mock) {
             $mock->shouldReceive('getAverageForDay')->once()->andReturn(10000);
         });
 
@@ -104,7 +107,6 @@ class PlanningServiceTest extends TestCase
 
         $order = $this->createOrder();
         resolve(PlanningService::class)->addOrder($order);
-
         $this->assertDatabaseCount('plannings', 1);
     }
 
@@ -128,9 +130,15 @@ class PlanningServiceTest extends TestCase
         $planning->addOrder($orderC);
         $planning->addOrder($orderD);
 
+        // $last = resolve(GetLastPlanningAvailable::class)->get($orderA);
+        // dd($last->orders); // 2021-08-01
+
+
         $this->assertDatabaseCount('plannings', 3);
         $this->ensurePlaningOrder($orderA, 1);
-        $this->ensurePlaningOrder($orderD, 2);
+        $this->ensurePlaningOrder($orderB, 2);
+        $this->ensurePlaningOrder($orderC, 4);
+        $this->ensurePlaningOrder($orderD, 3);
     }
 
     private function createPlaningFull($date)

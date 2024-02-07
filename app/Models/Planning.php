@@ -41,18 +41,42 @@ class Planning extends BaseModel
         ];
     }
 
-    public function addOrder(Order $order): void
+    public function addOrder(Order $order): PlanningOrder
     {
         $this->minutes_available -= $order->minutes_total;
         $this->minutes_scheduled += $order->minutes_total;
         $this->save();
 
-        PlanningOrder::create([
+        return PlanningOrder::create([
             'order_id' => $order->id,
             'planning_id' => $this->id,
             'status' => PlanningOrder::STATUS_PENDING,
             'order' => (PlanningOrder::where('planning_id', $this->id)->count() + 1),
             'deadline' => $order->getRawOriginal('deadline'),
         ]);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(PlanningOrder::class, 'planning_id', 'id')->orderBy('order', 'desc');
+    }
+
+    public function Reorder(PlanningOrder $current, int $newOrder)
+    {
+        if ($current->order == $newOrder) {
+            return;
+        }
+
+        $current->order = $newOrder;
+        $current->save();
+
+        $ordersToReorder = $this->orders()->where('order', '>=', $newOrder)->where('id', '!=', $current->id)->get();
+        foreach ($ordersToReorder as $order) {
+            $order->order++;
+            $order->save();
+        }
+        // $planningOrder = PlanningOrder::where('planning_id', $this->id)->where('order', $orderInArray)->first();
+        // $planningOrder->order = $orderInArray + 1;
+        // $planningOrder->save();
     }
 }
