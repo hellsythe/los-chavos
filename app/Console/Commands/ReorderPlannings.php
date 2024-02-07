@@ -32,8 +32,12 @@ class ReorderPlannings extends Command
         PlanningOrder::truncate();
         Planning::truncate();
 
-        $orders = Order::where('deadline', '>=', date('Y-m-d'))->orderBy('deadline')->get();
-        foreach ($orders as $key => $order) {
+        $orders = Order::where('deadline', '>=', date('Y-m-d'))
+            ->where('status', Order::STATUS_PENDING)
+            ->orderBy('deadline')
+            ->get();
+
+            foreach ($orders as $order) {
             $planning = resolve(PlanningService::class);
             $planning->addOrder($order);
         }
