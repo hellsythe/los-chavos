@@ -38,15 +38,20 @@ class PlanningService
             return;
         }
 
+        $posiblePostition = 0;
+
         foreach ($planning->orders as $orderInArray) {
             $date = $order->getAttribute('deadlinex');
             if ($date < $orderInArray->deadline){
-                $current = $planning->addOrder($order);
-                $planning->reorder($current, $orderInArray->order);
-                return;
+                $posiblePostition = $orderInArray->order;
+            } else if ($posiblePostition != 0){
+                break;
             }
         }
 
-        $planning->addOrder($order);
+        $current = $planning->addOrder($order);
+        if ($posiblePostition != 0){
+            $planning->reorder($current, $posiblePostition);
+        }
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('planning_orders', function (Blueprint $table) {
             $table->integer('order');
             $table->date('deadline');
+            $table->integer('group')->default(0);
         });
     }
 

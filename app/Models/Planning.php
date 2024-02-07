@@ -75,8 +75,5 @@ class Planning extends BaseModel
             $order->order++;
             $order->save();
         }
-        // $planningOrder = PlanningOrder::where('planning_id', $this->id)->where('order', $orderInArray)->first();
-        // $planningOrder->order = $orderInArray + 1;
-        // $planningOrder->save();
     }
 }

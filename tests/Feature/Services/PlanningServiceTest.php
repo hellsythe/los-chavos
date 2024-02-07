@@ -130,15 +130,11 @@ class PlanningServiceTest extends TestCase
         $planning->addOrder($orderC);
         $planning->addOrder($orderD);
 
-        // $last = resolve(GetLastPlanningAvailable::class)->get($orderA);
-        // dd($last->orders); // 2021-08-01
-
-
         $this->assertDatabaseCount('plannings', 3);
         $this->ensurePlaningOrder($orderA, 1);
-        $this->ensurePlaningOrder($orderB, 2);
+        $this->ensurePlaningOrder($orderB, 3);
         $this->ensurePlaningOrder($orderC, 4);
-        $this->ensurePlaningOrder($orderD, 3);
+        $this->ensurePlaningOrder($orderD, 2);
     }
 
     private function createPlaningFull($date)
@@ -172,6 +168,61 @@ class PlanningServiceTest extends TestCase
         $this->assertDatabaseHas('planning_orders', [
             'order_id' => $order->id,
             'order' => $position,
+        ]);
+    }
+
+    public function test_add_order_and_by_date_two_plannings_first_with_no_space_available()
+    {
+        PlanningOrder::truncate();
+        Planning::truncate();
+
+        $this->createPlaningFull(date('Y-m-d'));
+        $this->createPlaningFull(date('Y-m-d', strtotime(' + 1 days')));
+        $this->createPlaningFull(date('Y-m-d', strtotime(' + 2 days')));
+        $planningFull = $this->createPlaningEmpty(date('Y-m-d', strtotime(' + 3 days')));
+
+        $orderA = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 6 days'))]);
+        $orderB = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 8 days'))]);
+        $orderC = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 9 days'))]);
+        $orderD = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 7 days'))]);
+
+        $planning = resolve(PlanningService::class);
+        $planning->addOrder($orderA);
+        $planning->addOrder($orderB);
+        $planning->addOrder($orderC);
+        $planning->addOrder($orderD);
+
+        $planningFull->refresh();
+        $planningFull->minutes_available = 0;
+        $planningFull->minutes_max = $planningFull->minutes_scheduled;
+        $planningFull->minutes_used = $planningFull->minutes_scheduled;
+        $planningFull->save();
+
+        $orderA1 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 10 days'))]);
+        $orderB2 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 6 days'))]);
+        $orderC3 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 5 days'))]);
+        $orderD4 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 4 days'))]);
+
+        $planning = resolve(PlanningService::class);
+        $planning->addOrder($orderA1);
+        $planning->addOrder($orderB2);
+        $planning->addOrder($orderC3);
+        $planning->addOrder($orderD4);
+
+        $this->assertDatabaseCount('plannings', 5);
+        $this->ensurePlaningOrder($orderA, 1);
+        $this->ensurePlaningOrder($orderB, 3);
+        $this->ensurePlaningOrder($orderC, 4);
+        $this->ensurePlaningOrder($orderD, 2);
+    }
+
+
+    private function ensurePlaningOrderFull($order, $position, $planning)
+    {
+        $this->assertDatabaseHas('planning_orders', [
+            'order_id' => $order->id,
+            'order' => $position,
+            'planning_id' => $planning->id,
         ]);
     }
 
