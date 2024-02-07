@@ -21,8 +21,12 @@ export default {
         return {
             calendarOptions: {
                 plugins: [dayGridPlugin, interactionPlugin],
+                editable: true,
                 initialView: 'dayGridWeek',
-                locale: esLocale
+                locale: esLocale,
+                events: this.events,
+                timeZone: 'local',
+                firstDay: new Date().getDay(),
             }
         }
     }

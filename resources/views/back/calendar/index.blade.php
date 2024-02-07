@@ -5,7 +5,7 @@
 @section('content')
 <div id="calendar">
     <calendar
-        events="{{ json_encode($events) }}"
+        :events="{{ json_encode($events) }}"
     />
 </div>
 @endsection
