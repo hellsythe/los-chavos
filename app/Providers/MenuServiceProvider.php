@@ -62,6 +62,7 @@ class MenuServiceProvider extends ServiceProvider
         ], ['super-admin']);
 
         // $service_menu->addElement(Planning::makeMenu('calendar'), ['super-admin', 'Bordador']);
+        $service_menu->addElement(Planning::makeMenu('calendar-days'), ['super-admin']);
 
         $service_menu->addElement(Order::makeMenu('truck', [], 'deadline'), ['super-admin', 'Punto de venta', 'Bordador', 'Estampador']);
         $service_menu->addElement(CashBoxReport::makeMenu('currency-dollar'), ['super-admin', 'Punto de venta']);

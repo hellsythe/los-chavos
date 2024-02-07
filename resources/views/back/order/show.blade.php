@@ -62,6 +62,7 @@
             <strong class="text-3xl text-right">Folio de venta: &nbsp;#{{ $model->id }}</strong>
             <strong class="text-3xl text-right">Fecha de registro: &nbsp;{{ $model->created_at }}</strong>
             <strong class="text-3xl text-right">Fecha de entrega: &nbsp;{{ $model->deadline }}</strong>
+            <strong class="text-3xl text-right">Puntadas totales: &nbsp;{{ number_format($model->minutes_total) }}</strong>
         </div>
     </div>
 

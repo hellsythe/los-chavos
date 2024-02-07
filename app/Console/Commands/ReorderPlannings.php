@@ -37,9 +37,11 @@ class ReorderPlannings extends Command
             ->orderBy('deadline')
             ->get();
 
-            foreach ($orders as $order) {
-            $planning = resolve(PlanningService::class);
-            $planning->addOrder($order);
+        foreach ($orders as $order) {
+            if ($order->service_type == "Bordado") {
+                $planning = resolve(PlanningService::class);
+                $planning->addOrder($order);
+            }
         }
     }
 }
