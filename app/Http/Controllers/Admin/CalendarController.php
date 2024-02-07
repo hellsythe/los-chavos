@@ -22,11 +22,16 @@ class CalendarController extends Controller
         $events = [];
 
         foreach ($orders as $planningOrder) {
+            $model = $planningOrder->orderModel();
             $events[] = [
-                'title' => $planningOrder->orderModel()->deadlinex . ' ' .$planningOrder->orderModel()->desings,
+                'title' => $model->deadlinex . ' ' .$model->desings,
                 'start' => $planningOrder->planning->date->format('Y-m-d'),
                 'end' => $planningOrder->planning->date->format('Y-m-d'),
                 'description' => 'Lecture',
+                'extendedProps' => [
+                    'model_id' => $model->id,
+                ],
+                'url' => route('order.view', $model->id),
             ];
         }
 

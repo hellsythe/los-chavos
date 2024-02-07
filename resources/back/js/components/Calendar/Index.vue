@@ -22,17 +22,27 @@ export default {
             calendarOptions: {
                 plugins: [dayGridPlugin, interactionPlugin],
                 editable: true,
-                initialView: 'dayGridFiveDays',
+                initialView: 'dayGridThreeDays',
                 locale: esLocale,
                 events: this.events,
                 timeZone: 'local',
                 firstDay: new Date().getDay(),
                 views: {
-                    dayGridFiveDays: {
+                    dayGridThreeDays: {
                         type: 'dayGrid',
-                        duration: { days: 5 }
+                        duration: { days: 3 }
                     }
-                }
+                },
+                dayHeaderFormat: { weekday: 'long', day: 'numeric' },
+                eventMinHeight: 20,
+                eventDidMount: function (info) {
+                    // var tooltip = new Tooltip(info.el, {
+                    //     title: info.event.extendedProps.description,
+                    //     placement: 'top',
+                    //     trigger: 'hover',
+                    //     container: 'body'
+                    // });
+                },
             }
         }
     }
