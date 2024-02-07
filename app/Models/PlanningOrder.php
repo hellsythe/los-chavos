@@ -43,4 +43,15 @@ class PlanningOrder extends BaseModel
     {
         return Order::find($this->order_id);
     }
+
+    public static function finishOrder($order)
+    {
+        $planningOrder = PlanningOrder::where('order_id', $order->id)->first();
+        $planningOrder->status = PlanningOrder::STATUS_READY;
+        $planningOrder->save();
+
+        $planning = $planningOrder->planning;
+        $planning->minutes_used += $order->minutes_total;
+        $planning->save();
+    }
 }

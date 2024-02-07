@@ -18,7 +18,9 @@ class CalendarController extends Controller
     private function getEvents(): array
     {
         $plannings = Planning::where('date' , '>=', date('Y-m-d'))->pluck('id')->toArray();
-        $orders = PlanningOrder::whereIn('planning_id', $plannings)->get();
+        $orders = PlanningOrder::whereIn('planning_id', $plannings)
+            ->where('status', PlanningOrder::STATUS_PENDING)
+            ->get();
         $events = [];
 
         foreach ($orders as $planningOrder) {

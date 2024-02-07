@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PlanningService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
@@ -194,6 +195,20 @@ class Order extends BaseModel
 
             foreach ($payments as $payment) {
                 $payment->delete();
+            }
+        });
+
+        static::updated(function (Order $order) {
+            if ($order->isDirty('status')) {
+                switch ($order->attributes['status']) {
+                    case self::STATUS_PENDING:
+                        $planning = resolve(PlanningService::class);
+                        $planning->addOrder($order);
+                        break;
+                    case self::STATUS_READY:
+                        PlanningOrder::finishOrder($order);
+                        break;
+                }
             }
         });
     }
