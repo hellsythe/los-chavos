@@ -38,4 +38,9 @@ class PlanningOrder extends BaseModel
     {
         return $this->belongsTo(Planning::class);
     }
+
+    public function orderModel()
+    {
+        return Order::find($this->order_id);
+    }
 }

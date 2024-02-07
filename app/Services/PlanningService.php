@@ -3,7 +3,6 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Planning;
-use App\Models\PlanningOrder;
 use App\Services\Planning\GetLastPlanningAvailable;
 
 class PlanningService
@@ -11,19 +10,13 @@ class PlanningService
     public function addOrder(Order $order): void
     {
         $planning = resolve(GetLastPlanningAvailable::class);
-        // $planning = $planning->get($order)->addOrder($order);
-
-        $planning = $planning->get($order); //->addOrder($order)
+        $planning = $planning->get($order);
         $this->addToQueue($order, $planning);
     }
 
     private function addToQueue(Order $order, Planning $lastPlanning): void
     {
-        $planningDate = $lastPlanning->date->format('Y-m-d');
-        $today = date('Y-m-d');
-        $yesterdayDate = date('Y-m-d', strtotime( $planningDate . ' - 1 days'));
-
-        if($planningDate == $today)
+        if($lastPlanning->date->format('Y-m-d') == date('Y-m-d'))
         {
             $lastPlanning->addOrder($order);
         } else {
@@ -31,6 +24,7 @@ class PlanningService
             $response = $this->findPositionFromDate($order, $lastPlanning, $position);
             $current = $response['planning']->addOrder($order);
             $response['planning']->reorder($current, $response['position']);
+            $this->reorderPositionsIfNecessary($response['planning'], $response['counter']);
         }
 
     }
@@ -55,6 +49,7 @@ class PlanningService
 
     private function findPositionFromDate(Order $order, $planning, $position)
     {
+        $counter = 0;
         $oldPlanning = $planning;
         $oldPosition = $position;
         $date = date('Y-m-d', strtotime( $planning->date->format('Y-m-d') . ' - 1 days'));
@@ -78,6 +73,7 @@ class PlanningService
 
             $oldPlanning = $currentPlanning;
             $oldPosition = $currentPosition;
+            $counter++;
 
             break;
         }
@@ -85,6 +81,22 @@ class PlanningService
         return [
             'planning' => $oldPlanning,
             'position' => $oldPosition,
+            'counter' => $counter,
         ];
+    }
+
+    private function reorderPositionsIfNecessary($planning, $counter)
+    {
+        if ($counter == 0) {
+            return;
+        }
+
+        for($i = 0; $i < $counter; $i++) {
+            $nextPlaning = Planning::where('date', date('Y-m-d', strtotime($planning->date->format('Y-m-d') . ' + 1 days')))->first();
+            $order = $planning->removeLastOrder();
+            $planningOrder = $nextPlaning->addOrder($order);
+            $nextPlaning->reorder($planningOrder, 1);
+            $planning = $nextPlaning;
+        }
     }
 }

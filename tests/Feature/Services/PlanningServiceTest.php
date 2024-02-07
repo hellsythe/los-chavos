@@ -170,7 +170,7 @@ class PlanningServiceTest extends TestCase
         ]);
     }
 
-    public function test_cadd_order_and_by_date_two_plannings_first_with_no_space_available()
+    public function test_add_order_and_by_date_two_plannings_first_with_no_space_available()
     {
         PlanningOrder::truncate();
         Planning::truncate();
@@ -195,30 +195,31 @@ class PlanningServiceTest extends TestCase
         $planningFull->minutes_used = $planningFull->minutes_scheduled;
         $planningFull->save();
 
-        $this->ensurePlaningOrderFull($orderA, 1, $planningFull);
-        $this->ensurePlaningOrderFull($orderB, 3, $planningFull);
-        $this->ensurePlaningOrderFull($orderC, 4, $planningFull);
-        $this->ensurePlaningOrderFull($orderD, 2, $planningFull);
-
         $orderA1 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 10 days'))]);
         $orderB2 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 6 days'))]);
         $orderC3 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 5 days'))]);
         $orderD4 = $this->createOrder(['deadline' => date('Y-m-d', strtotime(' + 4 days'))]);
 
         $planning = resolve(PlanningService::class);
-        // $planning->addOrder($orderA1);
-        // $planning->addOrder($orderB2);
-        // $planning->addOrder($orderC3);
+        $planning->addOrder($orderA1);
+        $planning->addOrder($orderB2);
+        $planning->addOrder($orderC3);
         $planning->addOrder($orderD4);
 
         $planning = resolve(GetLastPlanningAvailable::class);
-        $planning = $planning->get($orderA1); //->addOrder($order)
+        $planning = $planning->get($orderA1);
 
-        // $this->assertDatabaseCount('plannings', 3);
-        // $this->ensurePlaningOrderFull($orderA1, 4, $planning);
-        // $this->ensurePlaningOrderFull($orderB2, 3, $planning);
-        // $this->ensurePlaningOrderFull($orderC3, 2, $planning);
-        // $this->ensurePlaningOrderFull($orderD4, 1, $planning);
+        $this->assertDatabaseCount('plannings', 3);
+
+        $this->ensurePlaningOrderFull($orderD4, 1, $planningFull);
+        $this->ensurePlaningOrderFull($orderC3, 2, $planningFull);
+        $this->ensurePlaningOrderFull($orderA, 3, $planningFull);
+        $this->ensurePlaningOrderFull($orderB2, 4, $planningFull);
+
+        $this->ensurePlaningOrderFull($orderD, 1, $planning);
+        $this->ensurePlaningOrderFull($orderB, 2, $planning);
+        $this->ensurePlaningOrderFull($orderC, 3, $planning);
+        $this->ensurePlaningOrderFull($orderA1, 4, $planning);
     }
 
 

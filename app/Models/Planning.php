@@ -77,19 +77,16 @@ class Planning extends BaseModel
         }
     }
 
-    public static function removeOrder(Order $order)
+    public function removeLastOrder()
     {
-        $planningOrder = PlanningOrder::where('order_id', $order->id)->first();
-        // $this->minutes_available -= $order->minutes_total;
-        // $this->minutes_scheduled += $order->minutes_total;
-        // $this->save();
+        $order = $this->orders()->first();
+        $orderModel = $order->orderModel();
 
-        // return PlanningOrder::create([
-        //     'order_id' => $order->id,
-        //     'planning_id' => $this->id,
-        //     'status' => PlanningOrder::STATUS_PENDING,
-        //     'order' => (PlanningOrder::where('planning_id', $this->id)->count() + 1),
-        //     'deadline' => $order->getRawOriginal('deadline'),
-        // ]);
+        $this->minutes_available += $orderModel->minutes_total;
+        $this->minutes_scheduled -= $orderModel->minutes_total;
+        $this->save();
+        $order->forceDelete();
+
+        return $orderModel;
     }
 }
