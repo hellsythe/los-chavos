@@ -23,15 +23,14 @@ class PlanningService
         $today = date('Y-m-d');
         $yesterdayDate = date('Y-m-d', strtotime( $planningDate . ' - 1 days'));
 
-        if($planningDate == $today || $yesterdayDate == $today)
+        if($planningDate == $today)
         {
             $lastPlanning->addOrder($order);
         } else {
             $position = $this->findPositionInPlaning($order, $lastPlanning);
-            // $this->findPositionFromDate($order, $lastPlanning);
-            $current = $lastPlanning->addOrder($order);
-            $lastPlanning->reorder($current, $position);
-            // $this->checkIfCanAddToOldsPlannings($current);
+            $response = $this->findPositionFromDate($order, $lastPlanning, $position);
+            $current = $response['planning']->addOrder($order);
+            $response['planning']->reorder($current, $response['position']);
         }
 
     }
@@ -54,32 +53,38 @@ class PlanningService
         return $position;
     }
 
-    private function findPositionFromDate(Order $order, $planning)
+    private function findPositionFromDate(Order $order, $planning, $position)
     {
         $oldPlanning = $planning;
+        $oldPosition = $position;
         $date = date('Y-m-d', strtotime( $planning->date->format('Y-m-d') . ' - 1 days'));
-        $oldPosition = 0;
-        $currentPosition = 0;
 
         while (true) {
             if ($date == date('Y-m-d')) {
-                return 0;
+                break;
             }
 
             $currentPlanning = Planning::where('date', $date)->first();
 
             if (!$currentPlanning) {
-                return 0;
+                break;
             }
 
             $currentPosition = $this->findPositionInPlaning($order, $currentPlanning);
 
-            if ($currentPosition == $currentPlanning->orders->count()) {
-                return $oldPosition;
+            if ($currentPosition == ($currentPlanning->orders->count() + 1)) {
+                break;
             }
 
+            $oldPlanning = $currentPlanning;
+            $oldPosition = $currentPosition;
 
             break;
         }
+
+        return [
+            'planning' => $oldPlanning,
+            'position' => $oldPosition,
+        ];
     }
 }
