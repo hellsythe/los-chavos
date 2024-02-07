@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Planning;
+use App\Models\PlanningOrder;
 use App\Services\Planning\GetLastPlanningAvailable;
 
 class PlanningService
@@ -20,38 +21,65 @@ class PlanningService
     {
         $planningDate = $lastPlanning->date->format('Y-m-d');
         $today = date('Y-m-d');
-        $newDate = date('Y-m-d', strtotime( $planningDate . ' - 1 days'));
+        $yesterdayDate = date('Y-m-d', strtotime( $planningDate . ' - 1 days'));
 
-        if($planningDate == $today || $newDate == $today)
+        if($planningDate == $today || $yesterdayDate == $today)
         {
             $lastPlanning->addOrder($order);
         } else {
-            $this->findPositionInPlaning($order, $lastPlanning);
+            $position = $this->findPositionInPlaning($order, $lastPlanning);
+            // $this->findPositionFromDate($order, $lastPlanning);
+            $current = $lastPlanning->addOrder($order);
+            $lastPlanning->reorder($current, $position);
+            // $this->checkIfCanAddToOldsPlannings($current);
         }
 
     }
 
-    private function findPositionInPlaning(Order $order, Planning $planning)
+    private function findPositionInPlaning(Order $order, Planning $planning): int
     {
         if ($planning->orders->isEmpty()) {
-            $planning->addOrder($order);
-            return;
+            return 0;
         }
 
-        $posiblePostition = 0;
+        $position = count($planning->orders) + 1;
 
         foreach ($planning->orders as $orderInArray) {
             $date = $order->getAttribute('deadlinex');
             if ($date < $orderInArray->deadline){
-                $posiblePostition = $orderInArray->order;
-            } else if ($posiblePostition != 0){
-                break;
+                $position = $orderInArray->order;
             }
         }
 
-        $current = $planning->addOrder($order);
-        if ($posiblePostition != 0){
-            $planning->reorder($current, $posiblePostition);
+        return $position;
+    }
+
+    private function findPositionFromDate(Order $order, $planning)
+    {
+        $oldPlanning = $planning;
+        $date = date('Y-m-d', strtotime( $planning->date->format('Y-m-d') . ' - 1 days'));
+        $oldPosition = 0;
+        $currentPosition = 0;
+
+        while (true) {
+            if ($date == date('Y-m-d')) {
+                return 0;
+            }
+
+            $currentPlanning = Planning::where('date', $date)->first();
+
+            if (!$currentPlanning) {
+                return 0;
+            }
+
+            $currentPosition = $this->findPositionInPlaning($order, $currentPlanning);
+
+            if ($currentPosition == $currentPlanning->orders->count()) {
+                return $oldPosition;
+            }
+
+
+            break;
         }
     }
 }

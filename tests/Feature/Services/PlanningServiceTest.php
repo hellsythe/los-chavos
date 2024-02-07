@@ -209,11 +209,15 @@ class PlanningServiceTest extends TestCase
         $planning->addOrder($orderC3);
         $planning->addOrder($orderD4);
 
+        $planning = resolve(GetLastPlanningAvailable::class);
+        $planning = $planning->get($orderA1); //->addOrder($order)
+
         $this->assertDatabaseCount('plannings', 5);
-        $this->ensurePlaningOrder($orderA, 1);
-        $this->ensurePlaningOrder($orderB, 3);
-        $this->ensurePlaningOrder($orderC, 4);
-        $this->ensurePlaningOrder($orderD, 2);
+        // $this->ensurePlaningOrderFull($orderD4, 1, $planningFull);
+        $this->ensurePlaningOrderFull($orderA1, 4, $planning);
+        $this->ensurePlaningOrderFull($orderB2, 3, $planning);
+        $this->ensurePlaningOrderFull($orderC3, 2, $planning);
+        $this->ensurePlaningOrderFull($orderD4, 1, $planning);
     }
 
 

@@ -33,4 +33,9 @@ class PlanningOrder extends BaseModel
             'plural' => 'PlanningOrder',
         ];
     }
+
+    public function planning()
+    {
+        return $this->belongsTo(Planning::class);
+    }
 }

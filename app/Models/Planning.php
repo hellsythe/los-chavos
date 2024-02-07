@@ -63,7 +63,7 @@ class Planning extends BaseModel
 
     public function Reorder(PlanningOrder $current, int $newOrder)
     {
-        if ($current->order == $newOrder) {
+        if ($current->order == $newOrder || $newOrder == 0) {
             return;
         }
 
@@ -75,5 +75,21 @@ class Planning extends BaseModel
             $order->order++;
             $order->save();
         }
+    }
+
+    public static function removeOrder(Order $order)
+    {
+        $planningOrder = PlanningOrder::where('order_id', $order->id)->first();
+        // $this->minutes_available -= $order->minutes_total;
+        // $this->minutes_scheduled += $order->minutes_total;
+        // $this->save();
+
+        // return PlanningOrder::create([
+        //     'order_id' => $order->id,
+        //     'planning_id' => $this->id,
+        //     'status' => PlanningOrder::STATUS_PENDING,
+        //     'order' => (PlanningOrder::where('planning_id', $this->id)->count() + 1),
+        //     'deadline' => $order->getRawOriginal('deadline'),
+        // ]);
     }
 }
