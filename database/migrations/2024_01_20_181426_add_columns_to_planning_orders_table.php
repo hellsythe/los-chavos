@@ -15,6 +15,8 @@ return new class extends Migration
             $table->integer('order');
             $table->date('deadline');
             $table->integer('group')->default(0);
+            $table->boolean('fixed')->default(0);
+
         });
     }
 

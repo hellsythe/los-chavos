@@ -22,11 +22,17 @@ export default {
             calendarOptions: {
                 plugins: [dayGridPlugin, interactionPlugin],
                 editable: true,
-                initialView: 'dayGridWeek',
+                initialView: 'dayGridFiveDays',
                 locale: esLocale,
                 events: this.events,
                 timeZone: 'local',
                 firstDay: new Date().getDay(),
+                views: {
+                    dayGridFiveDays: {
+                        type: 'dayGrid',
+                        duration: { days: 5 }
+                    }
+                }
             }
         }
     }

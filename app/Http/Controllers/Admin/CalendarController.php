@@ -21,11 +21,12 @@ class CalendarController extends Controller
         $orders = PlanningOrder::whereIn('planning_id', $plannings)->get();
         $events = [];
 
-        foreach ($orders as $key => $planningOrder) {
+        foreach ($orders as $planningOrder) {
             $events[] = [
-                'title' => $planningOrder->orderModel()->desings . ' - ' . $planningOrder->orderModel()->minutes_total,
+                'title' => $planningOrder->orderModel()->deadlinex . ' ' .$planningOrder->orderModel()->desings,
                 'start' => $planningOrder->planning->date->format('Y-m-d'),
                 'end' => $planningOrder->planning->date->format('Y-m-d'),
+                'description' => 'Lecture',
             ];
         }
 
