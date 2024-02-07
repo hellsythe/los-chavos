@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import Calendar from "./Calendar/Index.vue";
 import SalePoint from "./SalePoint/Index.vue";
 import PaymentDetail from "./SaleDetails/PaymentDetail.vue";
 import CashboxComponent from "./cashbox/Index.vue";
@@ -16,4 +17,13 @@ if (element !== null) {
 
     app.mount('#sale');
 
+}
+
+let calendar = document.getElementById('calendar')
+
+if (calendar !== null) {
+    const app = createApp({}).use(ContextMenu);
+    app.component('Calendar', Calendar)
+
+    app.mount('#calendar');
 }
