@@ -22,6 +22,7 @@ module.exports = {
             purple: colors.violet,
             blue: colors.blue,
             'light-blue': colors.sky,
+            sky: colors.sky,
             cyan: colors.cyan,
         },
         fontFamily: {
@@ -58,6 +59,7 @@ module.exports = {
         require('tailwindcss'),
         // require('@tailwindcss/forms'),
         require('autoprefixer'),
+        require("@tailwindcss/typography"),
         require('daisyui'),
     ],
 }

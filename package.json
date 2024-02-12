@@ -9,6 +9,7 @@
         "@heroicons/vue": "^2.0.17",
         "@sdkconsultoria/base": "file:vendor/sdkconsultoria/base",
         "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/typography": "^0.5.10",
         "@tiptap/extension-bold": "^2.0.3",
         "@tiptap/extension-italic": "^2.0.3",
         "@tiptap/extension-strike": "^2.0.3",
@@ -46,6 +47,7 @@
         "@tiptap/starter-kit": "^2.0.2",
         "@tiptap/vue-3": "^2.0.2",
         "lodash": "^4.17.21",
-        "print-js": "^1.6.0"
+        "print-js": "^1.6.0",
+        "vuedraggable": "^4.1.0"
     }
 }

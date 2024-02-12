@@ -1,16 +1,10 @@
 {
 	"folders": [
 		{
-			"name": "los-chavos",
 			"path": "."
 		},
 		{
-			"name": "base",
-			"path": "../base"
-		},
-		{
-			"name": "core",
-			"path": "../core"
+			"path": "../whatsapp-cloud-api"
 		}
 	],
 	"settings": {}

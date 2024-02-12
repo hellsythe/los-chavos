@@ -4571,7 +4571,7 @@
             "dist": {
                 "type": "path",
                 "url": "/var/www/packages/whatsapp-cloud-api",
-                "reference": "b6c999ae66b1e6cdd321b6515e0b55e8c10fee50"
+                "reference": "8a651498d2ae75e7ff4515c452f183175d1df1da"
             },
             "require": {
                 "php": "^8.0"
@@ -9850,5 +9850,5 @@
         "php": "^8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

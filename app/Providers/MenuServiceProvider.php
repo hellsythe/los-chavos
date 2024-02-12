@@ -61,6 +61,14 @@ class MenuServiceProvider extends ServiceProvider
             'extra_urls' => [],
         ], ['super-admin']);
 
+        $service_menu->addElement([
+            'name' => 'Chat',
+            'icon' => Base::icon('chat-bubble-left-right', ['class' => 'h-6 w-6']),
+            'url' =>  'chat.index',
+            'crud' => '',
+            'extra_urls' => [],
+        ], ['super-admin']);
+
         // $service_menu->addElement(Planning::makeMenu('calendar'), ['super-admin', 'Bordador']);
         $service_menu->addElement(Planning::makeMenu('calendar-days'), ['super-admin']);
 

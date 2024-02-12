@@ -57,6 +57,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('payment/report/pdf', 'PaymentController@report')->name('payment.report');
 
         Route::get('embrodery/calendar', 'CalendarController@index')->name('embrodery.calendar');
+        Route::get('chat', 'ChatController@index')->name('chat.index');
     });
 Route::get('aviso-privacidad', '\App\Http\Controllers\StaticSiteController@privacy');
 Route::get('/', function () {
