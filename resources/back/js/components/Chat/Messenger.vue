@@ -51,8 +51,8 @@ function setConversation(conversation) {
 }
 
 async function loadMessagesFromConversation() {
-    await fetch('/message?conversation_id=' + current_conversation.value.id)
+    await fetch('/message?chat_id=' + current_conversation.value.id)
         .then(response => response.json())
-        .then(data => messages.value = data);
+        .then(data => messages.value = data.data);
 }
 </script>
