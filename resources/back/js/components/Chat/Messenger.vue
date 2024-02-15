@@ -11,17 +11,26 @@
             </ul>
         </div>
         <div class="w-2/3 pl-1">
+            <div class="chat chat-start"></div>
+            <div class="chat chat-end"></div>
             <div class="w-full overflow-auto h-full">
-                <div :class="{chat:true, 'chat-start': message.direction == 'toApp', 'chat-end': message.direction != 'toApp'}" v-for="message in messages">
-                    <div :class="{'chat-bubble':true, 'chat-bubble-primary': message.direction != 'toApp'}">{{messages}}</div>
+                <div :class="{ chat: true, 'chat-start': message.direction == 'toApp', 'chat-end': message.direction != 'toApp' }"
+                    v-for="message in messages">
+                    <div class="chat-header">
+                        <time class="text-xs opacity-50">{{ convertTimestamp(message.timestamp) }}</time>
+                    </div>
+                    <div :class="{ 'chat-bubble': true, 'chat-bubble-primary': message.direction != 'toApp' }">
+                        {{ message.text }}
+                    </div>
                 </div>
             </div>
             <div class="w-full flex mt-3">
                 <div class="w-5/6 mr-1">
-                    <input type="text" placeholder="Escribe un mensaje" class="input border-1 border-gray-200 w-full" />
+                    <input v-model="model" type="text" placeholder="Escribe un mensaje"
+                        class="input border-1 border-gray-200 w-full" />
                 </div>
                 <div class="w-1/6">
-                    <button class="btn btn-primary w-full">Enviar</button>
+                    <button class="btn btn-primary w-full" @click="sendMessage">Enviar</button>
                 </div>
             </div>
         </div>
@@ -29,12 +38,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+const model = ref('')
 
 const conversations = ref('')
 const current_conversation = ref({ id: 0 })
 const messages = ref({})
-
+const convertTimestamp = computed(() => {
+    return (timestamp) => {
+        const date = new Date(parseInt(timestamp));
+        return date.toLocaleString();
+    }
+});
 loadConversations();
 
 async function loadConversations() {
@@ -55,4 +70,40 @@ async function loadMessagesFromConversation() {
         .then(response => response.json())
         .then(data => messages.value = data.data);
 }
+
+function sendMessage() {
+    fetch('/message/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phone_id: current_conversation.value.waba_phone,
+            to: current_conversation.value.client_phone,
+            message: {
+                "type": "text",
+                "text": {
+                    "preview_url": false,
+                    "body": model.value
+                }
+
+            }
+        })
+    }).then(response => response.json())
+        .then(data => {
+            loadMessagesFromConversation();
+        });
+}
+
+setTimeout(() => {
+    window.Echo.private(`new_whatsapp_message`)
+        .listen('.Sdkconsultoria\\WhatsappCloudApi\\Events\\NewWhatsappMessageHook', (e) => {
+            console.log(e.chat.chat_id);
+            console.log(current_conversation.value.id);
+            if (e.chat.chat_id == current_conversation.value.id) {
+                loadMessagesFromConversation();
+            }
+        });
+}, 1000);
+
 </script>

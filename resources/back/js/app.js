@@ -39,10 +39,3 @@ window.Echo.private(`orders_auth`)
 .listen('OrderAuth', (e) => {
     notifyb(e.order);
 });
-
-window.Echo.private(`new_whatsapp_message`)
-.listen('.Sdkconsultoria\\WhatsappCloudApi\\Events\\NewWhatsappMessageHook', (e) => {
-    console.log('newWhatsappMessage');
-
-    console.log(e);
-});
