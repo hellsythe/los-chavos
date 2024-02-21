@@ -2849,16 +2849,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.0.0",
+            "version": "v5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "4a21235f7e56e713259a6f76bf4b5ea08502b9dc"
+                "reference": "2218c2252c874a4624ab2f613d86ac32d227bc69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/4a21235f7e56e713259a6f76bf4b5ea08502b9dc",
-                "reference": "4a21235f7e56e713259a6f76bf4b5ea08502b9dc",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/2218c2252c874a4624ab2f613d86ac32d227bc69",
+                "reference": "2218c2252c874a4624ab2f613d86ac32d227bc69",
                 "shasum": ""
             },
             "require": {
@@ -2901,9 +2901,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.0.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.0.1"
             },
-            "time": "2024-01-07T17:17:35+00:00"
+            "time": "2024-02-21T19:24:10+00:00"
         },
         {
             "name": "nunomaduro/termwind",
@@ -4579,12 +4579,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/whatsapp-cloud-api.git",
-                "reference": "e4fe563bf347cecb1136b0e69712b6af81db03e0"
+                "reference": "7a974459e90e87cea9c88049dd6ec04948bbeda6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/e4fe563bf347cecb1136b0e69712b6af81db03e0",
-                "reference": "e4fe563bf347cecb1136b0e69712b6af81db03e0",
+                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/7a974459e90e87cea9c88049dd6ec04948bbeda6",
+                "reference": "7a974459e90e87cea9c88049dd6ec04948bbeda6",
                 "shasum": ""
             },
             "require": {
@@ -4640,7 +4640,7 @@
                 "issues": "https://github.com/sdkconsultoria/whatsapp-cloud-api/issues",
                 "source": "https://github.com/sdkconsultoria/whatsapp-cloud-api/tree/develop"
             },
-            "time": "2024-02-21T18:11:51+00:00"
+            "time": "2024-02-21T22:07:49+00:00"
         },
         {
             "name": "spatie/laravel-permission",
