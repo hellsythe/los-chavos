@@ -47,6 +47,11 @@ class PlanningOrder extends BaseModel
     public static function finishOrder($order)
     {
         $planningOrder = PlanningOrder::where('order_id', $order->id)->first();
+
+        if (!$planningOrder) {
+            return;
+        }
+
         $planningOrder->status = PlanningOrder::STATUS_READY;
         $planningOrder->save();
 
