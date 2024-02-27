@@ -22,6 +22,6 @@ class ChatController extends Controller
 
     public function unread()
     {
-        return response()->json(Chat::where('unread_messages', '0', 0)->count());
+        return response()->json(Chat::where('unread_messages', '>', 0)->sum('unread_messages'));
     }
 }
