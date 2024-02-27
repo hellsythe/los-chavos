@@ -4444,12 +4444,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/base.git",
-                "reference": "0791cb4b77627d7ee63d623a8555732cc6790651"
+                "reference": "d331b90cc156b87b81f8a591a9c7ff304c08f02e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/0791cb4b77627d7ee63d623a8555732cc6790651",
-                "reference": "0791cb4b77627d7ee63d623a8555732cc6790651",
+                "url": "https://api.github.com/repos/sdkconsultoria/base/zipball/d331b90cc156b87b81f8a591a9c7ff304c08f02e",
+                "reference": "d331b90cc156b87b81f8a591a9c7ff304c08f02e",
                 "shasum": ""
             },
             "require": {
@@ -4504,7 +4504,7 @@
                 "issues": "https://github.com/sdkconsultoria/base/issues",
                 "source": "https://github.com/sdkconsultoria/base/tree/develop"
             },
-            "time": "2023-10-08T18:44:14+00:00"
+            "time": "2024-02-27T21:46:55+00:00"
         },
         {
             "name": "sdkconsultoria/core",
@@ -4579,12 +4579,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/whatsapp-cloud-api.git",
-                "reference": "d28306a8f515618974165c8c912d618828335688"
+                "reference": "95fce81fedae2019591b79ef78fea14514f2ab7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/d28306a8f515618974165c8c912d618828335688",
-                "reference": "d28306a8f515618974165c8c912d618828335688",
+                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/95fce81fedae2019591b79ef78fea14514f2ab7f",
+                "reference": "95fce81fedae2019591b79ef78fea14514f2ab7f",
                 "shasum": ""
             },
             "require": {
@@ -4640,7 +4640,7 @@
                 "issues": "https://github.com/sdkconsultoria/whatsapp-cloud-api/issues",
                 "source": "https://github.com/sdkconsultoria/whatsapp-cloud-api/tree/develop"
             },
-            "time": "2024-02-27T17:58:25+00:00"
+            "time": "2024-02-27T21:17:19+00:00"
         },
         {
             "name": "spatie/laravel-permission",

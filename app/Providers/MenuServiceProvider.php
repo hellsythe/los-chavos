@@ -54,6 +54,7 @@ class MenuServiceProvider extends ServiceProvider
         ], ['super-admin', 'Punto de venta']);
 
         $service_menu->addElement([
+            'id' => 'chat-menu',
             'name' => 'Plan de trabajo',
             'icon' => Base::icon('calendar', ['class' => 'h-6 w-6']),
             'url' =>  'embrodery.calendar',
