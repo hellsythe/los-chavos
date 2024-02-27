@@ -58,6 +58,7 @@ Route::namespace('\App\Http\Controllers\Admin')
 
         Route::get('embrodery/calendar', 'CalendarController@index')->name('embrodery.calendar');
         Route::get('chat', 'ChatController@index')->name('chat.index');
+        Route::get('unread', 'ChatController@unread')->name('chat.unread');
     });
 Route::get('aviso-privacidad', '\App\Http\Controllers\StaticSiteController@privacy');
 Route::get('/', function () {

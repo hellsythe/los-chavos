@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Planning;
 use App\Models\PlanningOrder;
+use Sdkconsultoria\WhatsappCloudApi\Models\Chat;
 
 class ChatController extends Controller
 {
@@ -12,10 +13,15 @@ class ChatController extends Controller
     {
         return view('back.chat.index', [
             'urls' => [
-                'get_conversations'=> route('conversation.index'),
+                'get_conversations' => route('conversation.index'),
                 'get_messages' => route('message.index'),
                 'send_message' => route('message.send'),
             ]
         ]);
+    }
+
+    public function unread()
+    {
+        return response()->json(Chat::where('unread_messages', '0', 0)->count());
     }
 }

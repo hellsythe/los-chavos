@@ -39,3 +39,33 @@ window.Echo.private(`orders_auth`)
 .listen('OrderAuth', (e) => {
     notifyb(e.order);
 });
+
+let messages = 0;
+let menu = document.getElementById('chat-menu').getElementsByTagName('a')[0];
+window.Echo.channel(`new_whatsapp_message`)
+    .listen('.Sdkconsultoria\\WhatsappCloudApi\\Events\\NewWhatsappMessageHook', (e) => {
+        messages++;
+        loadMessages();
+
+    });
+
+    fetch('/admin/unread').then(response => response.json()).then(data => {
+        messages = data;
+        loadMessages();
+
+    });
+
+    function loadMessages(){
+        let lastBadge = menu.getElementsByClassName('badge')[0];
+
+
+        let badge = document.createElement('span');
+        badge.classList.add('badge', 'badge-warning');
+        badge.innerHTML = '+'+messages;
+
+        if(lastBadge){
+            lastBadge.remove();
+        }
+
+        menu.appendChild(badge);
+    }
