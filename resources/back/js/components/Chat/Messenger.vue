@@ -4,13 +4,7 @@
             <div class="p-2 flex">
                 <input @change="loadConversations" v-model="search" type="text" placeholder="Buscar Chat"
                     class="input w-full" />
-                <button class="btn btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                </button>
+                    <NewMessage />
             </div>
             <ul class="menu w-full p-0 overflow-auto">
                 <li v-for="conversation in conversations" @click="setConversation(conversation)">
@@ -29,7 +23,7 @@
                 <div :class="{ chat: true, 'chat-start': message.direction == 'toApp', 'chat-end': message.direction != 'toApp' }"
                     v-for="message in messages">
                     <div class="chat-header">
-                        <time class="text-xs opacity-50">{{ convertTimestamp(message.timestamp) }}</time>
+                        <span v-if="message.sended_by">Enviado por: {{ message.sended_by }}</span> <time class="text-xs opacity-50">{{ convertTimestamp(message.timestamp) }}</time>
                     </div>
                     <div :class="{ 'chat-bubble': true, 'chat-bubble-primary': message.direction != 'toApp' }">
                         {{ message.text }}
@@ -51,6 +45,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import NewMessage from './NewMessage.vue';
+
 const message = ref('')
 const search = ref('')
 
@@ -60,7 +56,7 @@ const messages = ref({})
 const convertTimestamp = computed(() => {
     return (timestamp) => {
         const date = new Date(parseInt(timestamp * 1000));
-        return date.toLocaleString();
+        return date.toLocaleString('es-MX');
     }
 });
 loadConversations();
