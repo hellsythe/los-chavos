@@ -51,8 +51,9 @@ window.Echo.channel(`new_whatsapp_message`)
 
     fetch('/admin/unread').then(response => response.json()).then(data => {
         messages = data;
-        loadMessages();
-
+        if(messages > 0){
+            loadMessages();
+        }
     });
 
     function loadMessages(){
