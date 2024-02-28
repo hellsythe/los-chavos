@@ -206,6 +206,10 @@ class WhatsappNotification
                 "parameters" => [
                     [
                         "type" => "text",
+                        "text" => $order->client->name
+                    ],
+                    [
+                        "type" => "text",
                         "text" => $order->id
                     ],
                 ]
