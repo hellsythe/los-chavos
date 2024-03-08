@@ -168,7 +168,7 @@ class WhatsappNotification
 
     public function sendOrderIsDeliveryNotification($order)
     {
-        $template = Template::find(4);
+        $template = Template::where('name', 'notificar_pedido_listo')->first();
         $template->setComponentsWithVars([
             [
                 "type" => "body",
@@ -198,7 +198,7 @@ class WhatsappNotification
 
     public function sendOrderTicketToClient($order)
     {
-        $template = Template::find(5);
+        $template = Template::where('name', 'ticket_pedido')->first();
 
         $template->setComponentsWithVars([
             [

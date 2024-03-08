@@ -13,7 +13,7 @@ class ChatController extends Controller
     {
         return view('back.chat.index', [
             'urls' => [
-                'get_conversations' => route('conversation.index'),
+                'get_conversations' => route('chat.index'),
                 'get_messages' => route('message.index'),
                 'send_message' => route('message.send'),
             ]
