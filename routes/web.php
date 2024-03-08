@@ -82,9 +82,6 @@ Route::namespace('\Sdkconsultoria\Core\Http\Controllers')
     });
 
 $routes = function () {
-    Route::get('whatsapp-webhook', 'WebhookController@subscribe')->name('meta.webhook.subscribe');
-    Route::post('whatsapp-webhook', 'WebhookController@webhook')->name('meta.webhook');
-
     Route::get('waba/{wabaId}/init', 'WabaController@init')->name('waba.init');
     Route::get('waba/{wabaId}/get-templates', 'WabaController@loadTemplatesFromWaba')->name('waba.getTemplatesFromMeta');
     Route::get('waba/{wabaId}/get-info', 'WabaController@getWabaInfoFromMeta')->name('waba.getInfoFromMeta');
