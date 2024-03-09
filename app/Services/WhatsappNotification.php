@@ -243,7 +243,7 @@ class WhatsappNotification
 
     protected function send($number, $template, $components = [])
     {
-        $request = Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
+        Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
             "messaging_product" => "whatsapp",
             "to" => '52' . $number,
             "type" => "template",
@@ -289,15 +289,13 @@ class WhatsappNotification
         $messageModel->save();
     }
 
-    private function getChat($phoneNumber, $to)
+    private function getChat(WabaPhone $phoneNumber, $to)
     {
         $chat = Chat::firstOrCreate([
+            'waba_phone_id' => $phoneNumber->id,
             'waba_phone' => $phoneNumber->phone_number_clean,
             'client_phone' => $to,
         ]);
-
-        $chat->last_message = date('Y-m-d H:i:s');
-        $chat->save();
 
         return $chat;
     }
