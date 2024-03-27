@@ -1,6 +1,6 @@
 import '@sdkconsultoria/base';
 import './components/components';
-
+import './chat';
 import Echo from 'laravel-echo';
 
 import Pusher from 'pusher-js';

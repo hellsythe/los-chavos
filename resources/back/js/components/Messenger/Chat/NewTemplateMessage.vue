@@ -93,6 +93,14 @@ function sentMessageTemplate() {
     })
         .then(response => response.json())
         .then(data => {
+            if (!data.ok) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'No se pudo enviar el mensaje',
+                    icon: 'error',
+                    confirmButtonText: 'Continuar'
+                })
+            }
             // Swal.fire({
             //     title: "Good job!",
             //     text: "You clicked the button!",
@@ -100,12 +108,7 @@ function sentMessageTemplate() {
             // });
         })
         .catch((error) => {
-            Swal.fire({
-                    title: 'Error!',
-                    text: 'No se pudo enviar el mensaje',
-                    icon: 'error',
-                    confirmButtonText: 'Continuar'
-                })
+
         });
 }
 </script>

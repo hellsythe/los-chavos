@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
+use Sdkconsultoria\WhatsappCloudApi\Lib\Template\SendTemplate;
 use Sdkconsultoria\WhatsappCloudApi\Models\Chat;
 use Sdkconsultoria\WhatsappCloudApi\Models\Message;
 use Sdkconsultoria\WhatsappCloudApi\Models\Template;
@@ -122,8 +123,7 @@ class WhatsappNotification
                 $user->phone,
                 'nuevo_pedido',
                 [
-                    [
-                        "type" => "body",
+                    "body" => [
                         "parameters" => [
                             [
                                 "type" => "text",
@@ -131,8 +131,7 @@ class WhatsappNotification
                             ],
                         ]
                     ],
-                    [
-                        "type" => "button",
+                    "button" => [
                         "sub_type" => "url",
                         "index" => "0",
                         "parameters" => [
@@ -153,8 +152,7 @@ class WhatsappNotification
             $order->client->phone,
             'notificar_pedido_listo',
             [
-                [
-                    "type" => "body",
+                "body" => [
                     "parameters" => [
                         [
                             "type" => "text",
@@ -168,10 +166,8 @@ class WhatsappNotification
 
     public function sendOrderIsDeliveryNotification($order)
     {
-        $template = Template::where('name', 'notificar_pedido_listo')->first();
-        $template->setComponentsWithVars([
-            [
-                "type" => "body",
+        $vars = ([
+            "body" => [
                 "parameters" => [
                     [
                         "type" => "text",
@@ -181,28 +177,14 @@ class WhatsappNotification
             ],
         ]);
 
-        $phoneNumber = WabaPhone::find(1)->first();
-        $response = resolve(MessageService::class)
-            ->sendTemplate($phoneNumber, '521'.$order->client->phone, $template);
-
-        $chat = $this->getChat($phoneNumber, '521'.$order->client->phone);
-        $message = [
-            'id' => $response['messages'][0]['id'],
-            'content' => json_encode($template->getMessage()),
-            'sender' => 'BOT'
-        ];
-
-        $this->registerMessage($chat, $message);
+        $this->send($order->client->phone, 'notificar_pedido_listo', $vars);
     }
 
 
     public function sendOrderTicketToClient($order)
     {
-        $template = Template::where('name', 'ticket_pedido')->first();
-
-        $template->setComponentsWithVars([
-            [
-                "type" => "body",
+        $vars = ([
+            "body" => [
                 "parameters" => [
                     [
                         "type" => "text",
@@ -214,45 +196,28 @@ class WhatsappNotification
                     ],
                 ]
             ],
-            [
-                "type" => "header",
+            "header" => [
                 "parameters" => [
                     [
                         "type" => "document",
                         "document" => [
-                            "link" => URL::to('storage/tickets/' . $order->id) . '.pdf'
+                            // "link" => URL::to('storage/tickets/' . $order->id) . '.pdf'
+                            "link" => 'https://los-chavos.site/storage/tickets/4341.pdf'
                         ]
                     ]
                 ]
             ]
         ]);
 
-        $phoneNumber = WabaPhone::find(1)->first();
-        $response = resolve(MessageService::class)
-            ->sendTemplate($phoneNumber, '521'.$order->client->phone, $template);
-
-        $chat = $this->getChat($phoneNumber, '521'.$order->client->phone);
-        $message = [
-            'id' => $response['messages'][0]['id'],
-            'content' => json_encode($template->getMessage()),
-            'sender' => 'BOT'
-        ];
-
-        $this->registerMessage($chat, $message);
+        $this->send($order->client->phone, 'ticket_pedido', $vars);
     }
 
-    protected function send($number, $template, $components = [])
+    protected function send($number, string $templateName, $vars = [])
     {
-        Http::withToken(config('app.whatsapp_token'))->post('https://graph.facebook.com/v16.0/' . config('app.whatsapp_phone_id') . '/messages', [
-            "messaging_product" => "whatsapp",
-            "to" => '52' . $number,
-            "type" => "template",
-            "template" => [
-                "name" => $template,
-                "language" => ["code" => "es_MX"],
-                'components' => $components
-            ],
-        ]);
+        $wabaPhone = WabaPhone::find(1)->first();
+        $template = Template::where('name', $templateName)->first();
+
+        resolve(SendTemplate::class)->send($wabaPhone, $template, "521$number", $vars, 'BOT');
     }
 
     protected function getAllAdminis()
@@ -274,29 +239,5 @@ class WhatsappNotification
         return User::whereHas("roles", function ($q) {
             $q->where("name", "Estampador");
         })->get();
-    }
-
-    private function registerMessage(Chat $chat, $message)
-    {
-        $messageModel = new Message();
-        $messageModel->direction = 'toClient';
-        $messageModel->body = $message['content'];
-        $messageModel->timestamp = time();
-        $messageModel->message_id = $message['id'];
-        $messageModel->type = 'text';
-        $messageModel->chat_id = $chat->id;
-        $messageModel->sended_by = $message['sender'] ?? null;
-        $messageModel->save();
-    }
-
-    private function getChat(WabaPhone $phoneNumber, $to)
-    {
-        $chat = Chat::firstOrCreate([
-            'waba_phone_id' => $phoneNumber->id,
-            'waba_phone' => $phoneNumber->phone_number_clean,
-            'client_phone' => $to,
-        ]);
-
-        return $chat;
     }
 }

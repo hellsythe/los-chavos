@@ -24,9 +24,9 @@ Route::get('/', function () {
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
     ->prefix('admin')->group(function () {
-    Route::SdkResource('planning', PlanningController::class);
-    Route::SdkResource('embroidery-statistics', EmbroideryStatisticsController::class);
-    Route::SdkResource('setting', SettingController::class);
+        Route::SdkResource('planning', PlanningController::class);
+        Route::SdkResource('embroidery-statistics', EmbroideryStatisticsController::class);
+        Route::SdkResource('setting', SettingController::class);
         Route::SdkResource('cash-box-report', CashBoxReportController::class);
         Route::SdkResource('order-design-print', OrderDesignPrintController::class);
         Route::SdkResource('design-print', DesignPrintController::class);
@@ -66,7 +66,7 @@ Route::get('/', function () {
 });
 
 // Route::get('/test', function () {
-//     $order = Order::find(4192);
+//     $order = Order::find(4072);
 //     resolve(WhatsappNotification::class)->sendRequestNotification($order);
 //     resolve(WhatsappNotification::class)->sendApprovedNotification($order);
 //     resolve(WhatsappNotification::class)->sendNewOrder($order);
@@ -106,8 +106,6 @@ $routes = function () {
 Route::namespace('Sdkconsultoria\WhatsappCloudApi\Http\Controllers')
     ->middleware('auth')
     ->prefix('api/v1')
-    ->group($routes);
+    ->group(\WhatsappCloudApi::routes());
 
-Route::namespace('Sdkconsultoria\WhatsappCloudApi\Http\Controllers')
-    ->middleware('auth')
-    ->group($routes);
+Route::ResourceView('template');
