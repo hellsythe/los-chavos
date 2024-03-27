@@ -4580,12 +4580,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sdkconsultoria/whatsapp-cloud-api.git",
-                "reference": "3261dd1a8f426f1157de1d4a1ccf5f58fcc7ace4"
+                "reference": "118adfe34fe96a486c795ee593fc9059ab0cff53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/3261dd1a8f426f1157de1d4a1ccf5f58fcc7ace4",
-                "reference": "3261dd1a8f426f1157de1d4a1ccf5f58fcc7ace4",
+                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/118adfe34fe96a486c795ee593fc9059ab0cff53",
+                "reference": "118adfe34fe96a486c795ee593fc9059ab0cff53",
                 "shasum": ""
             },
             "require": {
@@ -4642,7 +4642,7 @@
                 "issues": "https://github.com/sdkconsultoria/whatsapp-cloud-api/issues",
                 "source": "https://github.com/sdkconsultoria/whatsapp-cloud-api/tree/develop"
             },
-            "time": "2024-03-27T19:01:59+00:00"
+            "time": "2024-03-27T22:39:15+00:00"
         },
         {
             "name": "spatie/laravel-permission",

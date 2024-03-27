@@ -24,8 +24,7 @@ class WhatsappNotification
                     $user->phone,
                     'notificar_solicitud',
                     [
-                        [
-                            "type" => "body",
+                        "body" => [
                             "parameters" => [
                                 [
                                     "type" => "text",
@@ -33,8 +32,7 @@ class WhatsappNotification
                                 ],
                             ]
                         ],
-                        [
-                            "type" => "button",
+                        "button" => [
                             "sub_type" => "url",
                             "index" => "0",
                             "parameters" => [
@@ -58,8 +56,7 @@ class WhatsappNotification
                     $user->phone,
                     'pedido_aprobado',
                     [
-                        [
-                            "type" => "body",
+                        "body" => [
                             "parameters" => [
                                 [
                                     "type" => "text",
@@ -71,8 +68,7 @@ class WhatsappNotification
                                 ],
                             ]
                         ],
-                        [
-                            "type" => "button",
+                        "button" => [
                             "sub_type" => "url",
                             "index" => "0",
                             "parameters" => [
@@ -177,7 +173,7 @@ class WhatsappNotification
             ],
         ]);
 
-        $this->send($order->client->phone, 'notificar_pedido_listo', $vars);
+        $this->send($order->client->phone, 'pedido_entregado', $vars);
     }
 
 
