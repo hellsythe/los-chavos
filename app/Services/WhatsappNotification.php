@@ -210,10 +210,14 @@ class WhatsappNotification
 
     protected function send($number, string $templateName, $vars = [])
     {
-        $wabaPhone = WabaPhone::find(1)->first();
-        $template = Template::where('name', $templateName)->first();
+        try {
+            $wabaPhone = WabaPhone::find(1)->first();
+            $template = Template::where('name', $templateName)->first();
 
-        resolve(SendTemplate::class)->send($wabaPhone, $template, "521$number", $vars, 'BOT');
+            resolve(SendTemplate::class)->send($wabaPhone, $template, "521$number", $vars, 'BOT');
+        } catch (\Exception $e) {
+
+        }
     }
 
     protected function getAllAdminis()
