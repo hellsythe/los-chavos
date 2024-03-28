@@ -197,8 +197,8 @@ class WhatsappNotification
                     [
                         "type" => "document",
                         "document" => [
-                            // "link" => URL::to('storage/tickets/' . $order->id) . '.pdf'
-                            "link" => 'https://los-chavos.site/storage/tickets/4341.pdf'
+                            "link" => URL::to('storage/tickets/' . $order->id) . '.pdf'
+                            // "link" => 'https://los-chavos.site/storage/tickets/4341.pdf'
                         ]
                     ]
                 ]
