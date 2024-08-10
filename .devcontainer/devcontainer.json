@@ -25,6 +25,6 @@
 	},
 	"remoteUser": "sail",
 	"mounts": [
-		"type=bind,source=/home/${localEnv:USER}/.ssh,target=//home/sail/.ssh,readonly"
+		"type=bind,source=~/.ssh,target=//home/sail/.ssh,readonly"
 	]
 }
