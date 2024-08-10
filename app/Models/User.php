@@ -75,9 +75,16 @@ class User extends Authenticatable
                 ->label('Rol')
                 ->loadOptionsFromUrl('/admin/v1/role')
                 ->setComponent('SelectedField')
+                ->addExtra('valueName', 'name')
                 ->saveAs(function ($model, $value) {
                     $model->syncRoles([$value]);
                 }),
+            CustomField::make('branch_id')
+                ->rules(['required'])
+                ->label('Sucursal')
+                ->loadOptionsFromUrl('/admin/branch/api')
+                ->setComponent('SelectedField')
+                ->addExtra('valueName', 'id'),
         ];
     }
 
@@ -154,6 +161,15 @@ class User extends Authenticatable
     public function social()
     {
         return $this->hasMany(UserSocial::class);
+    }
+
+
+    /**
+     * Obtiene la sucursal del usuario.
+     */
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     /**

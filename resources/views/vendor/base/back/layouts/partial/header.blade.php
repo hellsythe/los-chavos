@@ -13,12 +13,18 @@
     @endphp
     <div class="flex justify-end flex-1 px-2">
         <div class="flex-1">
-            <label class="btn btn-ghost text-xl">Sucursal: </label>
-            <select class="select select-info w-full max-w-xs font-black">
-                @foreach ($branches as $branch)
-                    <option value="{{$branch->id}}" @if($branch->id == session('branch')) selected @endif>{{$branch->name}}</option>
-                @endforeach
-              </select>
+            <form action="">
+                <label class="btn btn-ghost text-xl">Sucursal: </label>
+                <select name="branch"  class="select select-info w-full max-w-xs font-black">
+                    @foreach ($branches as $branch)
+                        <option value="{{$branch->id}}" @if($branch->id == session('branch')) selected @endif>{{$branch->name}}</option>
+                    @endforeach
+                  </select>
+
+                  @if (auth()->user()->hasRole('super-admin'))
+                    <button class="btn btn-primary">Cambiar</button>
+                  @endif
+            </form>
           </div>
         <div class="flex items-stretch">
             <div class="dropdown dropdown-end">
