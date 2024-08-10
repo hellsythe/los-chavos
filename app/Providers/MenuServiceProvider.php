@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Sdkconsultoria\Base\Services\MenuService;
+use App\Models\Branch;
 use App\Models\Planning;
 use App\Models\Employee;
 use App\Models\EmbroideryStatistics;
@@ -97,6 +98,7 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
+        $service_menu->addElement(Branch::makeMenu('book-open'));
         $service_menu->addElement(Setting::makeMenu('book-open'), ['super-admin']);
     }
 }

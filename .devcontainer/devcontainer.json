@@ -18,7 +18,8 @@
 				"bmewburn.vscode-intelephense-client",
 				"mhutchie.git-graph",
 				"eamodio.gitlens",
-				"pflannery.vscode-versionlens"
+				"pflannery.vscode-versionlens",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	},

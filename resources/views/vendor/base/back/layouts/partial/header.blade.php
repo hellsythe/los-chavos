@@ -6,10 +6,20 @@
     </div>
 
     @php
+        use App\Models\Branch;
         $user = auth()->user();
         $image = $user->image;
+        $branches = Branch::all();
     @endphp
     <div class="flex justify-end flex-1 px-2">
+        <div class="flex-1">
+            <label class="btn btn-ghost text-xl">Sucursal: </label>
+            <select class="select select-info w-full max-w-xs font-black">
+                @foreach ($branches as $branch)
+                    <option value="{{$branch->id}}" @if($branch->id == session('branch')) selected @endif>{{$branch->name}}</option>
+                @endforeach
+              </select>
+          </div>
         <div class="flex items-stretch">
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost rounded-btn">{!!Base::icon('sun', ['class' => 'h-5'])!!}</label>

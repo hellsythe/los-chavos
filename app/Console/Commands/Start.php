@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Branch;
 use App\Models\Service;
 use App\Models\Subservice;
 use App\Models\Garment;
@@ -42,6 +43,7 @@ class Start extends Command
         $this->assingPermissionsToBordador();
         $this->assingPermissionsToEstampador();
         $this->setDefaultConfig();
+        $this->createBranch();
 
         $this->info('Configuraciones basicas creadas correctamente');
     }
@@ -291,6 +293,27 @@ class Start extends Command
             $model->label = 'Costo por actualizar bordado';
             $model->value = '45';
             $model->status = Setting::STATUS_ACTIVE;
+            $model->save();
+        }
+    }
+
+    private function createBranch()
+    {
+        $model = Branch::where('name', 'Tierra blanca')->first();
+        if (!$model) {
+            $model = new Branch();
+            $model->name = 'Tierra blanca';
+            $model->address = 'Calle 1';
+            $model->status = Branch::STATUS_ACTIVE;
+            $model->save();
+        }
+
+        $model = Branch::where('name', 'Tres valles')->first();
+        if (!$model) {
+            $model = new Branch();
+            $model->name = 'Tres valles';
+            $model->address = 'Calle 1';
+            $model->status = Branch::STATUS_ACTIVE;
             $model->save();
         }
     }

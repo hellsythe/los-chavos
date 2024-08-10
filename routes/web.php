@@ -23,7 +23,8 @@ Route::get('/', function () {
 
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
-    ->prefix('admin')->group(function () {
+    ->prefix('admin')->group(function () { 
+    Route::SdkResource('branch', BranchController::class);
         Route::SdkResource('planning', PlanningController::class);
         Route::SdkResource('embroidery-statistics', EmbroideryStatisticsController::class);
         Route::SdkResource('setting', SettingController::class);
