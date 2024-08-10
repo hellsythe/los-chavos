@@ -1,0 +1,29 @@
+// https://aka.ms/devcontainer.json
+{
+	"name": "Los Chavos",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "laravel.test",
+	"workspaceFolder": "/var/www/html",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mikestead.dotenv",
+				"ryannaddy.laravel-artisan",
+				"onecentlin.laravel-blade",
+				"xdebug.php-pack",
+				"zobo.php-intellisense",
+				"open-southeners.laravel-pint",
+				"bmewburn.vscode-intelephense-client",
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"pflannery.vscode-versionlens"
+			]
+		}
+	},
+	"remoteUser": "sail",
+	"mounts": [
+		"type=bind,source=/home/${localEnv:USER}/.ssh,target=//home/sail/.ssh,readonly"
+	]
+}
