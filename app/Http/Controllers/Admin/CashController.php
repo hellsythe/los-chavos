@@ -14,7 +14,7 @@ class CashController extends Controller
     {
         return view('back.cash.report', [
             'payments' =>  $this->getPaymentsFromToday($request->type ?? 'total_embroidery'),
-            'model' => CashBoxReport::where('status', CashBoxReport::STATUS_CLOSE)->where('type', $request->type == 'total_embroidery' ? 'Bordado':'Estampado')->where('start', date('Y-m-d'))->first(),
+            'model' => CashBoxReport::where('status', CashBoxReport::STATUS_CLOSE)->where('type', $request->type == 'total_embroidery' ? 'Bordado':'Estampado')->where('branch_id', session('branch'))->where('start', date('Y-m-d'))->first(),
             'type' => $request->type == 'total_embroidery' ? 'Bordado':'Estampado',
         ]);
     }
