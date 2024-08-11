@@ -12,6 +12,12 @@ class CashBoxReportController extends ResourceController
     use ApiControllerTrait;
     protected $view = 'back.cash-box-report';
 
+    protected function customFilters($query, $request)
+    {
+        $query = $query->where('branch_id', session('branch'));
+        return $query;
+    }
+
     public function viewAny(Request $request)
     {
         $model = new $this->model;
@@ -19,6 +25,7 @@ class CashBoxReportController extends ResourceController
 
         $query = $model::where('status', $model::STATUS_CLOSE);
         $query = $model->orderBy('id', 'desc');
+        $query = $this->customFilters($query, $request);
         $query = $this->searchable($query, $request);
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
 

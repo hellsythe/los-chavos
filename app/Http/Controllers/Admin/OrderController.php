@@ -34,6 +34,8 @@ class OrderController extends ResourceController
 
     protected function customFilters($query, $request)
     {
+        $query = $query->where('branch_id', session('branch'));
+
         if (!$request->id && !$request->status && !$request->client && !$request->design) {
             return $query->where('orders.status', $this->model::STATUS_PENDING);
         }

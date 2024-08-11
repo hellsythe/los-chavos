@@ -7,6 +7,14 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class Payment extends BaseModel
 {
+    protected static function booted(): void
+    {
+        static::created(function ($model) {
+            $model->branch_id = session('branch');
+            $model->save();
+        });
+    }
+
     protected function fields()
     {
         return [

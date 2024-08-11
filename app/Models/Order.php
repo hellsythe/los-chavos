@@ -184,6 +184,11 @@ class Order extends BaseModel
 
     protected static function booted(): void
     {
+        static::created(function ($model) {
+            $model->branch_id = session('branch');
+            $model->save();
+        });
+
         static::deleted(function (Order $order) {
             $order_details = OrderDetail::where('order_id', $order->id)->get();
 

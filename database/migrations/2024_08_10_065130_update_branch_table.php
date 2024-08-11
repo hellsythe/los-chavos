@@ -34,6 +34,10 @@ return new class extends Migration
         Schema::table('employees', function (Blueprint $table) {
             $table->foreignId('branch_id')->nullable();
         });
+
+        Schema::table('order_details', function (Blueprint $table) {
+            $table->foreignId('branch_id')->nullable();
+        });
     }
 
     /**

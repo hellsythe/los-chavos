@@ -29,6 +29,7 @@ class OrderDetailController extends ResourceController
 
         $query = $this->searchable($query, $request)->leftJoin('orders', 'orders.id', '=', 'order_id');
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
+        $query = $query->where('order_details.branch_id', session('branch'));
         $query = $query->with('service', 'subservice', 'order');
         $query = $query->orderBy('orders.deadline', 'ASC');
 

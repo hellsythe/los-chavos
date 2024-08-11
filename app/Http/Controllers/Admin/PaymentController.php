@@ -15,6 +15,7 @@ class PaymentController extends ResourceController
 
     protected function customFilters($query, $request)
     {
+        $query = $query->where('branch_id', session('branch'));
         $request->start = $request->start ?? Date::now()->format('Y-m-d 00:00:00');
         $request->end = $request->end ?? Date::now()->format('Y-m-d 23:59');
         $query = $query->orderBy('id', 'DESC');

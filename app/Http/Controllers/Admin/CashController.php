@@ -25,8 +25,8 @@ class CashController extends Controller
         $now = date('Y-m-d');
 
         return [
-            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'cash')->sum($type),
-            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('payment_method', 'card')->sum($type),
+            'cash' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('branch_id', session('branch'))->where('payment_method', 'cash')->sum($type),
+            'card' => Payment::whereBetween('created_at', [$now, $tomorrow])->where('branch_id', session('branch'))->where('payment_method', 'card')->sum($type),
         ];
     }
 
@@ -45,6 +45,7 @@ class CashController extends Controller
         $cashbox->finish = date('Y-m-d');
         $cashbox->created_by = auth()->user()->id;
         $cashbox->type = ($request->type == 'total_embroidery' ? 'Bordado':'Estampado');
+        $cashbox->branch_id = session('branch');
         $cashbox->save();
 
         return ['status' => 'ok'];
