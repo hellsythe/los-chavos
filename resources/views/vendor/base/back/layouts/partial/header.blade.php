@@ -14,7 +14,7 @@
     <div class="flex justify-end flex-1 px-2">
         <div class="flex-1">
             <form action="">
-                <label class="btn btn-ghost text-xl">Sucursal: </label>
+                <label class="text-xl">Sucursal: </label>
                 <select name="branch"  class="select select-info w-full max-w-xs font-black">
                     @foreach ($branches as $branch)
                         <option value="{{$branch->id}}" @if($branch->id == session('branch')) selected @endif>{{$branch->name}}</option>

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\SetBranch;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
             \Sdkconsultoria\Base\Http\Middleware\Theme::class,
             \Sdkconsultoria\Base\Http\Middleware\Language::class,
             \Sdkconsultoria\Base\Http\Middleware\UpdatePassword::class,
+            SetBranch::class,
         ],
 
         'api' => [
