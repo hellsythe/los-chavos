@@ -11,7 +11,7 @@ class Payment extends BaseModel
     {
         static::created(function ($model) {
             $model->branch_id = session('branch');
-            $model->save();
+            $model->saveQuietly();
         });
     }
 
