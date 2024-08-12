@@ -7,14 +7,6 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class Payment extends BaseModel
 {
-    protected static function booted(): void
-    {
-        static::created(function ($model) {
-            $model->branch_id = session('branch');
-            $model->saveQuietly();
-        });
-    }
-
     protected function fields()
     {
         return [
@@ -35,6 +27,7 @@ class Payment extends BaseModel
 
     public function save(array $options = [])
     {
+        $this->branch_id = session('branch');
         $this->updateOrderMissingPayment();
         parent::save($options);
     }
