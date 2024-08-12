@@ -16,7 +16,7 @@ class SetBranch
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->has('branch')) {
-            if (auth()->user()->hasRole('super-admin')) {
+            if (auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('Bordador') || auth()->user()->hasRole('Estampador')) {
                 session()->put('branch', $request->get('branch'));
             } else {
                 session()->put('branch', auth()->user()->branch_id);

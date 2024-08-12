@@ -21,7 +21,7 @@
                     @endforeach
                   </select>
 
-                  @if (auth()->user()->hasRole('super-admin'))
+                  @if (auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('Estampador') || auth()->user()->hasRole('Bordador'))
                     <button class="btn btn-primary">Cambiar</button>
                   @endif
             </form>
