@@ -59,7 +59,8 @@ class PaymentController extends ResourceController
             'total' => $payments->sum('amount'),
             'total_embroidery' => $payments->sum('total_embroidery'),
             'total_print' => $payments->sum('total_print'),
-            'type' => $type
+            'type' => $type,
+            'branch_id' => session('branch'),
         ]);
 
         return $pdf->download();
