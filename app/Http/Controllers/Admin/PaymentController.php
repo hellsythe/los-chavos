@@ -39,7 +39,7 @@ class PaymentController extends ResourceController
         $request->start = $request->start ?? Date::now()->format('Y-m-d 00:00:00');
         $request->end = $request->end ?? Date::now()->format('Y-m-d 23:59');
 
-        $payments = $this->model::whereBetween('created_at', [$request->start, $request->end]);
+        $payments = $this->model::whereBetween('created_at', [$request->start, $request->end])->where('branch_id', session('branch'));
 
         if ($request->method) {
             $payments = $payments->where('payment_method', $request->method);
@@ -60,7 +60,6 @@ class PaymentController extends ResourceController
             'total_embroidery' => $payments->sum('total_embroidery'),
             'total_print' => $payments->sum('total_print'),
             'type' => $type,
-            'branch_id' => session('branch'),
         ]);
 
         return $pdf->download();
