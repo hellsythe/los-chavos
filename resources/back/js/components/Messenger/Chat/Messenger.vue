@@ -51,6 +51,7 @@ const search = ref('')
 const conversations = ref('')
 const current_conversation = ref({ id: 0 })
 const messages = ref({})
+let sendingMessage = false;
 
 loadConversations();
 
@@ -78,6 +79,17 @@ async function loadMessagesFromConversation() {
 }
 
 function sendMessage() {
+
+    if (sendingMessage) {
+        return;
+    }
+
+    if (message.value == '') {
+        return;
+    }
+
+    sendingMessage = true;
+
     fetch('/api/v1/message/send', {
         method: 'POST',
         headers: {
@@ -99,6 +111,7 @@ function sendMessage() {
         .then(data => {
             message.value = '';
             loadMessagesFromConversation();
+            sendingMessage = false;
         });
 }
 
