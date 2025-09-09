@@ -22,10 +22,10 @@ class DashboardController extends Controller
     public function indexGrupBy(Request $request)
     {
         if (auth()->user()->hasRole('Estampador')) {
-            $data = $this->groupDesign();
+            $data = $this->groupDesignPrint();
         }
         if (auth()->user()->hasRole('Bordador')) {
-            $data = $this->groupDesignPrint();
+            $data = $this->groupDesign();
         }
 
         if (auth()->user()->hasRole('super-admin')) {
@@ -41,9 +41,14 @@ class DashboardController extends Controller
         ->where('orders.status', Order::STATUS_PENDING)
         ->orderBy('garment', 'DESC');
 
-        if ($request->start && $request->end){
+        if (auth()->user()->hasRole('Bordador') && $request->start && $request->end){
             $data = $data->whereBetween('deadline', [$request->start, $request->end]);
         }
+
+        if ($request->name){
+            $data = $data->where('designs.name', 'like', '%'.$request->name.'%');
+        }
+
 
         $data = $data->get();
 

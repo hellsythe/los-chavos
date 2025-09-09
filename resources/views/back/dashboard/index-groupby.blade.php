@@ -35,6 +35,8 @@
     </div>
 
     <form action="" class="mt-2 mb-2">
+        <input class="input input-bordered" type="text" name="name" value="{{ request()->get('name') }}" placeholder="Buscar por nombre">
+
         <input class="input input-bordered" min="{{date('Y-m-d')}}" type="date" name="start" value="{{ request()->get('start') }}">
         <input class="input input-bordered" min="{{date('Y-m-d')}}" type="date" name="end" value="{{ request()->get('end') }}">
         <a class="btn btn-warning" href="/admin/orders-by-design"> Limpiar </a>
