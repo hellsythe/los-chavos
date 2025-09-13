@@ -86,9 +86,9 @@ class WhatsappNotification
 
     public function sendNewOrder($order)
     {
-        foreach ($this->getAllAdminis() as $user) {
-            $this->notifyNewOrderToUser($user, $order);
-        }
+        // foreach ($this->getAllAdminis() as $user) {
+        //     // $this->notifyNewOrderToUser($user, $order);
+        // }
 
         if (strpos($order->service_type, 'Bordado') !== false) {
             foreach ($this->getAllEmbroideries() as $user) {
