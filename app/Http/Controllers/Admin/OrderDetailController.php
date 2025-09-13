@@ -27,11 +27,18 @@ class OrderDetailController extends ResourceController
             $query = $query->where('order_details.service_id', 2);
         }
 
+
         $query = $this->searchable($query, $request)->leftJoin('orders', 'orders.id', '=', 'order_id');
         $query = $this->applyOrderByToQuery($query, $request->input('order'));
         $query = $query->where('order_details.branch_id', session('branch'));
         $query = $query->with('service', 'subservice', 'order');
         $query = $query->orderBy('orders.deadline', 'ASC');
+
+        if($request->input('subservice_name')){
+            $query = $query->whereHas('subservice', function ($q) use ($request) {
+                $q->where('id', $request->input('subservice_name'));
+            });
+        }
 
         return $this->setPagination($query, $request);
         // return $data->each(fn ($data) => $data->append('mirai'));

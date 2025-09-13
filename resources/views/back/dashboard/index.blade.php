@@ -55,17 +55,26 @@
         'garment_amount' => 'Prendas',
     ]);
 
+    $subservice = \App\Models\Subservice::all();
+    $subservice = $subservice->keyBy('id')->pluck('name', 'id')->toArray();
+    $subservice[''] = 'Cualquier Tipo';
+
     $array_search = array_merge($model->getParseSearchFilters(), [
         // ['field' => 'service'],
         // ['field' => 'subservice'],
+        // ['field' => 'design'],
+
         ['field' => 'deadline'],
+        // ['field' => 'subservice.name'],
+        ['field' => 'subservice.name', 'options' => $subservice, 'type' => 'select'],
         // ['field' => 'detail.design_id'],
     ]);
     ?>
 
     <div id="app" class="mt-4">
         <grid-view :create_route="false" :routes={{ json_encode($model->getIndexRoutes()) }}
-            :fields="{{ json_encode($array) }}" :filters={{ json_encode($array_search) }}
+            :fields="{{ json_encode($array) }}"
+            :filters="{{json_encode($array_search)}}"
             :translations='{!! json_encode($array_translation) !!}'
             :template_actions="{{ json_encode([
                 'update' => false,
