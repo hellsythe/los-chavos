@@ -90,26 +90,26 @@ class WhatsappNotification
         //     // $this->notifyNewOrderToUser($user, $order);
         // }
 
-        if (strpos($order->service_type, 'Bordado') !== false) {
-            foreach ($this->getAllEmbroideries() as $user) {
-                $this->notifyNewOrderToUser($user, $order);
-            }
-        }
+        // if (strpos($order->service_type, 'Bordado') !== false) {
+        //     foreach ($this->getAllEmbroideries() as $user) {
+        //         $this->notifyNewOrderToUser($user, $order);
+        //     }
+        // }
 
-        if (strpos($order->service_type, 'Estampado') !== false) {
-            foreach ($this->getAllPrinters() as $user) {
-                $this->notifyNewOrderToUser($user, $order);
-            }
-        }
+        // if (strpos($order->service_type, 'Estampado') !== false) {
+        //     foreach ($this->getAllPrinters() as $user) {
+        //         $this->notifyNewOrderToUser($user, $order);
+        //     }
+        // }
 
-        if (strpos($order->service_type, 'Estampado') !== false && strpos($order->service_type, 'Bordado') !== false) {
-            foreach ($this->getAllPrinters() as $user) {
-                $this->notifyNewOrderToUser($user, $order);
-            }
-            foreach ($this->getAllEmbroideries() as $user) {
-                $this->notifyNewOrderToUser($user, $order);
-            }
-        }
+        // if (strpos($order->service_type, 'Estampado') !== false && strpos($order->service_type, 'Bordado') !== false) {
+        //     foreach ($this->getAllPrinters() as $user) {
+        //         $this->notifyNewOrderToUser($user, $order);
+        //     }
+        //     foreach ($this->getAllEmbroideries() as $user) {
+        //         $this->notifyNewOrderToUser($user, $order);
+        //     }
+        // }
     }
 
     protected function notifyNewOrderToUser($user, $order)
