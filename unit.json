@@ -5,7 +5,7 @@
             "forwarded": {
                 "protocol": "X-Forwarded-Proto",
                 "source": [
-                    "<Load balancer IP, Subnet etc.>"
+                    "0.0.0.0/0"
                 ]
             }
         }
