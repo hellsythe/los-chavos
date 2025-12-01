@@ -21,9 +21,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/debug', function (\Illuminate\Http\Request $request) {
+    return [
+        'url' => $request->fullUrl(),
+        'secure' => $request->isSecure(),
+        'proto' => $request->header('X-Forwarded-Proto'),
+    ];
+});
+
+
 Route::namespace('\App\Http\Controllers\Admin')
     ->middleware('auth')
-    ->prefix('admin')->group(function () { 
+    ->prefix('admin')->group(function () {
     Route::SdkResource('branch', BranchController::class);
         Route::SdkResource('planning', PlanningController::class);
         Route::SdkResource('embroidery-statistics', EmbroideryStatisticsController::class);
