@@ -21,6 +21,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware('web')->get('/cookie-test', function () {
+    return response('cookie set')->cookie('test_cookie', '123456', 10);
+});
+
 Route::get('/test-session', function () {
     session(['test' => '123']);
     return response(['session' => session()->all()]);
