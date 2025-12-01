@@ -8,12 +8,21 @@ use Illuminate\Http\Request;
 class TrustProxies extends Middleware
 {
     /**
-     * Trust ALL proxies (Traefik in Coolify).
+     * The trusted proxies for this application.
+     *
+     * @var array<int, string>|string|null
      */
-    protected $proxies = '*';
+    protected $proxies;
 
     /**
-     * Use AWS_ELB headers (Laravel recommends this for reverse proxies).
+     * The headers that should be used to detect proxies.
+     *
+     * @var int
      */
-    protected $headers = Request::HEADER_X_FORWARDED_AWS_ELB;
+    protected $headers =
+        Request::HEADER_X_FORWARDED_FOR |
+        Request::HEADER_X_FORWARDED_HOST |
+        Request::HEADER_X_FORWARDED_PORT |
+        Request::HEADER_X_FORWARDED_PROTO |
+        Request::HEADER_X_FORWARDED_AWS_ELB;
 }
