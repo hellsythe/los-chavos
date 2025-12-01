@@ -21,6 +21,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/test-session', function () {
+    session(['test' => '123']);
+    return response(['session' => session()->all()]);
+});
+
 Route::get('/debug', function (\Illuminate\Http\Request $request) {
     return [
         'url' => $request->fullUrl(),
