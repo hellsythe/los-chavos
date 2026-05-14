@@ -44,7 +44,12 @@ export default {
     },
     computed: {
         fileFormat() {
-            return this.design?.media?.split('.').pop();
+            const media = this.design?.media;
+            if (!media) {
+                return '';
+            }
+            const cleanMedia = media.split('?')[0].split('#')[0];
+            return cleanMedia.split('.').pop()?.toLowerCase() || '';
         }
     },
     methods: {
@@ -53,6 +58,7 @@ export default {
             this.design.name = value.name;
             this.design.media = value.media;
             this.design.price = value.price;
+            this.showPreview = true;
             if (this.detail){
                 this.detail.price = value.price;
             }

@@ -21,7 +21,7 @@
     <NewComponent v-if="service.subservice.id == 4" :service="service" :errors="errors" ref="new" :cost="cost"/>
     <UpdateComponent v-if="service.subservice.id == 3" :service="service" :errors="errors" ref="update" :cost="cost" />
     <CustomComponent v-if="service.subservice.id == 2" :service="service" :errors="errors" ref="custom" />
-    <DesignComponent v-if="service.subservice.id == 1" :design="service.detail.design" text="Diseño Existente" :detail="service" :error="errors.detail.design.id" ref="exist" />
+    <DesignComponent v-if="service.subservice.id == 1" :key="`embroidery-design-${index}-${service.subservice.id}`" :design="service.detail.design" text="Diseño Existente" :detail="service" :error="errors.detail.design.id" ref="exist" />
 </template>
 
 <script>

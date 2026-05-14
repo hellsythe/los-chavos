@@ -15,7 +15,7 @@
             </select>
         </div>
 
-        <DesignPrint v-else :design="service.detail.design" :error="errors.detail.design.id" />
+        <DesignPrint v-else :key="`print-design-${service.id || 'new'}`" :design="service.detail.design" :error="errors.detail.design.id" />
 
         <div v-show="service.detail.is_new_design && service.detail.design_is_here">
             <div class="form-control mb-2 mr-2">
