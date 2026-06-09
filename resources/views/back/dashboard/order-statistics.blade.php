@@ -95,7 +95,7 @@
     <div class="tabs tabs-boxed mt-6 w-fit" id="statistics-tabs">
         <button type="button" class="tab tab-active" data-tab-target="orders-monthly">Órdenes por mes</button>
         <button type="button" class="tab" data-tab-target="popular-embroidery">Bordados populares</button>
-        <button type="button" class="tab" data-tab-target="school-forecast">Predicción escolar</button>
+        <button type="button" class="tab" data-tab-target="period-forecast">Predicción del periodo</button>
     </div>
 
     <div class="tab-panel mt-3" data-tab-panel="orders-monthly">
@@ -152,60 +152,102 @@
         </div>
     </div>
 
-    <div class="tab-panel mt-3 hidden" data-tab-panel="school-forecast">
+    <div class="tab-panel mt-3 hidden" data-tab-panel="period-forecast">
         <div class="card bg-base-100 shadow">
             <div class="card-body">
-                <h2 class="card-title">Predicción escolar {{ $school_forecast['year'] }} (1 ago - 30 sep)</h2>
+                <h2 class="card-title">Predicción del periodo seleccionado ({{ $demand_forecast['start'] }} a {{ $demand_forecast['end'] }})</h2>
+                <div class="mt-2 p-3 rounded-lg bg-base-200 text-sm">
+                    <div class="font-semibold mb-2">Glosario de colores</div>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-2 rounded bg-accent"></span>
+                            <span>Proyección del periodo</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-2 rounded bg-success"></span>
+                            <span>Órdenes reales</span>
+                        </div>
+                        @if (!is_null($current_year_projection))
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-4 h-2 rounded bg-info"></span>
+                                <span>Proyección año actual</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mt-2">
                     <div class="stats shadow">
                         <div class="stat">
                             <div class="stat-title">Pronóstico total</div>
-                            <div class="stat-value">{{ number_format($school_forecast['predicted_total_orders']) }}</div>
+                            <div class="stat-value">{{ number_format($demand_forecast['predicted_total_orders']) }}</div>
                         </div>
                     </div>
                     <div class="stats shadow">
                         <div class="stat">
                             <div class="stat-title">Órdenes reales del periodo</div>
-                            <div class="stat-value">{{ number_format($school_forecast['actual_total_orders']) }}</div>
+                            <div class="stat-value">{{ number_format($demand_forecast['actual_total_orders']) }}</div>
                         </div>
                     </div>
                     <div class="stats shadow">
                         <div class="stat">
                             <div class="stat-title">Cumplimiento a hoy</div>
-                            <div class="stat-value">{{ is_null($school_forecast['progress_percent']) ? 'N/A' : number_format($school_forecast['progress_percent'], 2) . '%' }}</div>
+                            <div class="stat-value">{{ is_null($demand_forecast['progress_percent']) ? 'N/A' : number_format($demand_forecast['progress_percent'], 2) . '%' }}</div>
                         </div>
                     </div>
                     <div class="stats shadow">
                         <div class="stat">
                             <div class="stat-title">Error histórico (MAPE)</div>
-                            <div class="stat-value">{{ is_null($school_forecast['backtest_mape']) ? 'N/A' : number_format($school_forecast['backtest_mape'], 2) . '%' }}</div>
+                            <div class="stat-value">{{ is_null($demand_forecast['backtest_mape']) ? 'N/A' : number_format($demand_forecast['backtest_mape'], 2) . '%' }}</div>
                         </div>
                     </div>
                 </div>
 
+                @if (!is_null($current_year_projection))
+                    <div class="stats shadow mt-3">
+                        <div class="stat">
+                            <div class="stat-title">Proyección año actual ({{ $current_year_projection['year'] }})</div>
+                            <div class="stat-value">{{ number_format($current_year_projection['predicted_total_orders']) }}</div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="mt-4 text-sm opacity-80">
-                    Pronóstico calculado con últimos {{ $school_forecast['history_years_used'] }} años.
+                    Pronóstico calculado con últimos {{ $demand_forecast['history_years_used'] }} años.
                 </div>
                 <div class="mt-1 text-sm opacity-80">
-                    Tendencia estimada: {{ number_format($school_forecast['weighted_growth_percent'], 2) }}% vs años previos.
+                    Tendencia estimada: {{ number_format($demand_forecast['weighted_growth_percent'], 2) }}% vs años previos.
                 </div>
 
                 @php
-                    $maxWeek = collect($school_forecast['weekly_projection'])->max('predicted_orders') ?: 1;
+                    $maxWeek = collect($demand_forecast['weekly_projection'])->max('predicted_orders') ?: 1;
+                    $currentYearWeekly = !is_null($current_year_projection)
+                        ? collect($current_year_projection['weekly_projection'])->keyBy('label')
+                        : collect();
                 @endphp
                 <div class="space-y-3 mt-4">
-                    @foreach ($school_forecast['weekly_projection'] as $week)
+                    @foreach ($demand_forecast['weekly_projection'] as $week)
                         @php
                             $predictedWidth = ($week['predicted_orders'] / $maxWeek) * 100;
                             $actualWidth = ($week['actual_orders'] / $maxWeek) * 100;
+                            $currentYearWeekProjection = (int) ($currentYearWeekly[$week['label']]['predicted_orders'] ?? 0);
+                            $currentYearWidth = ($currentYearWeekProjection / $maxWeek) * 100;
                         @endphp
                         <div>
                             <div class="flex justify-between text-sm mb-1 gap-3">
                                 <span>{{ $week['label'] }}</span>
-                                <span>Proy: {{ number_format($week['predicted_orders']) }} | Real: {{ number_format($week['actual_orders']) }}</span>
+                                <span>
+                                    Proy: {{ number_format($week['predicted_orders']) }}
+                                    | Real: {{ number_format($week['actual_orders']) }}
+                                    @if (!is_null($current_year_projection))
+                                        | Año actual: {{ number_format($currentYearWeekProjection) }}
+                                    @endif
+                                </span>
                             </div>
                             <progress class="progress progress-accent w-full" value="{{ $predictedWidth }}" max="100"></progress>
                             <progress class="progress progress-success w-full mt-1" value="{{ $actualWidth }}" max="100"></progress>
+                            @if (!is_null($current_year_projection))
+                                <progress class="progress progress-info w-full mt-1" value="{{ $currentYearWidth }}" max="100"></progress>
+                            @endif
                         </div>
                     @endforeach
                 </div>

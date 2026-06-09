@@ -173,8 +173,26 @@ class DashboardController extends Controller
             ->limit($topLimit)
             ->get();
 
-        $forecastYear = $selectedYear ?: (int) Carbon::now()->format('Y');
-        $schoolForecast = $this->buildSchoolForecast($forecastYear, $request->input('branch_id'), $historyYears);
+        $demandForecast = $this->buildRangeForecast($start->copy(), $end->copy(), $request->input('branch_id'), $historyYears);
+
+        $currentYear = (int) Carbon::now()->format('Y');
+        $selectedPeriodYear = (int) $start->format('Y');
+        $currentYearProjection = null;
+
+        if ($selectedPeriodYear !== $currentYear) {
+            $currentYearStart = $this->alignDateToYear($start->copy(), $currentYear)->startOfDay();
+            $currentYearEnd = $this->alignDateToYear($end->copy(), $currentYear)->endOfDay();
+            if ($currentYearEnd->lt($currentYearStart)) {
+                $currentYearEnd = $currentYearStart->copy()->addDays(max(0, $start->diffInDays($end)))->endOfDay();
+            }
+
+            $currentYearProjection = $this->buildRangeForecast(
+                $currentYearStart,
+                $currentYearEnd,
+                $request->input('branch_id'),
+                $historyYears
+            );
+        }
 
         return view('back.dashboard.order-statistics', array_merge($this->getMetrics(), [
             'total_orders' => $totalOrders,
@@ -190,7 +208,8 @@ class DashboardController extends Controller
             'history_years' => $historyYears,
             'chart_data' => $chartData,
             'popular_embroidery' => $popularEmbroidery,
-            'school_forecast' => $schoolForecast,
+            'demand_forecast' => $demandForecast,
+            'current_year_projection' => $currentYearProjection,
             'branches' => \App\Models\Branch::query()->orderBy('name')->get(['id', 'name']),
             'available_years' => Order::query()
                 ->select(DB::raw('YEAR(created_at) as year'))
@@ -201,18 +220,21 @@ class DashboardController extends Controller
         ]));
     }
 
-    protected function buildSchoolForecast(int $year, $branchId = null, int $historyYears = 3): array
+    protected function buildRangeForecast(Carbon $periodStart, Carbon $periodEnd, $branchId = null, int $historyYears = 3): array
     {
-        $historicalYears = [];
+        $historicalPeriods = [];
         for ($i = $historyYears; $i >= 1; $i--) {
-            $historicalYears[] = $year - $i;
+            $historicalPeriods[] = [
+                'start' => $periodStart->copy()->subYear($i),
+                'end' => $periodEnd->copy()->subYear($i),
+            ];
         }
 
-        $totalsByYear = [];
-        foreach ($historicalYears as $historicalYear) {
-            [$start, $end] = $this->schoolPeriodRange($historicalYear);
-            $totalsByYear[$historicalYear] = Order::query()
-                ->whereBetween('created_at', [$start, $end])
+        $totalsByPeriod = [];
+        foreach ($historicalPeriods as $index => $historicalPeriod) {
+            $label = $historicalPeriod['start']->format('Y');
+            $totalsByPeriod[$label] = Order::query()
+                ->whereBetween('created_at', [$historicalPeriod['start'], $historicalPeriod['end']])
                 ->when($branchId, function ($builder) use ($branchId) {
                     $builder->where('branch_id', $branchId);
                 })
@@ -220,10 +242,10 @@ class DashboardController extends Controller
         }
 
         $recentGrowthRates = [];
-        $sortedYears = array_values($historicalYears);
-        for ($i = 1; $i < count($sortedYears); $i++) {
-            $previous = $totalsByYear[$sortedYears[$i - 1]] ?? 0;
-            $current = $totalsByYear[$sortedYears[$i]] ?? 0;
+        $sortedPeriodKeys = array_values(array_keys($totalsByPeriod));
+        for ($i = 1; $i < count($sortedPeriodKeys); $i++) {
+            $previous = $totalsByPeriod[$sortedPeriodKeys[$i - 1]] ?? 0;
+            $current = $totalsByPeriod[$sortedPeriodKeys[$i]] ?? 0;
             if ($previous > 0) {
                 $recentGrowthRates[] = ($current - $previous) / $previous;
             }
@@ -242,10 +264,10 @@ class DashboardController extends Controller
             $weightedGrowth = $denominator > 0 ? $numerator / $denominator : 0.0;
         }
 
-        $lastHistoricalYear = max($historicalYears);
-        $lastHistoricalTotal = $totalsByYear[$lastHistoricalYear] ?? 0;
-        $averageHistoricalTotal = count($totalsByYear) > 0
-            ? array_sum($totalsByYear) / count($totalsByYear)
+        $lastHistoricalKey = !empty($sortedPeriodKeys) ? end($sortedPeriodKeys) : null;
+        $lastHistoricalTotal = $lastHistoricalKey ? ($totalsByPeriod[$lastHistoricalKey] ?? 0) : 0;
+        $averageHistoricalTotal = count($totalsByPeriod) > 0
+            ? array_sum($totalsByPeriod) / count($totalsByPeriod)
             : 0;
 
         $predictedTotal = $lastHistoricalTotal > 0
@@ -253,19 +275,24 @@ class DashboardController extends Controller
             : (int) round($averageHistoricalTotal);
         $predictedTotal = max(0, $predictedTotal);
 
-        $daysInSchoolPeriod = 61;
-        $dailyShares = array_fill(1, $daysInSchoolPeriod, 0.0);
+        $daysInPeriod = max(1, $periodStart->diffInDays($periodEnd) + 1);
+        $dailyShares = array_fill(1, $daysInPeriod, 0.0);
         $validYearsForShares = 0;
 
-        foreach ($historicalYears as $historicalYear) {
-            $yearTotal = $totalsByYear[$historicalYear] ?? 0;
-            if ($yearTotal < 1) {
+        foreach ($historicalPeriods as $historicalPeriod) {
+            $periodTotal = Order::query()
+                ->whereBetween('created_at', [$historicalPeriod['start'], $historicalPeriod['end']])
+                ->when($branchId, function ($builder) use ($branchId) {
+                    $builder->where('branch_id', $branchId);
+                })
+                ->count();
+
+            if ($periodTotal < 1) {
                 continue;
             }
 
-            [$start, $end] = $this->schoolPeriodRange($historicalYear);
             $dailyRows = Order::query()
-                ->whereBetween('created_at', [$start, $end])
+                ->whereBetween('created_at', [$historicalPeriod['start'], $historicalPeriod['end']])
                 ->when($branchId, function ($builder) use ($branchId) {
                     $builder->where('branch_id', $branchId);
                 })
@@ -277,27 +304,27 @@ class DashboardController extends Controller
                 ->orderBy('day_date')
                 ->get();
 
-            $sharesByDay = array_fill(1, $daysInSchoolPeriod, 0.0);
+            $sharesByDay = array_fill(1, $daysInPeriod, 0.0);
             foreach ($dailyRows as $row) {
-                $dayIndex = Carbon::parse($row->day_date)->diffInDays($start) + 1;
-                if ($dayIndex >= 1 && $dayIndex <= $daysInSchoolPeriod) {
-                    $sharesByDay[$dayIndex] = $row->total_orders / $yearTotal;
+                $dayIndex = Carbon::parse($row->day_date)->diffInDays($historicalPeriod['start']) + 1;
+                if ($dayIndex >= 1 && $dayIndex <= $daysInPeriod) {
+                    $sharesByDay[$dayIndex] = $row->total_orders / $periodTotal;
                 }
             }
 
-            for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
+            for ($day = 1; $day <= $daysInPeriod; $day++) {
                 $dailyShares[$day] += $sharesByDay[$day];
             }
             $validYearsForShares++;
         }
 
         if ($validYearsForShares > 0) {
-            for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
+            for ($day = 1; $day <= $daysInPeriod; $day++) {
                 $dailyShares[$day] = $dailyShares[$day] / $validYearsForShares;
             }
         } else {
-            for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
-                $dailyShares[$day] = 1 / $daysInSchoolPeriod;
+            for ($day = 1; $day <= $daysInPeriod; $day++) {
+                $dailyShares[$day] = 1 / $daysInPeriod;
             }
         }
 
@@ -305,13 +332,12 @@ class DashboardController extends Controller
         if ($sumShares <= 0) {
             $sumShares = 1;
         }
-        for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
+        for ($day = 1; $day <= $daysInPeriod; $day++) {
             $dailyShares[$day] = $dailyShares[$day] / $sumShares;
         }
 
-        [$forecastStart, $forecastEnd] = $this->schoolPeriodRange($year);
         $actualDailyRows = Order::query()
-            ->whereBetween('created_at', [$forecastStart, $forecastEnd])
+            ->whereBetween('created_at', [$periodStart, $periodEnd])
             ->when($branchId, function ($builder) use ($branchId) {
                 $builder->where('branch_id', $branchId);
             })
@@ -327,7 +353,7 @@ class DashboardController extends Controller
         $predictedByDay = [];
         $runningPredicted = 0;
         $dayCandidates = [];
-        for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
+        for ($day = 1; $day <= $daysInPeriod; $day++) {
             $rawValue = $predictedTotal * $dailyShares[$day];
             $predicted = (int) floor($rawValue);
             $runningPredicted += $predicted;
@@ -351,8 +377,8 @@ class DashboardController extends Controller
         $predictedToDate = 0;
         $now = Carbon::now()->endOfDay();
 
-        for ($day = 1; $day <= $daysInSchoolPeriod; $day++) {
-            $date = $forecastStart->copy()->addDays($day - 1);
+        for ($day = 1; $day <= $daysInPeriod; $day++) {
+            $date = $periodStart->copy()->addDays($day - 1);
             $dayKey = $date->format('Y-m-d');
             $weekNumber = (int) floor(($day - 1) / 7) + 1;
             $weekLabel = 'Semana ' . $weekNumber;
@@ -378,12 +404,12 @@ class DashboardController extends Controller
         }
 
         $mape = null;
-        if (count($historicalYears) >= 3) {
+        if (count($sortedPeriodKeys) >= 3) {
             $errors = [];
-            for ($i = 2; $i < count($historicalYears); $i++) {
-                $first = $totalsByYear[$historicalYears[$i - 2]] ?? 0;
-                $second = $totalsByYear[$historicalYears[$i - 1]] ?? 0;
-                $actual = $totalsByYear[$historicalYears[$i]] ?? 0;
+            for ($i = 2; $i < count($sortedPeriodKeys); $i++) {
+                $first = $totalsByPeriod[$sortedPeriodKeys[$i - 2]] ?? 0;
+                $second = $totalsByPeriod[$sortedPeriodKeys[$i - 1]] ?? 0;
+                $actual = $totalsByPeriod[$sortedPeriodKeys[$i]] ?? 0;
 
                 if ($first > 0 && $second > 0 && $actual > 0) {
                     $growth = ($second - $first) / $first;
@@ -398,9 +424,9 @@ class DashboardController extends Controller
         }
 
         return [
-            'year' => $year,
-            'start' => $forecastStart->format('Y-m-d'),
-            'end' => $forecastEnd->format('Y-m-d'),
+            'start' => $periodStart->format('Y-m-d'),
+            'end' => $periodEnd->format('Y-m-d'),
+            'year' => (int) $periodStart->format('Y'),
             'predicted_total_orders' => $predictedTotal,
             'actual_total_orders' => (int) array_sum(array_column($weeklyProjection, 'actual_orders')),
             'actual_to_date' => $actualToDate,
@@ -409,17 +435,18 @@ class DashboardController extends Controller
             'weighted_growth_percent' => round($weightedGrowth * 100, 2),
             'backtest_mape' => $mape,
             'history_years_used' => $historyYears,
-            'historical_totals' => $totalsByYear,
+            'historical_totals' => $totalsByPeriod,
             'weekly_projection' => array_values($weeklyProjection),
         ];
     }
 
-    protected function schoolPeriodRange(int $year): array
+    protected function alignDateToYear(Carbon $date, int $year): Carbon
     {
-        return [
-            Carbon::create($year, 8, 1)->startOfDay(),
-            Carbon::create($year, 9, 30)->endOfDay(),
-        ];
+        $month = (int) $date->format('m');
+        $day = (int) $date->format('d');
+        $lastDay = Carbon::create($year, $month, 1)->endOfMonth()->day;
+
+        return Carbon::create($year, $month, min($day, $lastDay));
     }
 
     public function indexGrupBy(Request $request)
