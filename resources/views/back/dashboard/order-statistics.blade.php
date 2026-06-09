@@ -93,6 +93,35 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mt-3">
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Ingresos totales</div>
+                <div class="stat-value">${{ number_format($total_revenue, 2) }}</div>
+            </div>
+        </div>
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Ingresos mismo periodo año pasado</div>
+                <div class="stat-value">${{ number_format($previous_total_revenue, 2) }}</div>
+            </div>
+        </div>
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Variación ingresos vs año pasado</div>
+                <div class="stat-value text-{{ is_null($variation_revenue_percent) ? 'base-content' : ($variation_revenue_percent >= 0 ? 'success' : 'error') }}">
+                    {{ is_null($variation_revenue_percent) ? 'N/A' : number_format($variation_revenue_percent, 2) . '%' }}
+                </div>
+            </div>
+        </div>
+        <div class="stats shadow">
+            <div class="stat">
+                <div class="stat-title">Promedio ingresos diarios</div>
+                <div class="stat-value">${{ number_format($average_revenue_per_day, 2) }}</div>
+            </div>
+        </div>
+    </div>
+
     <div class="tabs tabs-boxed mt-6 w-fit" id="statistics-tabs">
         <button type="button" class="tab tab-active" data-tab-target="orders-monthly">Órdenes por mes</button>
         <button type="button" class="tab" data-tab-target="popular-embroidery">Bordados populares</button>
@@ -209,6 +238,27 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mt-3">
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Ingresos proyectados</div>
+                            <div class="stat-value">${{ number_format($demand_forecast['predicted_total_revenue'], 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Ingresos reales del periodo</div>
+                            <div class="stat-value">${{ number_format($demand_forecast['actual_total_revenue'], 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Tendencia ingresos</div>
+                            <div class="stat-value">{{ number_format($demand_forecast['weighted_revenue_growth_percent'], 2) }}%</div>
+                        </div>
+                    </div>
+                </div>
+
                 @if (!is_null($current_year_projection))
                     <div class="stats shadow mt-3">
                         <div class="stat">
@@ -287,8 +337,29 @@
                     </div>
                     <div class="stats shadow">
                         <div class="stat">
-                            <div class="stat-title">Tendencia estimada</div>
+                            <div class="stat-title">Tendencia prendas</div>
                             <div class="stat-value">{{ number_format($embroidery_design_forecast['weighted_growth_percent'], 2) }}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mt-3">
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Ingresos proyectados</div>
+                            <div class="stat-value">${{ number_format($embroidery_design_forecast['predicted_total_revenue'], 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Ingresos reales</div>
+                            <div class="stat-value">${{ number_format($embroidery_design_forecast['actual_total_revenue'], 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Tendencia ingresos</div>
+                            <div class="stat-value">{{ number_format($embroidery_design_forecast['weighted_revenue_growth_percent'], 2) }}%</div>
                         </div>
                     </div>
                 </div>
@@ -331,12 +402,12 @@
                             <div class="flex justify-between text-sm mb-1 gap-3">
                                 <span class="truncate" title="{{ $item['design_name'] }}">{{ $item['design_name'] }}</span>
                                 <span>
-                                    Proy: {{ number_format($item['predicted_garments']) }} ({{ number_format($item['predicted_share_percent'], 2) }}%)
-                                    | Real: {{ number_format($item['actual_garments']) }} ({{ number_format($item['actual_share_percent'], 2) }}%)
+                                    Proy: {{ number_format($item['predicted_garments']) }} prendas (${{ number_format($item['predicted_revenue'], 2) }})
+                                    | Real: {{ number_format($item['actual_garments']) }} prendas (${{ number_format($item['actual_revenue'], 2) }})
                                     @if (!is_null($current_year_design_projection))
-                                        | Año actual: {{ number_format($currentYearDesignProjection) }}
+                                        | Año actual: {{ number_format($currentYearDesignProjection) }} prendas
                                     @endif
-                                    | <span class="{{ $statusClass }}">Faltante meta: {{ number_format($item['missing_to_goal']) }}</span>
+                                    | <span class="{{ $statusClass }}">Faltante meta: {{ number_format($item['missing_to_goal']) }} prendas (${{ number_format($item['revenue_difference'], 2) }})</span>
                                 </span>
                             </div>
                             <progress class="progress progress-accent w-full" value="{{ $predictedWidth }}" max="100"></progress>
@@ -355,14 +426,17 @@
                         <thead>
                             <tr>
                                 <th>Diseño</th>
-                                <th>Proyectado</th>
-                                <th>% Proyección</th>
-                                <th>Real</th>
-                                <th>% Real</th>
+                                <th>Prendas Proy</th>
+                                <th>Ingresos Proy</th>
+                                <th>% Prendas Proy</th>
+                                <th>Prendas Real</th>
+                                <th>Ingresos Real</th>
+                                <th>% Prendas Real</th>
                                 @if (!is_null($current_year_design_projection))
-                                    <th>Proy año actual</th>
+                                    <th>Prendas Año Actual</th>
                                 @endif
-                                <th>Faltante meta</th>
+                                <th>Faltante meta prendas</th>
+                                <th>Faltante meta $</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -373,8 +447,10 @@
                                 <tr>
                                     <td>{{ $item['design_name'] }}</td>
                                     <td>{{ number_format($item['predicted_garments']) }}</td>
+                                    <td>${{ number_format($item['predicted_revenue'], 2) }}</td>
                                     <td>{{ number_format($item['predicted_share_percent'], 2) }}%</td>
                                     <td>{{ number_format($item['actual_garments']) }}</td>
+                                    <td>${{ number_format($item['actual_revenue'], 2) }}</td>
                                     <td>{{ number_format($item['actual_share_percent'], 2) }}%</td>
                                     @if (!is_null($current_year_design_projection))
                                         <td>{{ number_format($currentYearDesignProjection) }}</td>
@@ -382,10 +458,13 @@
                                     <td class="{{ $item['missing_to_goal'] > 0 ? 'text-warning' : 'text-success' }}">
                                         {{ number_format($item['missing_to_goal']) }}
                                     </td>
+                                    <td class="{{ $item['revenue_difference'] > 0 ? 'text-warning' : 'text-success' }}">
+                                        ${{ number_format($item['revenue_difference'], 2) }}
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ !is_null($current_year_design_projection) ? 7 : 6 }}">Sin información para mostrar.</td>
+                                    <td colspan="{{ !is_null($current_year_design_projection) ? 10 : 9 }}">Sin información para mostrar.</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -71,9 +71,11 @@ class DashboardController extends Controller
         }
 
         $totalOrders = (clone $query)->count();
+        $totalRevenue = (clone $query)->sum('total') ?? 0;
 
         $days = max(1, $start->diffInDays($end) + 1);
         $averageOrdersPerDay = round($totalOrders / $days, 2);
+        $averageRevenuePerDay = round($totalRevenue / $days, 2);
 
         $previousStart = $start->copy()->subYear();
         $previousEnd = $end->copy()->subYear();
@@ -84,8 +86,13 @@ class DashboardController extends Controller
         }
 
         $previousTotalOrders = $previousQuery->count();
+        $previousTotalRevenue = $previousQuery->sum('total') ?? 0;
+
         $variationPercent = $previousTotalOrders > 0
             ? round((($totalOrders - $previousTotalOrders) / $previousTotalOrders) * 100, 2)
+            : null;
+        $variationRevenuePercent = $previousTotalRevenue > 0
+            ? round((($totalRevenue - $previousTotalRevenue) / $previousTotalRevenue) * 100, 2)
             : null;
 
         $monthlyOrders = (clone $query)
@@ -170,6 +177,10 @@ class DashboardController extends Controller
             'previous_total_orders' => $previousTotalOrders,
             'variation_percent' => $variationPercent,
             'average_orders_per_day' => $averageOrdersPerDay,
+            'total_revenue' => $totalRevenue,
+            'previous_total_revenue' => $previousTotalRevenue,
+            'variation_revenue_percent' => $variationRevenuePercent,
+            'average_revenue_per_day' => $averageRevenuePerDay,
             'start' => $start->format('Y-m-d'),
             'end' => $end->format('Y-m-d'),
             'branch_id' => $request->input('branch_id'),
@@ -206,6 +217,7 @@ class DashboardController extends Controller
         }
 
         $totalsByPeriod = [];
+        $revenueByPeriod = [];
         foreach ($historicalPeriods as $index => $historicalPeriod) {
             $label = $historicalPeriod['start']->format('Y');
             $totalsByPeriod[$label] = Order::query()
@@ -214,15 +226,28 @@ class DashboardController extends Controller
                     $builder->where('branch_id', $branchId);
                 })
                 ->count();
+            $revenueByPeriod[$label] = Order::query()
+                ->whereBetween('created_at', [$historicalPeriod['start'], $historicalPeriod['end']])
+                ->when($branchId, function ($builder) use ($branchId) {
+                    $builder->where('branch_id', $branchId);
+                })
+                ->sum('total') ?? 0;
         }
 
         $recentGrowthRates = [];
+        $revenueGrowthRates = [];
         $sortedPeriodKeys = array_values(array_keys($totalsByPeriod));
         for ($i = 1; $i < count($sortedPeriodKeys); $i++) {
             $previous = $totalsByPeriod[$sortedPeriodKeys[$i - 1]] ?? 0;
             $current = $totalsByPeriod[$sortedPeriodKeys[$i]] ?? 0;
             if ($previous > 0) {
                 $recentGrowthRates[] = ($current - $previous) / $previous;
+            }
+
+            $prevRevenue = $revenueByPeriod[$sortedPeriodKeys[$i - 1]] ?? 0;
+            $currRevenue = $revenueByPeriod[$sortedPeriodKeys[$i]] ?? 0;
+            if ($prevRevenue > 0) {
+                $revenueGrowthRates[] = ($currRevenue - $prevRevenue) / $prevRevenue;
             }
         }
 
@@ -239,16 +264,38 @@ class DashboardController extends Controller
             $weightedGrowth = $denominator > 0 ? $numerator / $denominator : 0.0;
         }
 
+        $weightedRevenueGrowth = 0.0;
+        if (!empty($revenueGrowthRates)) {
+            $revenueGrowthRates = array_reverse($revenueGrowthRates);
+            $numRev = 0.0;
+            $denRev = 0.0;
+            foreach ($revenueGrowthRates as $index => $rate) {
+                $weight = 1 / ($index + 1);
+                $numRev += $rate * $weight;
+                $denRev += $weight;
+            }
+            $weightedRevenueGrowth = $denRev > 0 ? $numRev / $denRev : 0.0;
+        }
+
         $lastHistoricalKey = !empty($sortedPeriodKeys) ? end($sortedPeriodKeys) : null;
         $lastHistoricalTotal = $lastHistoricalKey ? ($totalsByPeriod[$lastHistoricalKey] ?? 0) : 0;
+        $lastHistoricalRevenue = $lastHistoricalKey ? ($revenueByPeriod[$lastHistoricalKey] ?? 0) : 0;
         $averageHistoricalTotal = count($totalsByPeriod) > 0
             ? array_sum($totalsByPeriod) / count($totalsByPeriod)
+            : 0;
+        $averageHistoricalRevenue = count($revenueByPeriod) > 0
+            ? array_sum($revenueByPeriod) / count($revenueByPeriod)
             : 0;
 
         $predictedTotal = $lastHistoricalTotal > 0
             ? (int) round($lastHistoricalTotal * (1 + $weightedGrowth))
             : (int) round($averageHistoricalTotal);
         $predictedTotal = max(0, $predictedTotal);
+
+        $predictedRevenue = $lastHistoricalRevenue > 0
+            ? round($lastHistoricalRevenue * (1 + $weightedRevenueGrowth), 2)
+            : round($averageHistoricalRevenue, 2);
+        $predictedRevenue = max(0, $predictedRevenue);
 
         $daysInPeriod = max(1, $periodStart->diffInDays($periodEnd) + 1);
         $dailyShares = array_fill(1, $daysInPeriod, 0.0);
@@ -408,9 +455,18 @@ class DashboardController extends Controller
             'predicted_to_date' => $predictedToDate,
             'progress_percent' => $predictedToDate > 0 ? round(($actualToDate / $predictedToDate) * 100, 2) : null,
             'weighted_growth_percent' => round($weightedGrowth * 100, 2),
+            'predicted_total_revenue' => $predictedRevenue,
+            'actual_total_revenue' => Order::query()
+                ->whereBetween('created_at', [$periodStart, $periodEnd])
+                ->when($branchId, function ($builder) use ($branchId) {
+                    $builder->where('branch_id', $branchId);
+                })
+                ->sum('total') ?? 0,
+            'weighted_revenue_growth_percent' => round($weightedRevenueGrowth * 100, 2),
             'backtest_mape' => $mape,
             'history_years_used' => $historyYears,
             'historical_totals' => $totalsByPeriod,
+            'historical_revenues' => $revenueByPeriod,
             'weekly_projection' => array_values($weeklyProjection),
         ];
     }
@@ -504,6 +560,7 @@ class DashboardController extends Controller
         }
 
         $historicalTotals = [];
+        $historicalRevenues = [];
         $historicalByDesign = [];
 
         foreach ($historicalPeriods as $historicalPeriod) {
@@ -515,15 +572,23 @@ class DashboardController extends Controller
 
             $historicalByDesign[$historicalPeriod['label']] = $rows;
             $historicalTotals[$historicalPeriod['label']] = (int) $rows->sum('total_garments');
+            $historicalRevenues[$historicalPeriod['label']] = (float) $rows->sum('total_revenue');
         }
 
         $growthRates = [];
+        $revenueGrowthRates = [];
         $periodKeys = array_values(array_keys($historicalTotals));
         for ($i = 1; $i < count($periodKeys); $i++) {
             $previous = $historicalTotals[$periodKeys[$i - 1]] ?? 0;
             $current = $historicalTotals[$periodKeys[$i]] ?? 0;
             if ($previous > 0) {
                 $growthRates[] = ($current - $previous) / $previous;
+            }
+
+            $prevRevenue = $historicalRevenues[$periodKeys[$i - 1]] ?? 0;
+            $currRevenue = $historicalRevenues[$periodKeys[$i]] ?? 0;
+            if ($prevRevenue > 0) {
+                $revenueGrowthRates[] = ($currRevenue - $prevRevenue) / $prevRevenue;
             }
         }
 
@@ -540,21 +605,44 @@ class DashboardController extends Controller
             $weightedGrowth = $den > 0 ? $num / $den : 0.0;
         }
 
+        $weightedRevenueGrowth = 0.0;
+        if (!empty($revenueGrowthRates)) {
+            $revenueGrowthRates = array_reverse($revenueGrowthRates);
+            $numRev = 0.0;
+            $denRev = 0.0;
+            foreach ($revenueGrowthRates as $index => $rate) {
+                $weight = 1 / ($index + 1);
+                $numRev += $rate * $weight;
+                $denRev += $weight;
+            }
+            $weightedRevenueGrowth = $denRev > 0 ? $numRev / $denRev : 0.0;
+        }
+
         $lastKey = !empty($periodKeys) ? end($periodKeys) : null;
         $lastTotal = $lastKey ? ($historicalTotals[$lastKey] ?? 0) : 0;
+        $lastRevenue = $lastKey ? ($historicalRevenues[$lastKey] ?? 0) : 0;
         $avgTotal = !empty($historicalTotals) ? array_sum($historicalTotals) / count($historicalTotals) : 0;
+        $avgRevenue = !empty($historicalRevenues) ? array_sum($historicalRevenues) / count($historicalRevenues) : 0;
 
         $predictedTotal = $lastTotal > 0
             ? (int) round($lastTotal * (1 + $weightedGrowth))
             : (int) round($avgTotal);
         $predictedTotal = max(0, $predictedTotal);
 
+        $predictedRevenue = $lastRevenue > 0
+            ? round($lastRevenue * (1 + $weightedRevenueGrowth), 2)
+            : round($avgRevenue, 2);
+        $predictedRevenue = max(0, $predictedRevenue);
+
         $weightedShares = [];
         $shareWeights = [];
+        $revenueShares = [];
+        $revenueShareWeights = [];
         $historicalRows = array_reverse($historicalPeriods);
         foreach ($historicalRows as $index => $historicalPeriod) {
             $label = $historicalPeriod['label'];
             $total = $historicalTotals[$label] ?? 0;
+            $revenue = $historicalRevenues[$label] ?? 0;
             if ($total < 1) {
                 continue;
             }
@@ -565,6 +653,12 @@ class DashboardController extends Controller
                 $share = $row->total_garments / $total;
                 $weightedShares[$designName] = ($weightedShares[$designName] ?? 0) + ($share * $weight);
                 $shareWeights[$designName] = ($shareWeights[$designName] ?? 0) + $weight;
+
+                if ($revenue > 0) {
+                    $revShare = $row->total_revenue / $revenue;
+                    $revenueShares[$designName] = ($revenueShares[$designName] ?? 0) + ($revShare * $weight);
+                    $revenueShareWeights[$designName] = ($revenueShareWeights[$designName] ?? 0) + $weight;
+                }
             }
         }
 
@@ -576,6 +670,14 @@ class DashboardController extends Controller
             }
         }
 
+        $normalizedRevenueShares = [];
+        foreach ($revenueShares as $designName => $value) {
+            $weight = $revenueShareWeights[$designName] ?? 0;
+            if ($weight > 0) {
+                $normalizedRevenueShares[$designName] = $value / $weight;
+            }
+        }
+
         $shareSum = array_sum($normalizedShares);
         if ($shareSum > 0) {
             foreach ($normalizedShares as $designName => $value) {
@@ -583,8 +685,16 @@ class DashboardController extends Controller
             }
         }
 
+        $revenueShareSum = array_sum($normalizedRevenueShares);
+        if ($revenueShareSum > 0) {
+            foreach ($normalizedRevenueShares as $designName => $value) {
+                $normalizedRevenueShares[$designName] = $value / $revenueShareSum;
+            }
+        }
+
         $actualRows = $this->getEmbroideryDesignGarments($periodStart, $periodEnd, $branchId)->keyBy('design_name');
         $actualTotalGarments = (int) $actualRows->sum('total_garments');
+        $actualTotalRevenue = (float) $actualRows->sum('total_revenue');
 
         $projectedDesigns = [];
         $running = 0;
@@ -614,6 +724,11 @@ class DashboardController extends Controller
             $predictedGarments = (int) ($projectedDesigns[$designName] ?? 0);
             $actualGarments = (int) ($actualRows[$designName]->total_garments ?? 0);
             $missingToGoal = $predictedGarments - $actualGarments;
+
+            $revenueShare = $normalizedRevenueShares[$designName] ?? ($normalizedShares[$designName] ?? 0);
+            $predictedRevenueForDesign = round($predictedRevenue * $revenueShare, 2);
+            $actualRevenueForDesign = (float) ($actualRows[$designName]->total_revenue ?? 0);
+
             $items[] = [
                 'design_name' => $designName,
                 'predicted_garments' => $predictedGarments,
@@ -625,6 +740,15 @@ class DashboardController extends Controller
                     : 0,
                 'actual_share_percent' => $actualTotalGarments > 0
                     ? round(($actualGarments / $actualTotalGarments) * 100, 2)
+                    : 0,
+                'predicted_revenue' => $predictedRevenueForDesign,
+                'actual_revenue' => $actualRevenueForDesign,
+                'revenue_difference' => round($actualRevenueForDesign - $predictedRevenueForDesign, 2),
+                'predicted_revenue_share_percent' => $predictedRevenue > 0
+                    ? round(($predictedRevenueForDesign / $predictedRevenue) * 100, 2)
+                    : 0,
+                'actual_revenue_share_percent' => $actualTotalRevenue > 0
+                    ? round(($actualRevenueForDesign / $actualTotalRevenue) * 100, 2)
                     : 0,
             ];
         }
@@ -641,7 +765,10 @@ class DashboardController extends Controller
             'history_years_used' => $historyYears,
             'predicted_total_garments' => $predictedTotal,
             'actual_total_garments' => $actualTotalGarments,
+            'predicted_total_revenue' => $predictedRevenue,
+            'actual_total_revenue' => $actualTotalRevenue,
             'weighted_growth_percent' => round($weightedGrowth * 100, 2),
+            'weighted_revenue_growth_percent' => round($weightedRevenueGrowth * 100, 2),
             'top_limit' => $topLimit,
             'items' => $topItems,
         ];
@@ -661,6 +788,7 @@ class DashboardController extends Controller
             ->select([
                 DB::raw('d.name as design_name'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         $new = DB::table('order_details as od')
@@ -675,6 +803,7 @@ class DashboardController extends Controller
             ->select([
                 DB::raw('d.name as design_name'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         $updated = DB::table('order_details as od')
@@ -689,6 +818,7 @@ class DashboardController extends Controller
             ->select([
                 DB::raw('d.name as design_name'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         $custom = DB::table('order_details as od')
@@ -702,6 +832,7 @@ class DashboardController extends Controller
             ->select([
                 DB::raw("'Diseño personalizado' as design_name"),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         return DB::query()
@@ -709,6 +840,7 @@ class DashboardController extends Controller
             ->select([
                 'design_name',
                 DB::raw('SUM(garment_amount) as total_garments'),
+                DB::raw('SUM(revenue) as total_revenue'),
             ])
             ->groupBy('design_name')
             ->orderByDesc('total_garments')
