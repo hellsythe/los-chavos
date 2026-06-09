@@ -138,6 +138,7 @@ class DashboardController extends Controller
         $selectedPeriodYear = (int) $start->format('Y');
         $currentYearProjection = null;
         $currentYearDesignProjection = null;
+        $isCurrentYearPeriodFuture = false;
 
         if ($selectedPeriodYear !== $currentYear) {
             $currentYearStart = $this->alignDateToYear($start->copy(), $currentYear)->startOfDay();
@@ -145,6 +146,8 @@ class DashboardController extends Controller
             if ($currentYearEnd->lt($currentYearStart)) {
                 $currentYearEnd = $currentYearStart->copy()->addDays(max(0, $start->diffInDays($end)))->endOfDay();
             }
+
+            $isCurrentYearPeriodFuture = Carbon::now()->lt($currentYearStart);
 
             $currentYearProjection = $this->buildRangeForecast(
                 $currentYearStart,
@@ -181,6 +184,7 @@ class DashboardController extends Controller
             'embroidery_design_forecast' => $embroideryDesignForecast,
             'current_year_projection' => $currentYearProjection,
             'current_year_design_projection' => $currentYearDesignProjection,
+            'is_current_year_period_future' => $isCurrentYearPeriodFuture,
             'branches' => \App\Models\Branch::query()->orderBy('name')->get(['id', 'name']),
             'available_years' => Order::query()
                 ->select(DB::raw('YEAR(created_at) as year'))

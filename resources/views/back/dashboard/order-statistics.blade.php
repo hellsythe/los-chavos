@@ -218,6 +218,12 @@
                     </div>
                 @endif
 
+                @if ($is_current_year_period_future)
+                    <div class="alert alert-info text-sm mt-2">
+                        El periodo equivalente del año actual aún no ha ocurrido. La proyección mostrada es para fechas futuras.
+                    </div>
+                @endif
+
                 <div class="mt-4 text-sm opacity-80">
                     Pronóstico calculado con últimos {{ $demand_forecast['history_years_used'] }} años.
                 </div>
@@ -293,6 +299,12 @@
                             <div class="stat-title">Proyección año actual por diseño ({{ $current_year_design_projection['start'] }} a {{ $current_year_design_projection['end'] }})</div>
                             <div class="stat-value">{{ number_format($current_year_design_projection['predicted_total_garments']) }}</div>
                         </div>
+                    </div>
+                @endif
+
+                @if ($is_current_year_period_future)
+                    <div class="alert alert-info text-sm mt-2">
+                        El periodo equivalente del año actual aún no ha ocurrido. La proyección mostrada es para fechas futuras.
                     </div>
                 @endif
 
