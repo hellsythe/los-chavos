@@ -747,7 +747,7 @@ class DashboardController extends Controller
                     : 0,
                 'predicted_revenue' => $predictedRevenueForDesign,
                 'actual_revenue' => $actualRevenueForDesign,
-                'revenue_difference' => round($actualRevenueForDesign - $predictedRevenueForDesign, 2),
+                'revenue_difference' => round($predictedRevenueForDesign - $actualRevenueForDesign, 2),
                 'predicted_revenue_share_percent' => $predictedRevenue > 0
                     ? round(($predictedRevenueForDesign / $predictedRevenue) * 100, 2)
                     : 0,

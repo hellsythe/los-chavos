@@ -428,6 +428,7 @@
                             $currentYearDesignProjection = (int) ($currentYearDesignItems[$item['design_name']]['predicted_garments'] ?? 0);
                             $currentYearWidth = ($currentYearDesignProjection / $designMax) * 100;
                             $statusClass = $item['missing_to_goal'] > 0 ? 'text-warning' : 'text-success';
+                            $goalLabel = $item['missing_to_goal'] > 0 ? 'Faltante meta' : 'Meta superada';
                         @endphp
                         <div>
                             <div class="flex justify-between text-sm mb-1 gap-3">
@@ -438,7 +439,7 @@
                                     @if (!is_null($current_year_design_projection))
                                         | Año actual: {{ number_format($currentYearDesignProjection) }} prendas
                                     @endif
-                                    | <span class="{{ $statusClass }}">Faltante meta: {{ number_format($item['missing_to_goal']) }} prendas (${{ number_format($item['revenue_difference'], 2) }})</span>
+                                    | <span class="{{ $statusClass }}">{{ $goalLabel }}: {{ number_format(abs($item['missing_to_goal'])) }} prendas (${{ number_format(abs($item['revenue_difference']), 2) }})</span>
                                 </span>
                             </div>
                             <progress class="progress progress-accent w-full" value="{{ $predictedWidth }}" max="100"></progress>
@@ -466,8 +467,8 @@
                                 @if (!is_null($current_year_design_projection))
                                     <th>Prendas Año Actual</th>
                                 @endif
-                                <th>Faltante meta prendas</th>
-                                <th>Faltante meta $</th>
+                                <th>Diferencia prendas</th>
+                                <th>Diferencia $</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -487,10 +488,10 @@
                                         <td>{{ number_format($currentYearDesignProjection) }}</td>
                                     @endif
                                     <td class="{{ $item['missing_to_goal'] > 0 ? 'text-warning' : 'text-success' }}">
-                                        {{ number_format($item['missing_to_goal']) }}
+                                        {{ $item['missing_to_goal'] > 0 ? 'Faltan ' : 'Sobran ' }}{{ number_format(abs($item['missing_to_goal'])) }}
                                     </td>
                                     <td class="{{ $item['revenue_difference'] > 0 ? 'text-warning' : 'text-success' }}">
-                                        ${{ number_format($item['revenue_difference'], 2) }}
+                                        {{ $item['revenue_difference'] > 0 ? 'Faltan ' : 'Sobran ' }}${{ number_format(abs($item['revenue_difference']), 2) }}
                                     </td>
                                 </tr>
                             @empty
