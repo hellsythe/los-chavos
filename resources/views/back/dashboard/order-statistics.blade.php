@@ -176,13 +176,44 @@
                         <div>
                             <div class="flex justify-between text-sm mb-1 gap-3">
                                 <span class="truncate" title="{{ $item->design_name }}">{{ $item->design_name }}</span>
-                                <span>{{ number_format($item->total_orders) }} órdenes | {{ number_format($item->total_garments) }} prendas</span>
+                                <span>
+                                    {{ number_format($item->total_orders) }} órdenes
+                                    | {{ number_format($item->total_garments) }} prendas
+                                    | ${{ number_format($item->total_revenue, 2) }} ingresos
+                                </span>
                             </div>
                             <progress class="progress progress-secondary w-full" value="{{ $width }}" max="100"></progress>
                         </div>
                     @empty
                         <div class="text-sm opacity-80">No hay bordados en el periodo seleccionado.</div>
                     @endforelse
+                </div>
+
+                <div class="overflow-x-auto mt-6">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>Diseño</th>
+                                <th>Órdenes</th>
+                                <th>Prendas</th>
+                                <th>Ingresos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($popular_embroidery as $item)
+                                <tr>
+                                    <td>{{ $item->design_name }}</td>
+                                    <td>{{ number_format($item->total_orders) }}</td>
+                                    <td>{{ number_format($item->total_garments) }}</td>
+                                    <td>${{ number_format($item->total_revenue, 2) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4">Sin información para mostrar.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

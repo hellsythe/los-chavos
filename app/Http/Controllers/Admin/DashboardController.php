@@ -495,6 +495,7 @@ class DashboardController extends Controller
                 DB::raw('d.name as design_name'),
                 DB::raw('od.order_id as order_id'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         $new = DB::table('order_details as od')
@@ -510,6 +511,7 @@ class DashboardController extends Controller
                 DB::raw('d.name as design_name'),
                 DB::raw('od.order_id as order_id'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         $updated = DB::table('order_details as od')
@@ -525,6 +527,7 @@ class DashboardController extends Controller
                 DB::raw('d.name as design_name'),
                 DB::raw('od.order_id as order_id'),
                 DB::raw('od.garment_amount as garment_amount'),
+                DB::raw('od.total as revenue'),
             ]);
 
         return DB::query()
@@ -536,6 +539,7 @@ class DashboardController extends Controller
                 'design_name',
                 DB::raw('COUNT(DISTINCT order_id) as total_orders'),
                 DB::raw('SUM(garment_amount) as total_garments'),
+                DB::raw('SUM(revenue) as total_revenue'),
             ])
             ->groupBy('design_name')
             ->orderByDesc('total_orders')
