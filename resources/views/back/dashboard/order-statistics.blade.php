@@ -353,6 +353,25 @@
         <div class="card bg-base-100 shadow">
             <div class="card-body">
                 <h2 class="card-title">Predicción por diseño de bordado ({{ $embroidery_design_forecast['start'] }} a {{ $embroidery_design_forecast['end'] }})</h2>
+                <div class="mt-2 p-3 rounded-lg bg-base-200 text-sm">
+                    <div class="font-semibold mb-2">Glosario de colores</div>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-2 rounded bg-accent"></span>
+                            <span>Proyección del periodo</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-2 rounded bg-success"></span>
+                            <span>Prendas reales</span>
+                        </div>
+                        @if (!is_null($current_year_design_projection))
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-4 h-2 rounded bg-info"></span>
+                                <span>Proyección año actual</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mt-2">
                     <div class="stats shadow">
                         <div class="stat">
