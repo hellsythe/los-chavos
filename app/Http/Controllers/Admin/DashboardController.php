@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $periodType = $request->input('period_type', 'school');
         $topLimit = (int) $request->input('top_limit', 10);
         $historyYears = (int) $request->input('history_years', 3);
-        if (!in_array($topLimit, [10, 20, 30], true)) {
+        if (!in_array($topLimit, [10, 20, 30, 50], true)) {
             $topLimit = 10;
         }
         if (!in_array($historyYears, [3, 4, 5], true)) {
@@ -113,71 +113,31 @@ class DashboardController extends Controller
             $cursor->addMonth();
         }
 
-        $popularEmbroideryExisting = DB::table('order_details as od')
-            ->join('orders as o', 'o.id', '=', 'od.order_id')
-            ->join('order_designs as odg', 'odg.order_detail_id', '=', 'od.id')
-            ->join('designs as d', 'd.id', '=', 'odg.design_id')
-            ->where('od.service_id', 1)
-            ->whereBetween('o.created_at', [$start, $end])
-            ->when($request->filled('branch_id'), function ($builder) use ($request) {
-                $builder->where('o.branch_id', $request->input('branch_id'));
-            })
-            ->select([
-                DB::raw('d.name as design_name'),
-                DB::raw('od.order_id as order_id'),
-                DB::raw('od.garment_amount as garment_amount'),
-            ]);
+        $popularEmbroidery = $this->getPopularEmbroideryByRange($start->copy(), $end->copy(), $request->input('branch_id'), $topLimit);
+        $popularEmbroiderySource = 'current_period';
 
-        $popularEmbroideryNew = DB::table('order_details as od')
-            ->join('orders as o', 'o.id', '=', 'od.order_id')
-            ->join('order_new_designs as ond', 'ond.order_detail_id', '=', 'od.id')
-            ->join('designs as d', 'd.id', '=', 'ond.design_id')
-            ->where('od.service_id', 1)
-            ->whereBetween('o.created_at', [$start, $end])
-            ->when($request->filled('branch_id'), function ($builder) use ($request) {
-                $builder->where('o.branch_id', $request->input('branch_id'));
-            })
-            ->select([
-                DB::raw('d.name as design_name'),
-                DB::raw('od.order_id as order_id'),
-                DB::raw('od.garment_amount as garment_amount'),
-            ]);
-
-        $popularEmbroideryUpdated = DB::table('order_details as od')
-            ->join('orders as o', 'o.id', '=', 'od.order_id')
-            ->join('order_update_designs as oud', 'oud.order_detail_id', '=', 'od.id')
-            ->join('designs as d', 'd.id', '=', 'oud.design_id')
-            ->where('od.service_id', 1)
-            ->whereBetween('o.created_at', [$start, $end])
-            ->when($request->filled('branch_id'), function ($builder) use ($request) {
-                $builder->where('o.branch_id', $request->input('branch_id'));
-            })
-            ->select([
-                DB::raw('d.name as design_name'),
-                DB::raw('od.order_id as order_id'),
-                DB::raw('od.garment_amount as garment_amount'),
-            ]);
-
-        $popularEmbroidery = DB::query()
-            ->fromSub(
-                $popularEmbroideryExisting->unionAll($popularEmbroideryNew)->unionAll($popularEmbroideryUpdated),
-                'embroidery_designs'
-            )
-            ->select([
-                'design_name',
-                DB::raw('COUNT(DISTINCT order_id) as total_orders'),
-                DB::raw('SUM(garment_amount) as total_garments'),
-            ])
-            ->groupBy('design_name')
-            ->orderByDesc('total_orders')
-            ->limit($topLimit)
-            ->get();
+        if ($popularEmbroidery->isEmpty() && $start->gt(Carbon::now()->endOfDay())) {
+            $fallbackStart = $start->copy()->subYear();
+            $fallbackEnd = $end->copy()->subYear();
+            $popularEmbroidery = $this->getPopularEmbroideryByRange($fallbackStart, $fallbackEnd, $request->input('branch_id'), $topLimit);
+            if ($popularEmbroidery->isNotEmpty()) {
+                $popularEmbroiderySource = 'previous_year';
+            }
+        }
 
         $demandForecast = $this->buildRangeForecast($start->copy(), $end->copy(), $request->input('branch_id'), $historyYears);
+        $embroideryDesignForecast = $this->buildEmbroideryDesignForecast(
+            $start->copy(),
+            $end->copy(),
+            $request->input('branch_id'),
+            $historyYears,
+            $topLimit
+        );
 
         $currentYear = (int) Carbon::now()->format('Y');
         $selectedPeriodYear = (int) $start->format('Y');
         $currentYearProjection = null;
+        $currentYearDesignProjection = null;
 
         if ($selectedPeriodYear !== $currentYear) {
             $currentYearStart = $this->alignDateToYear($start->copy(), $currentYear)->startOfDay();
@@ -191,6 +151,14 @@ class DashboardController extends Controller
                 $currentYearEnd,
                 $request->input('branch_id'),
                 $historyYears
+            );
+
+            $currentYearDesignProjection = $this->buildEmbroideryDesignForecast(
+                $currentYearStart,
+                $currentYearEnd,
+                $request->input('branch_id'),
+                $historyYears,
+                $topLimit
             );
         }
 
@@ -208,8 +176,11 @@ class DashboardController extends Controller
             'history_years' => $historyYears,
             'chart_data' => $chartData,
             'popular_embroidery' => $popularEmbroidery,
+            'popular_embroidery_source' => $popularEmbroiderySource,
             'demand_forecast' => $demandForecast,
+            'embroidery_design_forecast' => $embroideryDesignForecast,
             'current_year_projection' => $currentYearProjection,
+            'current_year_design_projection' => $currentYearDesignProjection,
             'branches' => \App\Models\Branch::query()->orderBy('name')->get(['id', 'name']),
             'available_years' => Order::query()
                 ->select(DB::raw('YEAR(created_at) as year'))
@@ -447,6 +418,297 @@ class DashboardController extends Controller
         $lastDay = Carbon::create($year, $month, 1)->endOfMonth()->day;
 
         return Carbon::create($year, $month, min($day, $lastDay));
+    }
+
+    protected function getPopularEmbroideryByRange(Carbon $start, Carbon $end, $branchId = null, int $topLimit = 10)
+    {
+        $existing = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_designs as odg', 'odg.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'odg.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.order_id as order_id'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        $new = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_new_designs as ond', 'ond.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'ond.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.order_id as order_id'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        $updated = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_update_designs as oud', 'oud.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'oud.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.order_id as order_id'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        return DB::query()
+            ->fromSub(
+                $existing->unionAll($new)->unionAll($updated),
+                'embroidery_designs'
+            )
+            ->select([
+                'design_name',
+                DB::raw('COUNT(DISTINCT order_id) as total_orders'),
+                DB::raw('SUM(garment_amount) as total_garments'),
+            ])
+            ->groupBy('design_name')
+            ->orderByDesc('total_orders')
+            ->limit($topLimit)
+            ->get();
+    }
+
+    protected function buildEmbroideryDesignForecast(
+        Carbon $periodStart,
+        Carbon $periodEnd,
+        $branchId = null,
+        int $historyYears = 3,
+        int $topLimit = 10
+    ): array {
+        $historicalPeriods = [];
+        for ($i = $historyYears; $i >= 1; $i--) {
+            $historicalPeriods[] = [
+                'label' => (string) $periodStart->copy()->subYear($i)->format('Y'),
+                'start' => $periodStart->copy()->subYear($i),
+                'end' => $periodEnd->copy()->subYear($i),
+            ];
+        }
+
+        $historicalTotals = [];
+        $historicalByDesign = [];
+
+        foreach ($historicalPeriods as $historicalPeriod) {
+            $rows = $this->getEmbroideryDesignGarments(
+                $historicalPeriod['start'],
+                $historicalPeriod['end'],
+                $branchId
+            );
+
+            $historicalByDesign[$historicalPeriod['label']] = $rows;
+            $historicalTotals[$historicalPeriod['label']] = (int) $rows->sum('total_garments');
+        }
+
+        $growthRates = [];
+        $periodKeys = array_values(array_keys($historicalTotals));
+        for ($i = 1; $i < count($periodKeys); $i++) {
+            $previous = $historicalTotals[$periodKeys[$i - 1]] ?? 0;
+            $current = $historicalTotals[$periodKeys[$i]] ?? 0;
+            if ($previous > 0) {
+                $growthRates[] = ($current - $previous) / $previous;
+            }
+        }
+
+        $weightedGrowth = 0.0;
+        if (!empty($growthRates)) {
+            $growthRates = array_reverse($growthRates);
+            $num = 0.0;
+            $den = 0.0;
+            foreach ($growthRates as $index => $rate) {
+                $weight = 1 / ($index + 1);
+                $num += $rate * $weight;
+                $den += $weight;
+            }
+            $weightedGrowth = $den > 0 ? $num / $den : 0.0;
+        }
+
+        $lastKey = !empty($periodKeys) ? end($periodKeys) : null;
+        $lastTotal = $lastKey ? ($historicalTotals[$lastKey] ?? 0) : 0;
+        $avgTotal = !empty($historicalTotals) ? array_sum($historicalTotals) / count($historicalTotals) : 0;
+
+        $predictedTotal = $lastTotal > 0
+            ? (int) round($lastTotal * (1 + $weightedGrowth))
+            : (int) round($avgTotal);
+        $predictedTotal = max(0, $predictedTotal);
+
+        $weightedShares = [];
+        $shareWeights = [];
+        $historicalRows = array_reverse($historicalPeriods);
+        foreach ($historicalRows as $index => $historicalPeriod) {
+            $label = $historicalPeriod['label'];
+            $total = $historicalTotals[$label] ?? 0;
+            if ($total < 1) {
+                continue;
+            }
+            $weight = 1 / ($index + 1);
+            $rows = $historicalByDesign[$label] ?? collect();
+            foreach ($rows as $row) {
+                $designName = $row->design_name;
+                $share = $row->total_garments / $total;
+                $weightedShares[$designName] = ($weightedShares[$designName] ?? 0) + ($share * $weight);
+                $shareWeights[$designName] = ($shareWeights[$designName] ?? 0) + $weight;
+            }
+        }
+
+        $normalizedShares = [];
+        foreach ($weightedShares as $designName => $value) {
+            $weight = $shareWeights[$designName] ?? 0;
+            if ($weight > 0) {
+                $normalizedShares[$designName] = $value / $weight;
+            }
+        }
+
+        $shareSum = array_sum($normalizedShares);
+        if ($shareSum > 0) {
+            foreach ($normalizedShares as $designName => $value) {
+                $normalizedShares[$designName] = $value / $shareSum;
+            }
+        }
+
+        $actualRows = $this->getEmbroideryDesignGarments($periodStart, $periodEnd, $branchId)->keyBy('design_name');
+        $actualTotalGarments = (int) $actualRows->sum('total_garments');
+
+        $projectedDesigns = [];
+        $running = 0;
+        $candidates = [];
+        foreach ($normalizedShares as $designName => $share) {
+            $raw = $predictedTotal * $share;
+            $predicted = (int) floor($raw);
+            $running += $predicted;
+            $candidates[] = ['design_name' => $designName, 'decimal' => $raw - $predicted];
+            $projectedDesigns[$designName] = $predicted;
+        }
+
+        $missing = $predictedTotal - $running;
+        usort($candidates, function ($a, $b) {
+            return $b['decimal'] <=> $a['decimal'];
+        });
+        for ($i = 0; $i < $missing; $i++) {
+            $designName = $candidates[$i]['design_name'] ?? null;
+            if ($designName) {
+                $projectedDesigns[$designName] = ($projectedDesigns[$designName] ?? 0) + 1;
+            }
+        }
+
+        $allDesignNames = array_unique(array_merge(array_keys($projectedDesigns), $actualRows->keys()->toArray()));
+        $items = [];
+        foreach ($allDesignNames as $designName) {
+            $predictedGarments = (int) ($projectedDesigns[$designName] ?? 0);
+            $actualGarments = (int) ($actualRows[$designName]->total_garments ?? 0);
+            $missingToGoal = $predictedGarments - $actualGarments;
+            $items[] = [
+                'design_name' => $designName,
+                'predicted_garments' => $predictedGarments,
+                'actual_garments' => $actualGarments,
+                'difference' => $actualGarments - $predictedGarments,
+                'missing_to_goal' => $missingToGoal,
+                'predicted_share_percent' => $predictedTotal > 0
+                    ? round(($predictedGarments / $predictedTotal) * 100, 2)
+                    : 0,
+                'actual_share_percent' => $actualTotalGarments > 0
+                    ? round(($actualGarments / $actualTotalGarments) * 100, 2)
+                    : 0,
+            ];
+        }
+
+        usort($items, function ($a, $b) {
+            return $b['predicted_garments'] <=> $a['predicted_garments'];
+        });
+
+        $topItems = array_slice($items, 0, $topLimit);
+
+        return [
+            'start' => $periodStart->format('Y-m-d'),
+            'end' => $periodEnd->format('Y-m-d'),
+            'history_years_used' => $historyYears,
+            'predicted_total_garments' => $predictedTotal,
+            'actual_total_garments' => $actualTotalGarments,
+            'weighted_growth_percent' => round($weightedGrowth * 100, 2),
+            'top_limit' => $topLimit,
+            'items' => $topItems,
+        ];
+    }
+
+    protected function getEmbroideryDesignGarments(Carbon $start, Carbon $end, $branchId = null)
+    {
+        $existing = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_designs as odg', 'odg.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'odg.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        $new = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_new_designs as ond', 'ond.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'ond.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        $updated = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_update_designs as oud', 'oud.order_detail_id', '=', 'od.id')
+            ->join('designs as d', 'd.id', '=', 'oud.design_id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw('d.name as design_name'),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        $custom = DB::table('order_details as od')
+            ->join('orders as o', 'o.id', '=', 'od.order_id')
+            ->join('order_custom_designs as ocd', 'ocd.order_detail_id', '=', 'od.id')
+            ->where('od.service_id', 1)
+            ->whereBetween('o.created_at', [$start, $end])
+            ->when($branchId, function ($builder) use ($branchId) {
+                $builder->where('o.branch_id', $branchId);
+            })
+            ->select([
+                DB::raw("'Diseño personalizado' as design_name"),
+                DB::raw('od.garment_amount as garment_amount'),
+            ]);
+
+        return DB::query()
+            ->fromSub($existing->unionAll($new)->unionAll($updated)->unionAll($custom), 'embroidery_design_rows')
+            ->select([
+                'design_name',
+                DB::raw('SUM(garment_amount) as total_garments'),
+            ])
+            ->groupBy('design_name')
+            ->orderByDesc('total_garments')
+            ->get();
     }
 
     public function indexGrupBy(Request $request)

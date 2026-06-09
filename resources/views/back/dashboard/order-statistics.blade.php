@@ -46,6 +46,7 @@
                 <option value="10" {{ (int) $top_limit === 10 ? 'selected' : '' }}>Top 10</option>
                 <option value="20" {{ (int) $top_limit === 20 ? 'selected' : '' }}>Top 20</option>
                 <option value="30" {{ (int) $top_limit === 30 ? 'selected' : '' }}>Top 30</option>
+                <option value="50" {{ (int) $top_limit === 50 ? 'selected' : '' }}>Top 50</option>
             </select>
         </div>
         <div class="form-control">
@@ -96,6 +97,7 @@
         <button type="button" class="tab tab-active" data-tab-target="orders-monthly">Órdenes por mes</button>
         <button type="button" class="tab" data-tab-target="popular-embroidery">Bordados populares</button>
         <button type="button" class="tab" data-tab-target="period-forecast">Predicción del periodo</button>
+        <button type="button" class="tab" data-tab-target="design-forecast">Predicción por diseño</button>
     </div>
 
     <div class="tab-panel mt-3" data-tab-panel="orders-monthly">
@@ -129,6 +131,11 @@
         <div class="card bg-base-100 shadow">
             <div class="card-body">
                 <h2 class="card-title">Bordados más populares (Top {{ $top_limit }})</h2>
+                @if ($popular_embroidery_source === 'previous_year')
+                    <div class="alert alert-info text-sm mt-2 mb-2">
+                        El periodo seleccionado aún no ha transcurrido. Se muestran datos del año anterior como referencia.
+                    </div>
+                @endif
                 @php
                     $popularMax = collect($popular_embroidery)->max('total_orders') ?: 1;
                 @endphp
@@ -250,6 +257,127 @@
                             @endif
                         </div>
                     @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-panel mt-3 hidden" data-tab-panel="design-forecast">
+        <div class="card bg-base-100 shadow">
+            <div class="card-body">
+                <h2 class="card-title">Predicción por diseño de bordado ({{ $embroidery_design_forecast['start'] }} a {{ $embroidery_design_forecast['end'] }})</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mt-2">
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Prendas proyectadas</div>
+                            <div class="stat-value">{{ number_format($embroidery_design_forecast['predicted_total_garments']) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Prendas reales</div>
+                            <div class="stat-value">{{ number_format($embroidery_design_forecast['actual_total_garments']) }}</div>
+                        </div>
+                    </div>
+                    <div class="stats shadow">
+                        <div class="stat">
+                            <div class="stat-title">Tendencia estimada</div>
+                            <div class="stat-value">{{ number_format($embroidery_design_forecast['weighted_growth_percent'], 2) }}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!is_null($current_year_design_projection))
+                    <div class="stats shadow mt-3">
+                        <div class="stat">
+                            <div class="stat-title">Proyección año actual por diseño ({{ $current_year_design_projection['start'] }} a {{ $current_year_design_projection['end'] }})</div>
+                            <div class="stat-value">{{ number_format($current_year_design_projection['predicted_total_garments']) }}</div>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="mt-4 text-sm opacity-80">
+                    Top {{ $embroidery_design_forecast['top_limit'] }} diseños. Histórico usado: últimos {{ $embroidery_design_forecast['history_years_used'] }} años.
+                </div>
+
+                @php
+                    $designMax = collect($embroidery_design_forecast['items'])->max('predicted_garments') ?: 1;
+                    $currentYearDesignItems = !is_null($current_year_design_projection)
+                        ? collect($current_year_design_projection['items'])->keyBy('design_name')
+                        : collect();
+                @endphp
+                <div class="space-y-3 mt-4">
+                    @forelse ($embroidery_design_forecast['items'] as $item)
+                        @php
+                            $predictedWidth = ($item['predicted_garments'] / $designMax) * 100;
+                            $actualWidth = ($item['actual_garments'] / $designMax) * 100;
+                            $currentYearDesignProjection = (int) ($currentYearDesignItems[$item['design_name']]['predicted_garments'] ?? 0);
+                            $currentYearWidth = ($currentYearDesignProjection / $designMax) * 100;
+                            $statusClass = $item['missing_to_goal'] > 0 ? 'text-warning' : 'text-success';
+                        @endphp
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 gap-3">
+                                <span class="truncate" title="{{ $item['design_name'] }}">{{ $item['design_name'] }}</span>
+                                <span>
+                                    Proy: {{ number_format($item['predicted_garments']) }} ({{ number_format($item['predicted_share_percent'], 2) }}%)
+                                    | Real: {{ number_format($item['actual_garments']) }} ({{ number_format($item['actual_share_percent'], 2) }}%)
+                                    @if (!is_null($current_year_design_projection))
+                                        | Año actual: {{ number_format($currentYearDesignProjection) }}
+                                    @endif
+                                    | <span class="{{ $statusClass }}">Faltante meta: {{ number_format($item['missing_to_goal']) }}</span>
+                                </span>
+                            </div>
+                            <progress class="progress progress-accent w-full" value="{{ $predictedWidth }}" max="100"></progress>
+                            <progress class="progress progress-success w-full mt-1" value="{{ $actualWidth }}" max="100"></progress>
+                            @if (!is_null($current_year_design_projection))
+                                <progress class="progress progress-info w-full mt-1" value="{{ $currentYearWidth }}" max="100"></progress>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="text-sm opacity-80">No hay datos suficientes para generar predicción por diseño.</div>
+                    @endforelse
+                </div>
+
+                <div class="overflow-x-auto mt-6">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>Diseño</th>
+                                <th>Proyectado</th>
+                                <th>% Proyección</th>
+                                <th>Real</th>
+                                <th>% Real</th>
+                                @if (!is_null($current_year_design_projection))
+                                    <th>Proy año actual</th>
+                                @endif
+                                <th>Faltante meta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($embroidery_design_forecast['items'] as $item)
+                                @php
+                                    $currentYearDesignProjection = (int) ($currentYearDesignItems[$item['design_name']]['predicted_garments'] ?? 0);
+                                @endphp
+                                <tr>
+                                    <td>{{ $item['design_name'] }}</td>
+                                    <td>{{ number_format($item['predicted_garments']) }}</td>
+                                    <td>{{ number_format($item['predicted_share_percent'], 2) }}%</td>
+                                    <td>{{ number_format($item['actual_garments']) }}</td>
+                                    <td>{{ number_format($item['actual_share_percent'], 2) }}%</td>
+                                    @if (!is_null($current_year_design_projection))
+                                        <td>{{ number_format($currentYearDesignProjection) }}</td>
+                                    @endif
+                                    <td class="{{ $item['missing_to_goal'] > 0 ? 'text-warning' : 'text-success' }}">
+                                        {{ number_format($item['missing_to_goal']) }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ !is_null($current_year_design_projection) ? 7 : 6 }}">Sin información para mostrar.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
