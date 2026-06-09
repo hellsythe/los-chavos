@@ -33,6 +33,7 @@
     @if (auth()->user()->hasRole(['super-admin', 'Bordador']))
         <div class="mt-4">
             <a href="{{route('dashboard.groupby')}}" class="btn btn-active">Agrupar por Diseños iguales</a>
+            <a href="{{route('dashboard.order.statistics')}}" class="btn btn-primary">Estadísticas de órdenes</a>
         </div>
     @endif
     <?php

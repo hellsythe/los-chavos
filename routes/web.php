@@ -60,6 +60,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::SdkResource('order', OrderController::class);
         Route::SdkResource('design', DesignController::class);
         Route::get('/', 'DashboardController@index')->name('dashboard');
+        Route::get('/order-statistics', 'DashboardController@orderStatistics')->name('dashboard.order.statistics');
         Route::get('/orders-by-design', 'DashboardController@indexGrupBy')->name('dashboard.groupby');
         Route::get('/orders-by-design/{id}', 'DashboardController@ordersGroupBy')->name('dashboard.grouped');
         Route::get('/api-order/update-status/{id}/{status}', 'OrderController@updateOrderStatus')->name('order.update.status');
