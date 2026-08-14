@@ -64,4 +64,32 @@ class ReceivedMessage extends BaseReceivedMessage
             NewWhatsappMessageHook::dispatch(['chat_id' => $chat->id]);
         }
     }
+
+    protected function processIfIsResponse(array &$content): void
+    {
+        if (isset($content['context']) && isset($content['context']['id'])) {
+            $message = Message::where('message_id', $content['context']['id'])->firstOrFail();
+            $content['context']['message'] = $message->body;
+        }
+    }
+
+    protected function processTextMessage(Chat $chat, array $content): void
+    {
+        $messageModel = new Message();
+        $messageModel->chat_id = $chat->id;
+        $messageModel->message_id = $content['id'];
+        $messageModel->timestamp = $content['timestamp'];
+        $messageModel->status = Message::STATUS_DELIVERED;
+        $messageModel->type = $content['type'];
+        $messageModel->body = json_encode($content);
+        $messageModel->direction = 'toApp';
+        $messageModel->save();
+    }
+
+    protected function saveFile(array $file, string $phoneNumberId, Chat $chat): string
+    {
+        $service = resolve(MediaManagerService::class);
+
+        return $service->download($file['id'], $phoneNumberId, "received/{$chat->id}/{$file['id']}", 'public');
+    }
 }
