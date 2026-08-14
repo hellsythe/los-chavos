@@ -27,11 +27,27 @@ class ReceivedMessage extends BaseReceivedMessage
             ? Chat::findOrCreateChat($content['from'], $wabaPhoneNumber)
             : null;
 
+        if (! $chat) {
+            return;
+        }
+
+        $messageId = $content['id'] ?? null;
+        $existing = $messageId ? Message::where('message_id', $messageId)->first() : null;
+
+        if ($existing) {
+            Log::channel('webhook')->info('Duplicate webhook detected, skipping', [
+                'message_id' => $messageId,
+                'chat_id' => $chat->id,
+                'existing_id' => $existing->id,
+            ]);
+            return;
+        }
+
         Log::channel('webhook')->info('Incoming webhook', [
             'type' => $content['type'],
             'from' => $content['from'] ?? null,
-            'message_id' => $content['id'] ?? null,
-            'chat_id' => $chat?->id,
+            'message_id' => $messageId,
+            'chat_id' => $chat->id,
             'has_context' => isset($content['context']['id']),
         ]);
 
@@ -60,9 +76,7 @@ class ReceivedMessage extends BaseReceivedMessage
                 break;
         }
 
-        if ($chat) {
-            NewWhatsappMessageHook::dispatch(['chat_id' => $chat->id]);
-        }
+        NewWhatsappMessageHook::dispatch(['chat_id' => $chat->id]);
     }
 
     protected function processIfIsResponse(array &$content): void
