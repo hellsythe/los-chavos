@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php /home/hellsythe/projects/sdk/los-chavos/artisan session:table --pretend)",
+      "Bash(php /home/hellsythe/projects/sdk/los-chavos/artisan session:table)"
+    ]
+  }
+}

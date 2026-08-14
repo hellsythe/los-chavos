@@ -57,9 +57,33 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::SdkResource('payment', PaymentController::class);
         Route::SdkResource('order-detail', OrderDetailController::class);
         Route::SdkResource('client', ClientController::class);
-        Route::SdkResource('order', OrderController::class);
-        Route::SdkResource('design', DesignController::class);
-        Route::get('/', 'DashboardController@index')->name('dashboard');
+    Route::SdkResource('order', OrderController::class);
+    Route::SdkResource('design', DesignController::class);
+    Route::SdkResource('school', SchoolController::class);
+    Route::SdkResource('uniform', UniformController::class);
+    Route::post('uniform/{id}/photos', 'UniformController@storePhotos')->name('uniform.photos.store');
+    Route::delete('uniform-photo/{id}', 'UniformController@deletePhoto')->name('uniform.photo.delete');
+    Route::get('school-types/api', function () {
+        return response()->json([
+            'data' => [
+                ['id' => 'publica', 'name' => 'Pública'],
+                ['id' => 'privada', 'name' => 'Privada'],
+            ],
+        ]);
+    })->name('school.types.api');
+    Route::get('school-niveles/api', function () {
+        return response()->json([
+            'data' => [
+                ['id' => 'kinder', 'name' => 'Kinder'],
+                ['id' => 'primaria', 'name' => 'Primaria'],
+                ['id' => 'secundaria', 'name' => 'Secundaria'],
+                ['id' => 'bachillerato', 'name' => 'Bachillerato'],
+                ['id' => 'universidad', 'name' => 'Universidad'],
+                ['id' => 'otro', 'name' => 'Otro'],
+            ],
+        ]);
+    })->name('school.niveles.api');
+    Route::get('/', 'DashboardController@index')->name('dashboard');
         Route::get('/order-statistics', 'DashboardController@orderStatistics')->name('dashboard.order.statistics');
         Route::get('/orders-by-design', 'DashboardController@indexGrupBy')->name('dashboard.groupby');
         Route::get('/orders-by-design/{id}', 'DashboardController@ordersGroupBy')->name('dashboard.grouped');

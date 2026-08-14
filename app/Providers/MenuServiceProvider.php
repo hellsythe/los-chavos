@@ -19,6 +19,8 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\Design;
 use App\Models\Payment;
+use App\Models\School;
+use App\Models\Uniform;
 use Base;
 
 class MenuServiceProvider extends ServiceProvider
@@ -100,5 +102,7 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
         $service_menu->addElement(Branch::makeMenu('book-open'));
         $service_menu->addElement(Setting::makeMenu('book-open'), ['super-admin']);
+        $service_menu->addElement(School::makeMenu('office-building'), ['super-admin']);
+        $service_menu->addElement(Uniform::makeMenu('identification'), ['super-admin']);
     }
 }
