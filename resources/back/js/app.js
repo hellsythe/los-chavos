@@ -1,5 +1,6 @@
 import '@sdkconsultoria/base';
 import './components/components';
+import './extra-fields';
 import './chat';
 import './chatbot-config';
 import Echo from 'laravel-echo';

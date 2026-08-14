@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Sdkconsultoria\Base\Fields\CustomField;
+use App\Fields\TextAreaField;
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
 
@@ -11,7 +11,7 @@ class ServiceChatbotInfo extends BaseModel
     protected $table = 'service_chatbot_info';
 
     protected $fillable = [
-        'service_id',
+        'name',
         'description',
         'notes',
     ];
@@ -28,30 +28,21 @@ class ServiceChatbotInfo extends BaseModel
     protected function fields()
     {
         return [
-            CustomField::make('service_id')
-                ->label('Servicio')
-                ->rules(['required'])
-                ->loadOptionsFromUrl('/admin/service/api')
-                ->setComponent('SelectedField')
-                ->addExtra('valueName', 'id'),
-            TextField::make('description')->label('Descripción para el bot')->rules(['nullable'])->searchable(false),
-            TextField::make('notes')->label('Notas adicionales')->rules(['nullable'])->searchable(false),
+            TextField::make('name')->label('Nombre (texto libre)')->rules(['required'])->searchable(true),
+            TextAreaField::make('description')->label('Descripción para el bot')->rules(['nullable'])->searchable(false),
+            TextAreaField::make('notes')->label('Notas adicionales')->rules(['nullable'])->searchable(false),
         ];
-    }
-
-    public function service()
-    {
-        return $this->belongsTo(Service::class);
     }
 
     public function getIndexFields()
     {
-        return ['service_id', 'description'];
+        return ['name', 'description'];
     }
 
     public function getParseSearchFilters()
     {
         return [
+            ['field' => 'name'],
             ['field' => 'description'],
             ['field' => 'notes'],
         ];

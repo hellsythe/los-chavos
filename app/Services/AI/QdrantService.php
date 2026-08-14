@@ -194,13 +194,11 @@ class QdrantService
 
     public function upsertService(ServiceChatbotInfo $info): void
     {
-        $service = $info->service;
-
         $this->upsertPoint(
             $this->servicesCollection,
             $info->id,
-            $this->serviceEmbeddingText($info, $service),
-            $this->servicePayload($info, $service),
+            $this->serviceEmbeddingText($info),
+            $this->servicePayload($info),
         );
     }
 
@@ -209,10 +207,10 @@ class QdrantService
         $this->deletePoint($this->servicesCollection, $id);
     }
 
-    public function serviceEmbeddingText(ServiceChatbotInfo $info, $service): string
+    public function serviceEmbeddingText(ServiceChatbotInfo $info): string
     {
         $parts = [
-            $service?->name,
+            $info->name,
             $info->description,
             $info->notes,
         ];
@@ -220,13 +218,12 @@ class QdrantService
         return implode("\n", array_filter($parts));
     }
 
-    protected function servicePayload(ServiceChatbotInfo $info, $service): array
+    protected function servicePayload(ServiceChatbotInfo $info): array
     {
         return [
             'type' => 'service',
             'id' => (int) $info->id,
-            'service_id' => $service ? (int) $service->id : null,
-            'name' => $service?->name,
+            'name' => $info->name,
             'description' => $info->description,
             'notes' => $info->notes,
             'status' => (int) $info->status,
