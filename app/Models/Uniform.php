@@ -8,6 +8,12 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class Uniform extends BaseModel
 {
+    protected $fillable = [
+        'name',
+        'school_id',
+        'description',
+    ];
+
     protected function fields()
     {
         return [

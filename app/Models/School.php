@@ -9,6 +9,15 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class School extends BaseModel
 {
+    protected $fillable = [
+        'name',
+        'location',
+        'type',
+        'nivel_educativo',
+        'city',
+        'logo',
+    ];
+
     protected function fields()
     {
         return [
