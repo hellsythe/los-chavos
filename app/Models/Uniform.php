@@ -27,14 +27,24 @@ class Uniform extends BaseModel
     protected function fields()
     {
         return [
-            TextField::make('name')->label('Nombre')->rules(['required']),
+            TextField::make('name')->label('Nombre')->rules(['required'])->searchable(true),
             CustomField::make('school_id')
                 ->rules(['required'])
                 ->label('Escuela')
                 ->loadOptionsFromUrl('/admin/school/api')
                 ->setComponent('SelectedField')
                 ->addExtra('valueName', 'id'),
-            TextField::make('description')->label('Descripción')->rules(['nullable']),
+            TextField::make('description')->label('Descripción')->rules(['nullable'])->searchable(true),
+            CustomField::make('school_name')
+                ->rules(['nullable'])
+                ->label('Escuela')
+                ->canBeSaved(false)
+                ->searchable(true),
+            CustomField::make('school_location')
+                ->rules(['nullable'])
+                ->label('Localidad')
+                ->canBeSaved(false)
+                ->searchable(true),
         ];
     }
 
@@ -44,6 +54,11 @@ class Uniform extends BaseModel
             'singular' => 'Uniforme',
             'plural' => 'Uniformes',
         ];
+    }
+
+    public function getIndexFields()
+    {
+        return ['name', 'school_name', 'description'];
     }
 
     public function school()

@@ -12,11 +12,56 @@ class UniformController extends ResourceController
 {
     protected $model = \App\Models\Uniform::class;
 
+    public function viewAny(Request $request)
+    {
+        $model = new $this->model;
+        $this->authorize('viewAny', $model);
+
+        $query = $model::with('school')->where('status', $model::STATUS_ACTIVE);
+
+        $this->customFilters($query, $request);
+
+        $page = $query->paginate($request->integer('pagination') ?: 15);
+
+        $page->getCollection()->transform(function ($uniform) {
+            $school = $uniform->school;
+            $attributes = $uniform->getAttributes();
+            $attributes['school_name'] = $school ? $school->name : '';
+            $attributes['school_location'] = $school ? $school->location : '';
+            $attributes['school_city'] = $school ? $school->city : '';
+            $attributes['school_nivel'] = $school ? $school->nivel_educativo : '';
+            return $attributes;
+        });
+
+        return $page->appends($request->all());
+    }
+
+    protected function customFilters($query, $request)
+    {
+        $searchable = ['name', 'school_name', 'description', 'school_location'];
+        foreach ($searchable as $field) {
+            $value = $request->input($field);
+            if (! $value) {
+                continue;
+            }
+            $term = '%' . $value . '%';
+            if ($field === 'school_name' || $field === 'school_location') {
+                $query->whereHas('school', function ($builder) use ($term, $field) {
+                    $builder->where($field === 'school_name' ? 'name' : 'location', 'like', $term);
+                });
+            } else {
+                $query->where($field, 'like', $term);
+            }
+        }
+        return $query;
+    }
+
     public function show(Request $request, $id)
     {
         $model = $this->model::findModel($id);
         $model->isAuthorize('view');
 
+        $model->load('school');
         $photos = $model->photos()->get();
 
         return view('back.uniform.show', [
