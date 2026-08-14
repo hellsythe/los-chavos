@@ -116,7 +116,8 @@ class ImportUniformes extends Command
                 $rows = $this->parseListLayout($sheet, $level, $defaultCity, $defaultType);
             }
 
-            foreach ($rows as $row) {
+            $rowCount = count($rows);
+            foreach ($rows as $idx => $row) {
                 $this->stats['rows_total']++;
                 $school = $this->upsertSchool($row, $mode, $dryRun);
                 if ($school === null) {
@@ -132,7 +133,30 @@ class ImportUniformes extends Command
 
                 if ($useImages && $row['image_row'] !== null) {
                     $headerRow = (int) $row['image_row'];
-                    $this->attachSchoolLogo($school['model'], $headerRow, $headerRow + 6, $imageIndex, $sheetName, $dryRun);
+                    $nextHeaderRow = isset($rows[$idx + 1]['image_row']) ? (int) $rows[$idx + 1]['image_row'] : null;
+                    $cards = $this->splitCardsImages($imageIndex, $sheetName, $headerRow, $nextHeaderRow);
+
+                    if ($cards['logo'] !== null) {
+                        $this->attachSchoolLogo($school['model'], (int) $cards['logo']['top_row'], $imageIndex, $sheetName, $dryRun);
+                    }
+
+                    foreach ($row['uniforms'] as $uniformIndex => $uniform) {
+                        $uniform['school_id'] = $school['model']->id;
+                        $saved = $this->upsertUniform($uniform, $mode, $dryRun);
+                        if ($saved === null) {
+                            continue;
+                        }
+                        if ($saved['action'] === 'created') {
+                            $this->stats['uniforms_created']++;
+                        } else {
+                            $this->stats['uniforms_updated']++;
+                        }
+
+                        if ($useImages && isset($cards['uniforms'][$uniformIndex])) {
+                            $this->attachUniformPhotos($saved['model'], $cards['uniforms'][$uniformIndex], $dryRun);
+                        }
+                    }
+                    continue;
                 }
 
                 foreach ($row['uniforms'] as $uniform) {
@@ -145,10 +169,6 @@ class ImportUniformes extends Command
                         $this->stats['uniforms_created']++;
                     } else {
                         $this->stats['uniforms_updated']++;
-                    }
-
-                    if ($useImages && ! empty($uniform['desc_row'])) {
-                        $this->attachUniformPhotos($saved['model'], (int) $uniform['desc_row'], $imageIndex, $sheetName, $dryRun);
                     }
                 }
             }
@@ -297,7 +317,7 @@ class ImportUniformes extends Command
             $desc = $descRow !== null ? $this->cleanCell($sheet->getCell($col . $descRow)->getValue()) : '';
             $next = $descRow !== null ? $this->cleanCell($sheet->getCell($this->nextCol($col) . $descRow)->getValue()) : '';
             if ($next !== '') {
-                $desc = trim($desc . ' | ' . $next);
+                $desc = trim($desc . "\n" . $next);
             }
             if ($desc === '') {
                 continue;
@@ -307,6 +327,8 @@ class ImportUniformes extends Command
                 'description' => $desc,
                 'images' => [],
                 'desc_row' => $descRow,
+                'label_col' => $col,
+                'image_row' => $descRow !== null ? $descRow + 1 : null,
             ];
         }
         return $uniforms;
@@ -470,9 +492,9 @@ class ImportUniformes extends Command
         return $drawing->getHashCode() ?: spl_object_hash($drawing);
     }
 
-    private function attachSchoolLogo(School $school, int $rowStart, int $rowEnd, array $imageIndex, string $sheetName, bool $dryRun): void
+    private function attachSchoolLogo(School $school, int $imageRow, array $imageIndex, string $sheetName, bool $dryRun): void
     {
-        $image = $this->findImageCoveringRow($imageIndex, $sheetName, $rowStart, $rowEnd, $school->name);
+        $image = $this->findImageAtCell($imageIndex, $sheetName, $imageRow, 1);
         if ($image === null) {
             return;
         }
@@ -491,15 +513,8 @@ class ImportUniformes extends Command
         }
     }
 
-    private function attachUniformPhotos(Uniform $uniform, ?int $descRow, array $imageIndex, string $sheetName, bool $dryRun): void
+    private function attachUniformPhotos(Uniform $uniform, array $image, bool $dryRun): void
     {
-        if ($descRow === null) {
-            return;
-        }
-        $image = $this->findImageCoveringRow($imageIndex, $sheetName, $descRow - 2, $descRow + 1, $uniform->name);
-        if ($image === null) {
-            return;
-        }
         if ($dryRun) {
             $this->stats['images_uniform']++;
             return;
@@ -521,7 +536,7 @@ class ImportUniformes extends Command
         }
     }
 
-    private function findImageCoveringRow(array $imageIndex, ?string $sheetName, int $rowStart, int $rowEnd, string $context): ?array
+    private function findImageAtCell(array $imageIndex, ?string $sheetName, int $row, int $colIndex): ?array
     {
         $imageData = $imageIndex['image_data'] ?? [];
         $candidates = [];
@@ -534,24 +549,62 @@ class ImportUniformes extends Command
                 }
             }
         }
-        $best = null;
-        $bestDistance = PHP_INT_MAX;
         foreach ($candidates as $entry) {
             $top = $entry['top_row'] ?? null;
             $bottom = $entry['bottom_row'] ?? $top;
-            if ($top === null) {
+            $topCol = $entry['top_col'] ?? null;
+            $bottomCol = $entry['bottom_col'] ?? $topCol;
+            if ($top === null || $topCol === null) {
                 continue;
             }
-            $centerRow = (int) (($top + $bottom) / 2);
-            if ($centerRow >= $rowStart - 5 && $centerRow <= $rowEnd + 8) {
-                $distance = abs($centerRow - $rowStart);
-                if ($distance < $bestDistance) {
-                    $best = $entry;
-                    $bestDistance = $distance;
-                }
+            if ($top <= $row && $bottom >= $row && $topCol <= $colIndex && $bottomCol >= $colIndex) {
+                return $entry;
             }
         }
-        return $best;
+        return null;
+    }
+
+    private function splitCardsImages(array $imageIndex, string $sheetName, int $headerRow, ?int $nextHeaderRow = null): array
+    {
+        $imageData = $imageIndex['image_data'][$sheetName] ?? [];
+        $cardStart = $headerRow;
+        $cardEnd = $nextHeaderRow !== null ? $nextHeaderRow - 1 : $headerRow + 6;
+
+        $logo = null;
+        $uniforms = [];
+        foreach ($imageData as $entry) {
+            $top = $entry['top_row'] ?? null;
+            $bottom = $entry['bottom_row'] ?? $top;
+            $topCol = $entry['top_col'] ?? null;
+            if ($top === null || $topCol === null) {
+                continue;
+            }
+            if (! ($top <= $cardEnd && $bottom >= $cardStart)) {
+                continue;
+            }
+            if ($topCol === 1) {
+                $logo = $entry;
+            } else {
+                $uniforms[] = $entry;
+            }
+        }
+
+        usort($uniforms, function ($a, $b) {
+            $rowDiff = ($a['top_row'] ?? 0) - ($b['top_row'] ?? 0);
+            if ($rowDiff !== 0) {
+                return $rowDiff;
+            }
+            return ($a['top_col'] ?? 0) - ($b['top_col'] ?? 0);
+        });
+
+        return ['logo' => $logo, 'uniforms' => $uniforms];
+    }
+
+    private function columnIndex(string $col): int
+    {
+        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $idx = strpos($alphabet, strtoupper($col));
+        return $idx === false ? 0 : $idx + 1;
     }
 
     private function storeImage(Drawing $drawing, string $folder, string $name): string
