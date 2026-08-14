@@ -13,7 +13,4 @@
     </div>
 
     @vite(['resources/back/js/app.js'])
-    @verbatim
-    <script>window.CSRF_TOKEN = "{{ csrf_token() }}";</script>
-    @endverbatim
 @endsection

@@ -134,22 +134,32 @@ class ChatbotConfigController extends Controller
 
     protected function saveSetting(string $name, string $label, array $value): void
     {
-        $row = \App\Models\Setting::query()
-            ->withTrashed()
-            ->where('name', $name)
-            ->first();
+        try {
+            $row = \App\Models\Setting::query()
+                ->withTrashed()
+                ->where('name', $name)
+                ->first();
 
-        if ($row && $row->trashed()) {
-            $row->restore();
-        }
+            if ($row && $row->trashed()) {
+                $row->forceDelete();
+                $row = null;
+            }
 
-        if (! $row) {
-            $row = new \App\Models\Setting();
-            $row->name = $name;
+            if (! $row) {
+                $row = new \App\Models\Setting();
+                $row->name = $name;
+            }
+            $row->label = $label;
+            $row->value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            $row->status = \App\Models\Setting::STATUS_ACTIVE;
+            $row->save();
+        } catch (\Throwable $e) {
+            Log::error('Failed to save chatbot setting', [
+                'name' => $name,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
         }
-        $row->label = $label;
-        $row->value = json_encode($value, JSON_UNESCAPED_UNICODE);
-        $row->status = \App\Models\Setting::STATUS_ACTIVE;
-        $row->save();
     }
 }

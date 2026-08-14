@@ -212,11 +212,12 @@ function removeHoliday(index) {
 async function save() {
     saving.value = true
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
         const response = await fetch(props.urls.save, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': window.CSRF_TOKEN,
+                'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json',
             },
             body: JSON.stringify(config),
