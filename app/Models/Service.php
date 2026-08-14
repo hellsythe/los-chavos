@@ -26,4 +26,9 @@ class Service extends BaseModel
     {
         return $this->hasMany(Subservice::class);
     }
+
+    public function chatbotInfo()
+    {
+        return $this->hasOne(ServiceChatbotInfo::class);
+    }
 }

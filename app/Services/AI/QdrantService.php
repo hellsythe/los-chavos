@@ -3,6 +3,7 @@
 namespace App\Services\AI;
 
 use App\Models\School;
+use App\Models\ServiceChatbotInfo;
 use App\Models\Uniform;
 use Illuminate\Support\Facades\Log;
 use Qdrant\Endpoints\Collections;
@@ -30,6 +31,8 @@ class QdrantService
 
     protected string $uniformsCollection;
 
+    protected string $servicesCollection;
+
     protected int $vectorSize;
 
     protected string $distance;
@@ -40,6 +43,7 @@ class QdrantService
         $this->apiKey = config('qdrant.api_key') ?: null;
         $this->schoolsCollection = (string) config('qdrant.collections.schools');
         $this->uniformsCollection = (string) config('qdrant.collections.uniforms');
+        $this->servicesCollection = (string) config('qdrant.collections.services');
         $this->vectorSize = (int) config('qdrant.vector_size');
         $this->distance = (string) config('qdrant.distance');
 
@@ -80,6 +84,11 @@ class QdrantService
         return $this->uniformsCollection;
     }
 
+    public function servicesCollection(): string
+    {
+        return $this->servicesCollection;
+    }
+
     /**
      * Create the collections if they don't exist with the proper vector configuration.
      */
@@ -90,7 +99,7 @@ class QdrantService
             ->pluck('name')
             ->all();
 
-        foreach ([$this->schoolsCollection, $this->uniformsCollection] as $name) {
+        foreach ([$this->schoolsCollection, $this->uniformsCollection, $this->servicesCollection] as $name) {
             if (in_array($name, $existing, true)) {
                 continue;
             }
@@ -183,6 +192,52 @@ class QdrantService
         );
     }
 
+    public function upsertService(ServiceChatbotInfo $info): void
+    {
+        $service = $info->service;
+
+        $this->upsertPoint(
+            $this->servicesCollection,
+            $info->id,
+            $this->serviceEmbeddingText($info, $service),
+            $this->servicePayload($info, $service),
+        );
+    }
+
+    public function deleteService(int $id): void
+    {
+        $this->deletePoint($this->servicesCollection, $id);
+    }
+
+    public function serviceEmbeddingText(ServiceChatbotInfo $info, $service): string
+    {
+        $parts = [
+            $service?->name,
+            $info->description,
+            $info->notes,
+        ];
+
+        return implode("\n", array_filter($parts));
+    }
+
+    protected function servicePayload(ServiceChatbotInfo $info, $service): array
+    {
+        return [
+            'type' => 'service',
+            'id' => (int) $info->id,
+            'service_id' => $service ? (int) $service->id : null,
+            'name' => $service?->name,
+            'description' => $info->description,
+            'notes' => $info->notes,
+            'status' => (int) $info->status,
+        ];
+    }
+
+    public function countServices(): int
+    {
+        return $this->countCollection($this->servicesCollection);
+    }
+
     protected function schoolPayload(School $school): array
     {
         return [
@@ -261,7 +316,7 @@ class QdrantService
     }
 
     /**
-     * Search both collections and return normalized chunks for prompt use.
+     * Search all collections and return normalized chunks for prompt use.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -271,8 +326,9 @@ class QdrantService
 
         $schools = $this->searchCollection($this->schoolsCollection, $vector, $topK);
         $uniforms = $this->searchCollection($this->uniformsCollection, $vector, $topK);
+        $services = $this->searchCollection($this->servicesCollection, $vector, $topK);
 
-        return array_merge($schools, $uniforms);
+        return array_merge($schools, $uniforms, $services);
     }
 
     /**
@@ -337,6 +393,19 @@ class QdrantService
             ];
             if (! empty($payload['description'])) {
                 $parts[] = 'Descripción: '.$payload['description'];
+            }
+            return implode("\n", $parts);
+        }
+
+        if ($type === 'service') {
+            $parts = [
+                'Servicio: '.($payload['name'] ?? ''),
+            ];
+            if (! empty($payload['description'])) {
+                $parts[] = 'Descripción: '.$payload['description'];
+            }
+            if (! empty($payload['notes'])) {
+                $parts[] = 'Notas: '.$payload['notes'];
             }
             return implode("\n", $parts);
         }

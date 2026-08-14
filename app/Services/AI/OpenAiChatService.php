@@ -68,6 +68,7 @@ class OpenAiChatService
         string $userQuery,
         array $contextChunks,
         array $history = [],
+        ?string $businessContext = null,
         ?string $systemPrompt = null,
     ): array {
         $systemPrompt ??= (string) config('openai_llm.chat_bot.system_prompt');
@@ -77,6 +78,13 @@ class OpenAiChatService
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt],
         ];
+
+        if ($businessContext !== null && trim($businessContext) !== '') {
+            $messages[] = [
+                'role' => 'system',
+                'content' => "INFORMACIÓN DEL NEGOCIO (fecha actual, horarios, feriados):\n".$businessContext,
+            ];
+        }
 
         if ($contextText !== '') {
             $messages[] = [

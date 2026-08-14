@@ -53,6 +53,7 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::SdkResource('garment', GarmentController::class);
         Route::SdkResource('subservice', SubserviceController::class);
         Route::SdkResource('service', ServiceController::class);
+        Route::SdkResource('service-chatbot-info', ServiceChatbotInfoController::class);
         Route::SdkResource('employee', EmployeeController::class);
         Route::SdkResource('payment', PaymentController::class);
         Route::SdkResource('order-detail', OrderDetailController::class);

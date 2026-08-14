@@ -15,6 +15,7 @@ use App\Models\Typography;
 use App\Models\Garment;
 use App\Models\Subservice;
 use App\Models\Service;
+use App\Models\ServiceChatbotInfo;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Design;
@@ -99,6 +100,7 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Garment::makeMenu('academic-cap'), ['super-admin']);
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
+        $service_menu->addElement(ServiceChatbotInfo::makeMenu('chat-bubble-left-right'), ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
         $service_menu->addElement(Branch::makeMenu('book-open'));
         $service_menu->addElement(Setting::makeMenu('book-open'), ['super-admin']);

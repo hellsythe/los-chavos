@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\School;
+use App\Models\ServiceChatbotInfo;
 use App\Models\Uniform;
 use App\Services\AI\QdrantService;
 use Illuminate\Console\Command;
@@ -10,17 +11,17 @@ use Illuminate\Console\Command;
 class QdrantSync extends Command
 {
     protected $signature = 'app:qdrant-sync
-                            {--type=all : Tipo a sincronizar (all|schools|uniforms)}
+                            {--type=all : Tipo a sincronizar (all|schools|uniforms|services)}
                             {--truncate : Vacía las colecciones antes de sincronizar}
                             {--dry-run : No escribe en Qdrant, solo muestra lo que haría}';
 
-    protected $description = 'Sincroniza escuelas y/o uniformes hacia Qdrant.';
+    protected $description = 'Sincroniza escuelas, uniformes y/o servicios hacia Qdrant.';
 
     public function handle(QdrantService $qdrant): int
     {
         $type = (string) $this->option('type');
-        if (! in_array($type, ['all', 'schools', 'uniforms'], true)) {
-            $this->error('El --type debe ser: all|schools|uniforms');
+        if (! in_array($type, ['all', 'schools', 'uniforms', 'services'], true)) {
+            $this->error('El --type debe ser: all|schools|uniforms|services');
             return self::FAILURE;
         }
 
@@ -34,6 +35,8 @@ class QdrantSync extends Command
             'schools_fail' => 0,
             'uniforms_ok' => 0,
             'uniforms_fail' => 0,
+            'services_ok' => 0,
+            'services_fail' => 0,
             'errors' => [],
         ];
 
@@ -52,6 +55,9 @@ class QdrantSync extends Command
                 if ($type === 'all' || $type === 'uniforms') {
                     $qdrant->truncateCollection($qdrant->uniformsCollection());
                 }
+                if ($type === 'all' || $type === 'services') {
+                    $qdrant->truncateCollection($qdrant->servicesCollection());
+                }
                 $this->warn('Colecciones truncadas.');
             }
         }
@@ -64,11 +70,16 @@ class QdrantSync extends Command
             $this->syncUniforms($qdrant, $dryRun, $stats);
         }
 
+        if ($type === 'all' || $type === 'services') {
+            $this->syncServices($qdrant, $dryRun, $stats);
+        }
+
         if (! $dryRun) {
             $this->newLine();
             $this->info('Conteo en Qdrant después de la sincronización:');
             $this->line('  schools: '.$qdrant->countSchools());
             $this->line('  uniforms: '.$qdrant->countUniforms());
+            $this->line('  services: '.$qdrant->countServices());
         }
 
         $this->newLine();
@@ -78,6 +89,8 @@ class QdrantSync extends Command
             ['schools_fail', $stats['schools_fail']],
             ['uniforms_ok', $stats['uniforms_ok']],
             ['uniforms_fail', $stats['uniforms_fail']],
+            ['services_ok', $stats['services_ok']],
+            ['services_fail', $stats['services_fail']],
         ]);
 
         if (! empty($stats['errors'])) {
@@ -148,6 +161,43 @@ class QdrantSync extends Command
                 } catch (\Throwable $e) {
                     $stats['uniforms_fail']++;
                     $stats['errors'][] = "Uniform #{$uniform->id} ({$uniform->name}): ".$e->getMessage();
+                }
+                $bar->advance();
+            }
+        });
+
+        $bar->finish();
+        $this->newLine();
+    }
+
+    protected function syncServices(QdrantService $qdrant, bool $dryRun, array &$stats): void
+    {
+        $this->info('Sincronizando info de servicios...');
+        $query = ServiceChatbotInfo::query()->where('status', ServiceChatbotInfo::STATUS_ACTIVE)->with('service');
+        $count = $query->count();
+        $this->line("  Total a procesar: {$count}");
+
+        if ($count === 0) {
+            return;
+        }
+
+        $bar = $this->output->createProgressBar($count);
+        $bar->start();
+
+        $query->orderBy('id')->chunk(50, function ($infos) use ($qdrant, $dryRun, $bar, &$stats) {
+            foreach ($infos as $info) {
+                if ($dryRun) {
+                    $stats['services_ok']++;
+                    $bar->advance();
+                    continue;
+                }
+
+                try {
+                    $qdrant->upsertService($info);
+                    $stats['services_ok']++;
+                } catch (\Throwable $e) {
+                    $stats['services_fail']++;
+                    $stats['errors'][] = "ServiceChatbotInfo #{$info->id}: ".$e->getMessage();
                 }
                 $bar->advance();
             }

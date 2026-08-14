@@ -7,6 +7,8 @@ use Sdkconsultoria\Core\Models\Model as BaseModel;
 
 class Setting extends BaseModel
 {
+    protected $fillable = ['name', 'label', 'value', 'status'];
+
     protected function fields()
     {
         return[

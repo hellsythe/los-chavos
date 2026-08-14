@@ -6,6 +6,7 @@ return [
     'collections' => [
         'schools' => env('QDRANT_COLLECTION_SCHOOLS', 'schools'),
         'uniforms' => env('QDRANT_COLLECTION_UNIFORMS', 'uniforms'),
+        'services' => env('QDRANT_COLLECTION_SERVICES', 'services'),
     ],
     'vector_size' => (int) env('EMBEDDING_VECTOR_SIZE', 1536),
     'distance' => \Qdrant\Models\Request\VectorParams::DISTANCE_COSINE,

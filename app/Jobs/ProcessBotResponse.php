@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Services\AI\MediaProcessor;
 use App\Services\AI\OpenAiChatService;
 use App\Services\AI\QdrantService;
+use App\Services\BusinessInfoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,6 +31,7 @@ class ProcessBotResponse implements ShouldQueue
         QdrantService $qdrant,
         OpenAiChatService $chatService,
         MediaProcessor $media,
+        BusinessInfoService $businessInfo,
     ): void {
         $chat = Chat::find($this->chatId);
         if (! $chat || ! $chat->bot) {
@@ -115,11 +117,14 @@ class ProcessBotResponse implements ShouldQueue
 
         $history = $this->buildHistory($chat);
 
+        $businessContext = $businessInfo->getBusinessContext();
+
         try {
             $messages_payload = $chatService->buildBotPrompt(
                 userQuery: $query,
                 contextChunks: $contextChunks,
                 history: $history,
+                businessContext: $businessContext,
             );
 
             if (empty($contextChunks)) {
@@ -222,7 +227,7 @@ class ProcessBotResponse implements ShouldQueue
                         'body' => $text,
                     ],
                 ],
-            ]);
+            ], 'BOT');
         } catch (\Throwable $e) {
             Log::error('Failed to send bot reply', [
                 'chat_id' => $chat->id,
