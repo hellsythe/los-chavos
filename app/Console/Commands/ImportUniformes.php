@@ -110,7 +110,7 @@ class ImportUniformes extends Command
             $sheetDrawings = $imageIndex['drawings'][$sheetName] ?? [];
             $sheetImages = $imageIndex['image_data'][$sheetName] ?? [];
 
-            if ($this->isCardLayout($sheet)) {
+            if ($this->hasCardAnchors($sheet)) {
                 $rows = $this->parseCardLayout($sheet, $level, $defaultCity, $defaultType);
             } else {
                 $rows = $this->parseListLayout($sheet, $level, $defaultCity, $defaultType);
@@ -130,8 +130,9 @@ class ImportUniformes extends Command
                     $this->stats['schools_updated']++;
                 }
 
-                if ($useImages && ! empty($row['images'])) {
-                    $this->attachSchoolLogo($school['model'], $row['images'], $sheetImages, $dryRun);
+                if ($useImages && $row['image_row'] !== null) {
+                    $headerRow = (int) $row['image_row'];
+                    $this->attachSchoolLogo($school['model'], $headerRow, $headerRow + 6, $imageIndex, $sheetName, $dryRun);
                 }
 
                 foreach ($row['uniforms'] as $uniform) {
@@ -146,8 +147,8 @@ class ImportUniformes extends Command
                         $this->stats['uniforms_updated']++;
                     }
 
-                    if ($useImages && ! empty($uniform['images'])) {
-                        $this->attachUniformPhotos($saved['model'], $uniform['images'], $sheetImages, $dryRun);
+                    if ($useImages && ! empty($uniform['desc_row'])) {
+                        $this->attachUniformPhotos($saved['model'], (int) $uniform['desc_row'], $imageIndex, $sheetName, $dryRun);
                     }
                 }
             }
@@ -164,6 +165,22 @@ class ImportUniformes extends Command
     {
         $v = $sheet->getCell('A7')->getValue();
         return $v !== null && stripos((string) $v, 'escuela') !== false;
+    }
+
+    private function hasCardAnchors($sheet): bool
+    {
+        $highestRow = $sheet->getHighestRow();
+        foreach ($sheet->getRowIterator(1, $highestRow) as $rowObj) {
+            $a = (string) $sheet->getCell('A' . $rowObj->getRowIndex())->getValue();
+            if (stripos($this->cleanCell($a), 'escuela') !== false) {
+                return true;
+            }
+            $f = (string) $sheet->getCell('F' . $rowObj->getRowIndex())->getValue();
+            if (stripos($this->cleanCell($f), 'lunes') !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function parseListLayout($sheet, string $level, string $defaultCity, string $defaultType): array
@@ -206,22 +223,19 @@ class ImportUniformes extends Command
         $rows = [];
         $highestRow = $sheet->getHighestRow();
 
-        for ($r = 7; $r <= $highestRow; $r += 9) {
-            $name = $this->cleanCell($sheet->getCell('B' . $r)->getValue());
+        $headerRows = $this->findHeaderRows($sheet, $highestRow);
+
+        foreach ($headerRows as $headerRow) {
+            $name = $this->cleanCell($sheet->getCell('B' . $headerRow)->getValue());
             if ($name === '' || ! $this->looksLikeSchoolName($name)) {
                 continue;
             }
-            $location = $this->cleanCell($sheet->getCell('H' . $r)->getValue());
-            $colonia = $this->cleanCell($sheet->getCell('L' . $r)->getValue());
+            $location = $this->cleanCell($sheet->getCell('H' . $headerRow)->getValue());
+            $colonia = $this->cleanCell($sheet->getCell('L' . $headerRow)->getValue());
             $place = trim($location . ($colonia ? ' / ' . $colonia : ''));
 
-            $imageRow = $r;
-            $generatedImageNames = ["logo_{$r}"];
-            $generatedUniformImages = [
-                'lunes_gala' => $r + 1,
-                'diario' => $r + 5,
-                'edu_fisica' => $r + 7,
-            ];
+            $labelRow = $this->findLabelRow($sheet, $headerRow, $highestRow);
+            $descRow = $labelRow !== null ? $labelRow + 1 : null;
 
             $rows[] = [
                 'name' => $name,
@@ -230,46 +244,79 @@ class ImportUniformes extends Command
                 'city' => $defaultCity,
                 'type' => $defaultType,
                 'description' => null,
-                'uniforms' => $this->buildUniformsFromCard($sheet, $r),
-                'images' => $generatedImageNames,
-                'image_row' => $imageRow,
-                'uniform_images' => $generatedUniformImages,
+                'uniforms' => $labelRow !== null ? $this->buildUniformsFromCard($sheet, $labelRow, $descRow) : [],
+                'images' => [],
+                'image_row' => $headerRow,
+                'uniform_images' => [],
             ];
         }
         return $rows;
     }
 
-    private function buildUniformsFromCard($sheet, int $baseRow): array
+    private function findHeaderRows($sheet, int $highestRow): array
+    {
+        $rows = [];
+        foreach ($sheet->getRowIterator(1, $highestRow) as $rowObj) {
+            $r = $rowObj->getRowIndex();
+            $a = $this->cleanCell($sheet->getCell('A' . $r)->getValue());
+            if (stripos($a, 'escuela') !== false) {
+                $name = $this->cleanCell($sheet->getCell('B' . $r)->getValue());
+                if ($name !== '') {
+                    $rows[] = $r;
+                }
+            }
+        }
+        return $rows;
+    }
+
+    private function findLabelRow($sheet, int $headerRow, int $highestRow): ?int
+    {
+        $limit = min($highestRow, $headerRow + 12);
+        for ($r = $headerRow + 1; $r <= $limit; $r++) {
+            $f = $this->cleanCell($sheet->getCell('F' . $r)->getValue());
+            if (stripos($f, 'lunes') !== false) {
+                return $r;
+            }
+        }
+        return null;
+    }
+
+    private function buildUniformsFromCard($sheet, int $labelRow, ?int $descRow): array
     {
         $uniforms = [];
-        $labelCells = ['F9' => 'lunes_gala', 'K9' => 'diario', 'Q9' => 'edu_fisica'];
-        $isStart = ($baseRow === 7);
-        foreach ($labelCells as $labelCell => $key) {
-            $label = $this->cleanCell($sheet->getCell($labelCell)->getValue());
-            if ($label === '' || stripos($label, 'LUNES') === false && stripos($label, 'DIARIO') === false && stripos($label, 'EDUCACION') === false && stripos($label, 'DEPORTIVO') === false) {
+        $cells = [
+            'F' => 'lunes_gala',
+            'K' => 'diario',
+            'Q' => 'edu_fisica',
+        ];
+        foreach ($cells as $col => $key) {
+            $label = $this->cleanCell($sheet->getCell($col . $labelRow)->getValue());
+            if (stripos($label, 'lunes') === false && stripos($label, 'diario') === false && stripos($label, 'educacion') === false && stripos($label, 'deportivo') === false) {
                 continue;
             }
-            $labelRow = (int) preg_replace('/[A-Z]+/', '', $labelCell);
-            $descRow = $isStart ? ($labelRow + 1) : ($baseRow + $this->offsetRow($key));
-            $descCol = substr($labelCell, 0, -1);
-            $desc = $this->cleanCell($sheet->getCell($descCol . $descRow)->getValue());
+            $desc = $descRow !== null ? $this->cleanCell($sheet->getCell($col . $descRow)->getValue()) : '';
+            $next = $descRow !== null ? $this->cleanCell($sheet->getCell($this->nextCol($col) . $descRow)->getValue()) : '';
+            if ($next !== '') {
+                $desc = trim($desc . ' | ' . $next);
+            }
+            if ($desc === '') {
+                continue;
+            }
             $uniforms[] = [
                 'name' => $this->uniformTypes[$key],
                 'description' => $desc,
-                'images' => ["{$key}_" . $descRow],
+                'images' => [],
+                'desc_row' => $descRow,
             ];
         }
         return $uniforms;
     }
 
-    private function offsetRow(string $key): int
+    private function nextCol(string $col): string
     {
-        return match ($key) {
-            'lunes_gala' => 1,
-            'diario' => 5,
-            'edu_fisica' => 7,
-            default => 1,
-        };
+        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $idx = strpos($alphabet, $col);
+        return $idx !== false && $idx < 25 ? $alphabet[$idx + 1] : $col;
     }
 
     private function looksLikeSchoolName(string $value): bool
@@ -373,41 +420,49 @@ class ImportUniformes extends Command
     private function buildImageIndex($spreadsheet): array
     {
         $imageData = [];
+        $drawingsBySheet = [];
         foreach ($spreadsheet->getSheetNames() as $name) {
             $sheet = $spreadsheet->getSheetByName($name);
             $drawings = $sheet->getDrawingCollection();
+            $drawingsBySheet[$name] = [];
+            $imageData[$name] = [];
             foreach ($drawings as $drawing) {
                 if (! $drawing instanceof Drawing) {
                     continue;
                 }
+                $coords = $this->parseCoordinates($drawing->getCoordinates() ?? '');
+                $anchor = $this->parseCoordinates($drawing->getCoordinates2() ?? $drawing->getCoordinates() ?? '');
+                $entry = [
+                    'drawing' => $drawing,
+                    'sheet' => $name,
+                    'top_row' => $coords['row'],
+                    'top_col' => $coords['col'],
+                    'bottom_row' => $anchor['row'],
+                    'bottom_col' => $anchor['col'],
+                ];
                 $key = $this->drawingKey($drawing);
-                $imageData[$key] = [
-                    'drawing' => $drawing,
-                    'sheet' => $name,
-                    'row' => $drawing->getRow(),
-                    'col' => $drawing->getColumn(),
-                ];
+                $imageData[$name][$key] = $entry;
+                $drawingsBySheet[$name][] = $entry;
             }
         }
-
-        $drawingsBySheet = [];
-        foreach ($spreadsheet->getSheetNames() as $name) {
-            $sheet = $spreadsheet->getSheetByName($name);
-            $drawingsBySheet[$name] = [];
-            foreach ($sheet->getDrawingCollection() as $drawing) {
-                if (! $drawing instanceof Drawing) {
-                    continue;
-                }
-                $drawingsBySheet[$name][] = [
-                    'drawing' => $drawing,
-                    'sheet' => $name,
-                    'row' => $drawing->getRow(),
-                    'col' => $drawing->getColumn(),
-                ];
-            }
-        }
-
         return ['drawings' => $drawingsBySheet, 'image_data' => $imageData];
+    }
+
+    private function parseCoordinates(string $coord): array
+    {
+        $coord = strtoupper(trim($coord));
+        if ($coord === '') {
+            return ['row' => null, 'col' => null];
+        }
+        preg_match('/^([A-Z]+)(\d+)$/', $coord, $m);
+        if (! $m) {
+            return ['row' => null, 'col' => null];
+        }
+        $col = 0;
+        foreach (str_split($m[1]) as $ch) {
+            $col = $col * 26 + (ord($ch) - 64);
+        }
+        return ['row' => (int) $m[2], 'col' => $col];
     }
 
     private function drawingKey(Drawing $drawing): string
@@ -415,9 +470,9 @@ class ImportUniformes extends Command
         return $drawing->getHashCode() ?: spl_object_hash($drawing);
     }
 
-    private function attachSchoolLogo(School $school, array $imageTokens, array $imageIndex, bool $dryRun): void
+    private function attachSchoolLogo(School $school, int $rowStart, int $rowEnd, array $imageIndex, string $sheetName, bool $dryRun): void
     {
-        $image = $this->findImageByToken($imageTokens, $imageIndex);
+        $image = $this->findImageCoveringRow($imageIndex, $sheetName, $rowStart, $rowEnd, $school->name);
         if ($image === null) {
             return;
         }
@@ -436,48 +491,67 @@ class ImportUniformes extends Command
         }
     }
 
-    private function attachUniformPhotos(Uniform $uniform, array $imageTokens, array $imageIndex, bool $dryRun): void
+    private function attachUniformPhotos(Uniform $uniform, ?int $descRow, array $imageIndex, string $sheetName, bool $dryRun): void
     {
-        foreach ($imageTokens as $token) {
-            $image = $this->findImageByToken([$token], $imageIndex);
-            if ($image === null) {
-                continue;
-            }
-            if ($dryRun) {
-                $this->stats['images_uniform']++;
-                continue;
-            }
-            try {
-                $photo = new UniformPhoto();
-                $photo->uniform_id = $uniform->id;
-                $photo->order = ($uniform->photos()->max('order') ?? 0) + 1;
-                $photo->status = UniformPhoto::STATUS_ACTIVE;
-                $photo->save();
+        if ($descRow === null) {
+            return;
+        }
+        $image = $this->findImageCoveringRow($imageIndex, $sheetName, $descRow - 2, $descRow + 1, $uniform->name);
+        if ($image === null) {
+            return;
+        }
+        if ($dryRun) {
+            $this->stats['images_uniform']++;
+            return;
+        }
+        try {
+            $photo = new UniformPhoto();
+            $photo->uniform_id = $uniform->id;
+            $photo->order = ($uniform->photos()->max('order') ?? 0) + 1;
+            $photo->status = UniformPhoto::STATUS_ACTIVE;
+            $photo->save();
 
-                $url = $this->storeImage($image['drawing'], "uniform/" . $uniform->id, (string) $photo->id);
-                $photo->photo = $url;
-                $photo->save();
-                $this->stats['images_uniform']++;
-            } catch (\Throwable $e) {
-                $this->stats['images_failed']++;
-                $this->warn("Foto no guardada para uniforme {$uniform->id}: " . $e->getMessage());
-            }
+            $url = $this->storeImage($image['drawing'], "uniform/" . $uniform->id, (string) $photo->id);
+            $photo->photo = $url;
+            $photo->save();
+            $this->stats['images_uniform']++;
+        } catch (\Throwable $e) {
+            $this->stats['images_failed']++;
+            $this->warn("Foto no guardada para uniforme {$uniform->id}: " . $e->getMessage());
         }
     }
 
-    private function findImageByToken(array $tokens, array $imageIndex): ?array
+    private function findImageCoveringRow(array $imageIndex, ?string $sheetName, int $rowStart, int $rowEnd, string $context): ?array
     {
         $imageData = $imageIndex['image_data'] ?? [];
-        foreach ($tokens as $token) {
-            if (isset($imageData[$token])) {
-                return $imageData[$token];
-            }
-            $matches = array_filter($imageData, fn($img) => str_contains($img['sheet'], $token) || str_contains((string) $img['row'], $token));
-            if (! empty($matches)) {
-                return reset($matches) ?: null;
+        $candidates = [];
+        if ($sheetName !== null && isset($imageData[$sheetName])) {
+            $candidates = $imageData[$sheetName];
+        } elseif ($sheetName === null) {
+            foreach ($imageData as $items) {
+                foreach ($items as $it) {
+                    $candidates[] = $it;
+                }
             }
         }
-        return null;
+        $best = null;
+        $bestDistance = PHP_INT_MAX;
+        foreach ($candidates as $entry) {
+            $top = $entry['top_row'] ?? null;
+            $bottom = $entry['bottom_row'] ?? $top;
+            if ($top === null) {
+                continue;
+            }
+            $centerRow = (int) (($top + $bottom) / 2);
+            if ($centerRow >= $rowStart - 5 && $centerRow <= $rowEnd + 8) {
+                $distance = abs($centerRow - $rowStart);
+                if ($distance < $bestDistance) {
+                    $best = $entry;
+                    $bestDistance = $distance;
+                }
+            }
+        }
+        return $best;
     }
 
     private function storeImage(Drawing $drawing, string $folder, string $name): string
@@ -504,8 +578,23 @@ class ImportUniformes extends Command
     private function readDrawingContents(Drawing $drawing): string
     {
         $path = $drawing->getPath();
-        if ($path && file_exists($path)) {
+        if ($path && file_exists($path) && is_readable($path)) {
             return file_get_contents($path);
+        }
+        if (str_starts_with((string) $path, 'zip://')) {
+            $inner = substr($path, strlen('zip://'));
+            $parts = explode('#', $inner, 2);
+            if (count($parts) === 2) {
+                [$zipPath, $entry] = $parts;
+                $zip = new \ZipArchive();
+                if ($zip->open($zipPath) === true) {
+                    $contents = $zip->getFromName($entry);
+                    $zip->close();
+                    if ($contents !== false) {
+                        return $contents;
+                    }
+                }
+            }
         }
         if (method_exists($drawing, 'getImageData')) {
             $data = $drawing->getImageData();
@@ -516,10 +605,6 @@ class ImportUniformes extends Command
                 return $data;
             }
         }
-        $contents = $drawing->getContents();
-        if (is_string($contents)) {
-            return $contents;
-        }
-        throw new \RuntimeException('No se pudo leer el contenido de la imagen.');
+        throw new \RuntimeException('No se pudo leer el contenido de la imagen (path: ' . $path . ').');
     }
 }

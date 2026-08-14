@@ -16,7 +16,17 @@ class School extends BaseModel
         'nivel_educativo',
         'city',
         'logo',
+        'status',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (! isset($model->status) || $model->status === 0) {
+                $model->status = self::STATUS_ACTIVE;
+            }
+        });
+    }
 
     protected function fields()
     {

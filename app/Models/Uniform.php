@@ -12,7 +12,17 @@ class Uniform extends BaseModel
         'name',
         'school_id',
         'description',
+        'status',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (! isset($model->status) || $model->status === 0) {
+                $model->status = self::STATUS_ACTIVE;
+            }
+        });
+    }
 
     protected function fields()
     {
