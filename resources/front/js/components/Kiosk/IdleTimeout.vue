@@ -9,7 +9,7 @@
                         La pantalla volverá al inicio en
                         <strong>{{ countdown }}</strong> {{ countdown === 1 ? 'segundo' : 'segundos' }}.
                     </p>
-                    <button type="button" class="kiosk-btn-home" @click="reset">
+                    <button type="button" class="kiosk-btn-cta" @click="reset">
                         Seguir aquí
                     </button>
                 </div>

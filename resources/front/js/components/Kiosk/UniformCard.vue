@@ -18,8 +18,8 @@
             <div class="kiosk-uniform-image-overlay" aria-hidden="true"></div>
         </div>
         <div class="kiosk-uniform-body">
-            <p class="kiosk-uniform-meta">{{ uniform.name }}</p>
-            <p class="kiosk-uniform-name line-clamp-2">{{ shortLabel }}</p>
+            <p class="kiosk-uniform-meta">Uniforme</p>
+            <p class="kiosk-uniform-name line-clamp-2">{{ uniform.name }}</p>
         </div>
     </button>
 </template>
@@ -49,10 +49,6 @@ export default {
                 || this.uniform.preview
                 || (this.uniform.photos && this.uniform.photos[0] && this.uniform.photos[0].url)
                 || null;
-        },
-        shortLabel() {
-            // Si name = "LUNES/GALA", mostrar variante inmediatamente más legible.
-            return this.uniform.name;
         },
     },
 };

@@ -53,7 +53,7 @@
                         </div>
                         <h3 class="kiosk-empty-title">No pudimos cargar</h3>
                         <p class="kiosk-empty-text">Revisa tu conexión e intenta de nuevo.</p>
-                        <button type="button" class="kiosk-btn-home" @click="goHome">Volver al inicio</button>
+                        <button type="button" class="kiosk-btn-back" @click="goHome">Volver al inicio</button>
                     </div>
                 </div>
             </transition>
@@ -94,7 +94,7 @@ export default {
     },
     computed: {
         headerEyebrow() {
-            if (this.step === 'schools') return 'Catálogo';
+            if (this.step === 'schools') return 'Catálogo de uniformes';
             if (this.step === 'uniforms') return 'Uniformes';
             if (this.step === 'detail') return 'Detalle';
             return '';

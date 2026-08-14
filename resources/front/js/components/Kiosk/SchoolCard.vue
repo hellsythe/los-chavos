@@ -3,7 +3,6 @@
         <div class="kiosk-school-media">
             <img v-if="school.logo" :src="school.logo" :alt="`Logo de ${school.name}`" />
             <span v-else class="kiosk-school-media-fallback" aria-hidden="true">{{ initials }}</span>
-            <div class="kiosk-school-media-overlay" aria-hidden="true"></div>
             <span v-if="school.nivel_educativo_label" class="kiosk-school-badge">
                 {{ school.nivel_educativo_label }}
             </span>
@@ -16,7 +15,7 @@
                 <span v-if="school.city">{{ school.city }}</span>
             </p>
             <span v-if="school.uniforms_count" class="kiosk-school-count">
-                {{ school.uniforms_count }} {{ school.uniforms_count === 1 ? 'uniforme' : 'uniformes' }}
+                {{ school.uniforms_count }} {{ school.uniforms_count === 1 ? 'uniforme' : 'uniformes' }} disponibles
             </span>
         </div>
     </button>
