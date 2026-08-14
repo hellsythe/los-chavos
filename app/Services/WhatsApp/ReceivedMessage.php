@@ -2,6 +2,7 @@
 
 namespace App\Services\WhatsApp;
 
+use Illuminate\Support\Facades\Log;
 use Sdkconsultoria\WhatsappCloudApi\Events\NewWhatsappMessageHook;
 use Sdkconsultoria\WhatsappCloudApi\Lib\Message\ReceivedMessage as BaseReceivedMessage;
 use Sdkconsultoria\WhatsappCloudApi\Models\Chat;
@@ -13,11 +14,26 @@ class ReceivedMessage extends BaseReceivedMessage
 {
     public function process(array $messageEvent)
     {
-        $phoneNumberId = $messageEvent['metadata']['phone_number_id'];
-        $wabaPhoneNumber = WabaPhone::where('phone_id', $phoneNumberId)->first();
+        $phoneNumberId = $messageEvent['metadata']['phone_number_id'] ?? null;
+        $wabaPhoneNumber = $phoneNumberId ? WabaPhone::where('phone_id', $phoneNumberId)->first() : null;
+
+        if (! isset($messageEvent['messages'][0])) {
+            Log::channel('webhook')->warning('Webhook without messages', ['event' => $messageEvent]);
+            return;
+        }
 
         $content = $messageEvent['messages'][0];
-        $chat = Chat::findOrCreateChat($content['from'], $wabaPhoneNumber);
+        $chat = $wabaPhoneNumber
+            ? Chat::findOrCreateChat($content['from'], $wabaPhoneNumber)
+            : null;
+
+        Log::channel('webhook')->info('Incoming webhook', [
+            'type' => $content['type'],
+            'from' => $content['from'] ?? null,
+            'message_id' => $content['id'] ?? null,
+            'chat_id' => $chat?->id,
+            'has_context' => isset($content['context']['id']),
+        ]);
 
         switch ($content['type']) {
             case 'unsupported':
@@ -44,6 +60,8 @@ class ReceivedMessage extends BaseReceivedMessage
                 break;
         }
 
-        NewWhatsappMessageHook::dispatch(['chat_id' => $chat->id]);
+        if ($chat) {
+            NewWhatsappMessageHook::dispatch(['chat_id' => $chat->id]);
+        }
     }
 }

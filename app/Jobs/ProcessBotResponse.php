@@ -33,6 +33,7 @@ class ProcessBotResponse implements ShouldQueue
     ): void {
         $chat = Chat::find($this->chatId);
         if (! $chat || ! $chat->bot) {
+            Log::channel('bot')->info('Skipped bot job', ['chat_id' => $this->chatId, 'reason' => 'chat not found or bot disabled']);
             return;
         }
 
@@ -45,6 +46,10 @@ class ProcessBotResponse implements ShouldQueue
         if ($lastInbound) {
             $lastInboundAt = $lastInbound instanceof \Carbon\Carbon ? $lastInbound : \Carbon\Carbon::parse($lastInbound);
             if ($lastInboundAt->diffInSeconds(now()) < $debounceTolerance) {
+                Log::channel('bot')->info('Bot job re-delayed (still in debounce window)', [
+                    'chat_id' => $chat->id,
+                    'last_inbound_seconds_ago' => $lastInboundAt->diffInSeconds(now()),
+                ]);
                 self::dispatch($this->chatId)->delay(now()->addSeconds(2));
                 return;
             }
@@ -63,6 +68,7 @@ class ProcessBotResponse implements ShouldQueue
             ->get();
 
         if ($messages->isEmpty()) {
+            Log::channel('bot')->info('No unprocessed messages', ['chat_id' => $chat->id]);
             return;
         }
 
@@ -76,8 +82,16 @@ class ProcessBotResponse implements ShouldQueue
         }
 
         $query = trim(implode("\n", $queryParts));
+
+        Log::channel('bot')->info('Bot processing started', [
+            'chat_id' => $chat->id,
+            'messages_count' => $messages->count(),
+            'query_preview' => mb_substr($query, 0, 200),
+        ]);
+
         if ($query === '') {
             $this->markProcessed($messages);
+            Log::channel('bot')->info('Empty query, marking processed', ['chat_id' => $chat->id]);
             return;
         }
 
@@ -87,8 +101,13 @@ class ProcessBotResponse implements ShouldQueue
 
         try {
             $contextChunks = $qdrant->search($query, (int) config('openai_llm.chat_bot.context_top_k'));
+            Log::channel('bot')->info('Qdrant search', [
+                'chat_id' => $chat->id,
+                'chunks_found' => count($contextChunks),
+                'top_scores' => array_map(fn ($c) => $c['score'] ?? null, array_slice($contextChunks, 0, 3)),
+            ]);
         } catch (\Throwable $e) {
-            Log::error('Qdrant search failed in bot', [
+            Log::channel('bot')->error('Qdrant search failed', [
                 'chat_id' => $chat->id,
                 'error' => $e->getMessage(),
             ]);
@@ -105,11 +124,12 @@ class ProcessBotResponse implements ShouldQueue
 
             if (empty($contextChunks)) {
                 $replyText = (string) config('openai_llm.chat_bot.no_context_message');
+                Log::channel('bot')->info('No context, using fallback message', ['chat_id' => $chat->id]);
             } else {
                 $replyText = $chatService->chat($messages_payload);
             }
         } catch (\Throwable $e) {
-            Log::error('OpenAI chat failed in bot', [
+            Log::channel('bot')->error('OpenAI chat failed', [
                 'chat_id' => $chat->id,
                 'error' => $e->getMessage(),
             ]);
@@ -119,6 +139,12 @@ class ProcessBotResponse implements ShouldQueue
         if ($error !== null) {
             $replyText = (string) config('openai_llm.chat_bot.fallback_message');
         }
+
+        Log::channel('bot')->info('Bot reply generated', [
+            'chat_id' => $chat->id,
+            'reply_preview' => mb_substr($replyText, 0, 200),
+            'reply_length' => mb_strlen($replyText),
+        ]);
 
         $this->sendReply($chat, $replyText);
 

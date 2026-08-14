@@ -63,6 +63,20 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
+        'webhook' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/webhook.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
+        'bot' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/bot.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

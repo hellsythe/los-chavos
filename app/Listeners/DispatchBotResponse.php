@@ -36,10 +36,17 @@ class DispatchBotResponse
         $chat->setAttribute('bot_pending_response_at', now()->addSeconds($debounce));
         $chat->save();
 
+        Log::channel('bot')->info('Bot dispatch scheduled', [
+            'chat_id' => $chat->id,
+            'client_phone' => $chat->client_phone,
+            'debounce_seconds' => $debounce,
+            'run_at' => now()->addSeconds($debounce)->toIso8601String(),
+        ]);
+
         try {
             ProcessBotResponse::dispatch($chat->id)->delay(now()->addSeconds($debounce));
         } catch (\Throwable $e) {
-            Log::error('Failed to dispatch ProcessBotResponse', [
+            Log::channel('bot')->error('Failed to dispatch ProcessBotResponse', [
                 'chat_id' => $chat->id,
                 'error' => $e->getMessage(),
             ]);
