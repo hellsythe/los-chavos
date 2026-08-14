@@ -126,6 +126,9 @@ class OrderController extends ResourceController
                 if (!auth()->user()->hasRole(['super-admin', 'Punto de venta'])) {
                     abort(403);
                 }
+                if ($order->missing_payment >= 1) {
+                    return redirect('admin/order/' . $id);
+                }
                 $order->delivery_at = date('Y-m-d');
 
                 (new WhatsappNotification())->sendOrderIsDeliveryNotification($order);

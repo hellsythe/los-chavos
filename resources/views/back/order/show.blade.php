@@ -19,9 +19,16 @@
                     class="btn btn-active mt-1 w-full lg:w-64 mr-1">Marcar que el pedido llego</a>
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Punto de venta']) && $model->getRawOriginal('status') == $model::STATUS_READY)
-                <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH]) }}"
-                    {!! $model->missing_payment>0 ? 'data-question="¿Esta orden tiene saldo pendiente de $'.number_format($model->missing_payment, 2).', desea marcarlo como entregado de todas formas?"':'' !!}
-                    class="btn btn-active mt-1 w-full lg:w-64 mr-1 question">Marcar como Entregado</a>
+                @if ($model->missing_payment >= 1)
+                    <div class="tooltip w-full lg:w-64 mr-1" data-tip="Registra el pago pendiente para poder entregar">
+                        <button class="btn btn-active btn-disabled mt-1 w-full lg:w-64 mr-1">
+                            Entrega bloqueada: adeudo ${{ number_format($model->missing_payment, 2) }}
+                        </button>
+                    </div>
+                @else
+                    <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_FINISH]) }}"
+                        class="btn btn-active mt-1 w-full lg:w-64 mr-1">Marcar como Entregado</a>
+                @endif
             @endif
             @if (auth()->user()->hasRole(['super-admin', 'Bordador', 'Estampador']) && $model->getRawOriginal('status') == $model::STATUS_PENDING)
                 <a href="{{ route('order.update.status', ['id' => $model->id, 'status' => $model::STATUS_READY]) }}"
