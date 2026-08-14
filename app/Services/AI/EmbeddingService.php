@@ -41,6 +41,15 @@ class EmbeddingService
             return array_fill(0, $this->vectorSize, 0.0);
         }
 
+        if (empty($this->apiKey)) {
+            Log::channel('bot')->error('OPEN_AI_API_KEY is empty - check .env file');
+            throw new \RuntimeException('OPEN_AI_API_KEY is not configured');
+        }
+
+        if (! str_starts_with($this->apiKey, 'sk-')) {
+            Log::channel('bot')->warning('OPEN_AI_API_KEY does not start with sk- - may be invalid');
+        }
+
         $cacheKey = 'embed:'.sha1($this->model.':'.$text);
 
         return Cache::remember($cacheKey, now()->addDay(), function () use ($text) {
