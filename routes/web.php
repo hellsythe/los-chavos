@@ -5,6 +5,7 @@ use App\Services\WhatsappNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\Admin\ChatbotConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,8 @@ Route::namespace('\App\Http\Controllers\Admin')
         Route::get('embrodery/calendar', 'CalendarController@index')->name('embrodery.calendar');
         Route::get('chat', 'ChatController@index')->name('chat.index');
         Route::get('unread', 'ChatController@unread')->name('chat.unread');
+        Route::get('chatbot-config', [ChatbotConfigController::class, 'index'])->name('chatbot-config.index');
+        Route::post('chatbot-config', [ChatbotConfigController::class, 'update'])->name('chatbot-config.update');
     });
 Route::get('aviso-privacidad', '\App\Http\Controllers\StaticSiteController@privacy');
 Route::get('/', function () {

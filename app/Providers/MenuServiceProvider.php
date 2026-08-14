@@ -101,6 +101,13 @@ class MenuServiceProvider extends ServiceProvider
         $service_menu->addElement(Service::makeMenu('book-open'), ['super-admin']);
         $service_menu->addElement(Subservice::makeMenu('hashtag'), ['super-admin']);
         $service_menu->addElement(ServiceChatbotInfo::makeMenu('chat-bubble-left-right'), ['super-admin']);
+        $service_menu->addElement([
+            'name' => 'Configuración Chatbot',
+            'icon' => Base::icon('cog-6-tooth', ['class' => 'h-6 w-6']),
+            'url' => 'chatbot-config.index',
+            'crud' => '',
+            'extra_urls' => [],
+        ], ['super-admin']);
         $service_menu->addElement(\App\Models\User::makeMenu('users'), ['super-admin']);
         $service_menu->addElement(Branch::makeMenu('book-open'));
         $service_menu->addElement(Setting::makeMenu('book-open'), ['super-admin']);
