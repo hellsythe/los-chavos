@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\School;
 use App\Models\Uniform;
 use App\Models\UniformPhoto;
+use App\Support\QdrantSync;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -21,7 +22,8 @@ class ImportUniformes extends Command
                             {--default-type=publica : Tipo por defecto (publica/privada)}
                             {--mode=upsert : Política de duplicados (upsert|skip|create)}
                             {--level= : Procesar solo un nivel (kinder|primaria|secundaria|bachillerato|universidad|otro)}
-                            {--clean-images : Elimina todas las imágenes existentes (uniformes y logos) antes de importar}';
+                            {--clean-images : Elimina todas las imágenes existentes (uniformes y logos) antes de importar}
+                            {--skip-qdrant : No sincronizar con Qdrant (corre app:qdrant-sync al final)}';
 
     protected $description = 'Importa escuelas y uniformes desde el archivo BASE DE DATOS DE UNIFORME.xlsm';
 
@@ -50,6 +52,7 @@ class ImportUniformes extends Command
         'images_uniform' => 0,
         'images_failed' => 0,
         'rows_total' => 0,
+        'qdrant_skipped' => false,
     ];
 
     public function handle(): int
@@ -85,14 +88,23 @@ class ImportUniformes extends Command
         $levelFilter = $this->option('level');
         $dryRun = (bool) $this->option('dry-run');
         $cleanImages = (bool) $this->option('clean-images');
+        $skipQdrant = (bool) $this->option('skip-qdrant');
 
         $this->info("Cargando archivo: $path");
         $this->info("Modo: " . ($useImages ? 'CON imágenes' : 'SAFE (sin imágenes)'));
         $this->info("Dry-run: " . ($dryRun ? 'SI' : 'NO'));
         $this->info("Duplicados: $mode");
         $this->info("Clean images: " . ($cleanImages ? 'SI' : 'NO'));
+        $this->info("Skip Qdrant: " . ($skipQdrant ? 'SI' : 'NO'));
         $this->info("Ciudad default: $defaultCity | Tipo default: $defaultType");
         $this->newLine();
+
+        if ($skipQdrant && ! $dryRun) {
+            $this->info('Importación con --skip-qdrant: los observers de School/Uniform NO sincronizarán con Qdrant.');
+            $this->info('Recuerda correr después: php artisan app:qdrant-sync');
+            $this->stats['qdrant_skipped'] = true;
+            QdrantSync::setBypass(true);
+        }
 
         if ($cleanImages && ! $dryRun) {
             $this->cleanExistingImages();
@@ -184,6 +196,12 @@ class ImportUniformes extends Command
         $this->newLine();
         $this->info('=== RESUMEN ===');
         $this->table(['Clave', 'Valor'], collect($this->stats)->map(fn($v, $k) => [$k, $v])->values()->toArray());
+
+        if ($skipQdrant && ! $dryRun) {
+            QdrantSync::setBypass(false);
+            $this->newLine();
+            $this->warn('Para sincronizar con Qdrant ejecuta: php artisan app:qdrant-sync');
+        }
 
         return self::SUCCESS;
     }

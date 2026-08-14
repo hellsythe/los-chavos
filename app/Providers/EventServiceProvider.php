@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Listeners\DispatchBotResponse;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Sdkconsultoria\WhatsappCloudApi\Events\NewWhatsappMessageHook;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        NewWhatsappMessageHook::class => [
+            DispatchBotResponse::class,
         ],
     ];
 
