@@ -153,3 +153,12 @@ Route::namespace('Sdkconsultoria\WhatsappCloudApi\Http\Controllers')
     ->group(\WhatsappCloudApi::routes());
 
 Route::ResourceView('template');
+
+Route::namespace('\App\Http\Controllers\Kiosk')->group(function () {
+    Route::get('/kiosk/{any?}', 'UniformCatalogController@index')->where('any', '.*');
+    Route::prefix('api/kiosk')->group(function () {
+        Route::get('/schools', 'UniformCatalogController@schools');
+        Route::get('/schools/{id}', 'UniformCatalogController@school');
+        Route::get('/uniforms/{id}', 'UniformCatalogController@uniform');
+    });
+});
