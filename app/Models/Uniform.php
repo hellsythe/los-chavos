@@ -38,16 +38,6 @@ class Uniform extends BaseModel
                 ->addExtra('valueName', 'id'),
             TextField::make('description')->label('Descripción')->rules(['nullable'])->searchable(true),
             FileField::make('preview')->setDisk('uniform/')->label('Imagen principal')->rules(['nullable', 'mimes:jpg,jpeg,png,webp'])->rulesUpdate(['nullable', 'mimes:jpg,jpeg,png,webp'])->searchable(false),
-            CustomField::make('school_name')
-                ->rules(['nullable'])
-                ->label('Escuela')
-                ->canBeSaved(false)
-                ->searchable(true),
-            CustomField::make('school_location')
-                ->rules(['nullable'])
-                ->label('Localidad')
-                ->canBeSaved(false)
-                ->searchable(true),
         ];
     }
 
@@ -62,6 +52,16 @@ class Uniform extends BaseModel
     public function getIndexFields()
     {
         return ['name', 'school_name', 'description'];
+    }
+
+    public function getParseSearchFilters()
+    {
+        return [
+            ['field' => 'name'],
+            ['field' => 'description'],
+            ['field' => 'school_name'],
+            ['field' => 'school_location'],
+        ];
     }
 
     public function school()
