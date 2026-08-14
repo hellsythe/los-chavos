@@ -12,11 +12,11 @@ class School extends BaseModel
     protected $fillable = [
         'name',
         'location',
+        'colonia',
         'type',
         'nivel_educativo',
         'city',
         'logo',
-        'status',
     ];
 
     protected static function booted(): void
@@ -33,6 +33,7 @@ class School extends BaseModel
         return [
             TextField::make('name')->label('Nombre')->rules(['required']),
             TextField::make('location')->label('Localidad')->rules(['required']),
+            TextField::make('colonia')->label('Colonia')->rules(['nullable']),
             CustomField::make('type')
                 ->rules(['required'])
                 ->label('Tipo')

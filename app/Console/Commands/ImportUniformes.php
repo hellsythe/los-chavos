@@ -20,7 +20,8 @@ class ImportUniformes extends Command
                             {--default-city=Tierra Blanca : Ciudad por defecto}
                             {--default-type=publica : Tipo por defecto (publica/privada)}
                             {--mode=upsert : Política de duplicados (upsert|skip|create)}
-                            {--level= : Procesar solo un nivel (kinder|primaria|secundaria|bachillerato|universidad|otro)}';
+                            {--level= : Procesar solo un nivel (kinder|primaria|secundaria|bachillerato|universidad|otro)}
+                            {--clean-images : Elimina todas las imágenes existentes (uniformes y logos) antes de importar}';
 
     protected $description = 'Importa escuelas y uniformes desde el archivo BASE DE DATOS DE UNIFORME.xlsm';
 
@@ -83,13 +84,19 @@ class ImportUniformes extends Command
         }
         $levelFilter = $this->option('level');
         $dryRun = (bool) $this->option('dry-run');
+        $cleanImages = (bool) $this->option('clean-images');
 
         $this->info("Cargando archivo: $path");
         $this->info("Modo: " . ($useImages ? 'CON imágenes' : 'SAFE (sin imágenes)'));
         $this->info("Dry-run: " . ($dryRun ? 'SI' : 'NO'));
         $this->info("Duplicados: $mode");
+        $this->info("Clean images: " . ($cleanImages ? 'SI' : 'NO'));
         $this->info("Ciudad default: $defaultCity | Tipo default: $defaultType");
         $this->newLine();
+
+        if ($cleanImages && ! $dryRun) {
+            $this->cleanExistingImages();
+        }
 
         $spreadsheet = IOFactory::load($path);
         $sheetNames = $spreadsheet->getSheetNames();
@@ -252,7 +259,6 @@ class ImportUniformes extends Command
             }
             $location = $this->cleanCell($sheet->getCell('H' . $headerRow)->getValue());
             $colonia = $this->cleanCell($sheet->getCell('L' . $headerRow)->getValue());
-            $place = trim($location . ($colonia ? ' / ' . $colonia : ''));
 
             $labelRow = $this->findLabelRow($sheet, $headerRow, $highestRow);
             $descRow = $labelRow !== null ? $labelRow + 1 : null;
@@ -260,7 +266,8 @@ class ImportUniformes extends Command
             $rows[] = [
                 'name' => $name,
                 'level' => $level,
-                'location' => $place !== '' ? $place : $location,
+                'location' => $location,
+                'colonia' => $colonia,
                 'city' => $defaultCity,
                 'type' => $defaultType,
                 'description' => null,
@@ -390,6 +397,7 @@ class ImportUniformes extends Command
         if ($existing && $mode === 'upsert') {
             $existing->fill([
                 'location' => $row['location'] ?? $existing->location,
+                'colonia' => $row['colonia'] ?? $existing->colonia,
                 'city' => $row['city'] ?? $existing->city,
                 'type' => $row['type'] ?? $existing->type,
             ]);
@@ -400,6 +408,7 @@ class ImportUniformes extends Command
         $school = School::create([
             'name' => $row['name'],
             'location' => $row['location'] ?? '',
+            'colonia' => $row['colonia'] ?? null,
             'type' => $row['type'],
             'nivel_educativo' => $row['level'],
             'city' => $row['city'],
@@ -492,6 +501,41 @@ class ImportUniformes extends Command
         return $drawing->getHashCode() ?: spl_object_hash($drawing);
     }
 
+    private function cleanExistingImages(): void
+    {
+        $this->info('Limpiando imágenes existentes...');
+
+        $deletedFiles = 0;
+        foreach (UniformPhoto::all() as $photo) {
+            $url = $photo->photo;
+            if ($url && strpos($url, '/storage/') !== false) {
+                $relative = substr($url, strpos($url, '/storage/') + strlen('/storage/'));
+                if (Storage::disk('public')->exists($relative)) {
+                    Storage::disk('public')->delete($relative);
+                    $deletedFiles++;
+                }
+            }
+        }
+        UniformPhoto::query()->delete();
+        $this->info("  UniformPhoto eliminadas: " . UniformPhoto::count() . " (archivos borrados: $deletedFiles)");
+
+        $deletedFiles = 0;
+        foreach (School::all() as $school) {
+            if ($school->logo) {
+                $url = $school->logo;
+                if (strpos($url, '/storage/') !== false) {
+                    $relative = substr($url, strpos($url, '/storage/') + strlen('/storage/'));
+                    if (Storage::disk('public')->exists($relative)) {
+                        Storage::disk('public')->delete($relative);
+                        $deletedFiles++;
+                    }
+                }
+            }
+        }
+        School::query()->update(['logo' => null]);
+        $this->info("  Logos eliminados de schools (archivos borrados: $deletedFiles)");
+    }
+
     private function attachSchoolLogo(School $school, int $imageRow, array $imageIndex, string $sheetName, bool $dryRun): void
     {
         $image = $this->findImageAtCell($imageIndex, $sheetName, $imageRow, 1);
@@ -503,8 +547,18 @@ class ImportUniformes extends Command
             return;
         }
         try {
+            $sourceKey = $this->drawingSourceKey($image['drawing']);
+            if ($sourceKey !== null && $school->logo) {
+                $stored = $this->logoSourceKeys[$school->id] ?? $this->loadLogoSourceKey($school);
+                if ($stored === $sourceKey) {
+                    return;
+                }
+            }
             $url = $this->storeImage($image['drawing'], "school/" . $school->id, 'logo');
             $school->logo = $url;
+            if ($sourceKey !== null) {
+                $this->logoSourceKeys[$school->id] = $sourceKey;
+            }
             $school->save();
             $this->stats['images_logo']++;
         } catch (\Throwable $e) {
@@ -513,17 +567,47 @@ class ImportUniformes extends Command
         }
     }
 
+    private function loadLogoSourceKey(School $school): ?string
+    {
+        $stored = $school->logo;
+        if ($stored === null) {
+            return null;
+        }
+        $file = basename(dirname($stored)) . '/' . basename($stored);
+        return 'logo:' . $file;
+    }
+
     private function attachUniformPhotos(Uniform $uniform, array $image, bool $dryRun): void
     {
+        $sourceKey = $this->drawingSourceKey($image['drawing']);
+
         if ($dryRun) {
-            $this->stats['images_uniform']++;
+            $exists = $sourceKey !== null
+                ? UniformPhoto::where('uniform_id', $uniform->id)->where('source_key', $sourceKey)->exists()
+                : false;
+            if (! $exists) {
+                $this->stats['images_uniform']++;
+            }
             return;
         }
+
+        if ($sourceKey !== null) {
+            $existing = UniformPhoto::where('uniform_id', $uniform->id)
+                ->where('source_key', $sourceKey)
+                ->first();
+            if ($existing !== null) {
+                return;
+            }
+        }
+
         try {
             $photo = new UniformPhoto();
             $photo->uniform_id = $uniform->id;
             $photo->order = ($uniform->photos()->max('order') ?? 0) + 1;
             $photo->status = UniformPhoto::STATUS_ACTIVE;
+            if ($sourceKey !== null) {
+                $photo->source_key = $sourceKey;
+            }
             $photo->save();
 
             $url = $this->storeImage($image['drawing'], "uniform/" . $uniform->id, (string) $photo->id);
@@ -534,6 +618,27 @@ class ImportUniformes extends Command
             $this->stats['images_failed']++;
             $this->warn("Foto no guardada para uniforme {$uniform->id}: " . $e->getMessage());
         }
+    }
+
+    private function drawingSourceKey($drawing): ?string
+    {
+        if ($drawing === null) {
+            return null;
+        }
+        if (method_exists($drawing, 'getHashCode') && $drawing->getHashCode()) {
+            return 'hash:' . $drawing->getHashCode();
+        }
+        $path = $drawing->getPath() ?? '';
+        if ($path !== '') {
+            if (str_starts_with($path, 'zip://')) {
+                $parts = explode('#', $path, 2);
+                if (count($parts) === 2) {
+                    return 'zip:' . $parts[1];
+                }
+            }
+            return 'file:' . $path;
+        }
+        return null;
     }
 
     private function findImageAtCell(array $imageIndex, ?string $sheetName, int $row, int $colIndex): ?array

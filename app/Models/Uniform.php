@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Sdkconsultoria\Base\Fields\CustomField;
+use Sdkconsultoria\Core\Fields\FileField;
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
 
@@ -12,6 +13,7 @@ class Uniform extends BaseModel
         'name',
         'school_id',
         'description',
+        'preview',
         'status',
     ];
 
@@ -35,6 +37,7 @@ class Uniform extends BaseModel
                 ->setComponent('SelectedField')
                 ->addExtra('valueName', 'id'),
             TextField::make('description')->label('Descripción')->rules(['nullable'])->searchable(true),
+            FileField::make('preview')->setDisk('uniform/')->label('Imagen principal')->rules(['nullable', 'mimes:jpg,jpeg,png,webp'])->rulesUpdate(['nullable', 'mimes:jpg,jpeg,png,webp'])->searchable(false),
             CustomField::make('school_name')
                 ->rules(['nullable'])
                 ->label('Escuela')
