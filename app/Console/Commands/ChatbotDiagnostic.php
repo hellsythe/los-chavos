@@ -10,7 +10,8 @@ class ChatbotDiagnostic extends Command
 {
     protected $signature = 'app:chatbot-diagnostic
                             {--date= : Fecha a simular (Y-m-d)}
-                            {--show-context : Imprime el contexto completo del bot}';
+                            {--show-context : Imprime el contexto completo del bot}
+                            {--show-prompt : Imprime el system prompt que se envía a OpenAI}';
 
     protected $description = 'Diagnostica qué información del negocio verá el bot';
 
@@ -71,6 +72,17 @@ class ChatbotDiagnostic extends Command
             $this->warn('⚠️  Si el contexto dice "cerrado" o "no configurado" y tú guardaste un horario, ejecuta:');
             $this->line('  php artisan cache:clear');
             $this->line('  sudo supervisorctl restart los-chavos-worker:*');
+        }
+
+        if ($this->option('show-prompt')) {
+            $this->info('=== 7. SYSTEM PROMPT ACTIVO EN CONFIG ===');
+            $prompt = (string) config('openai_llm.chat_bot.system_prompt');
+            $this->line($prompt);
+            $this->newLine();
+
+            $this->info('=== 8. SYSTEM PROMPT EN BD (si fue configurado vía .env) ===');
+            $envPrompt = env('CHAT_BOT_SYSTEM_PROMPT');
+            $this->line($envPrompt ?: '(no está en .env, usa el default)');
         }
 
         return self::SUCCESS;

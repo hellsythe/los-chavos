@@ -48,7 +48,54 @@ cd /var/www/vhosts/los-chavos.com
 php artisan queue:monitor
 ```
 
-## 5. Comandos útiles
+## 5. Actualizar configuración del chatbot no se refleja — qué hacer
+
+El worker PHP mantiene las clases y OPcache en memoria entre jobs. Aunque la cache de Laravel (archivo) se invalida al guardar, el proceso del worker puede seguir usando código viejo.
+
+**Diagnóstico rápido:**
+
+```bash
+ssh tu-usuario@plesk
+cd /var/www/vhosts/los-chavos.site/httpdocs
+
+# 1. Verificar que los datos están guardados en la DB
+php artisan tinker --execute='
+echo \App\Models\Setting::where("name", "business_hours")->first()?->value . PHP_EOL;
+'
+
+# 2. Probar el BusinessInfoService directamente (sin worker)
+php artisan tinker --execute='
+echo app(\App\Services\BusinessInfoService::class)->getBusinessContext() . PHP_EOL;
+'
+
+# 3. Si el paso 2 muestra datos nuevos, el problema es el worker → reinicia
+# 4. Si el paso 2 muestra datos viejos, el problema es el guardado → revisa logs
+```
+
+**Forzar recarga (3 pasos críticos):**
+
+```bash
+# 1. Limpiar todas las caches
+php artisan optimize:clear
+
+# 2. Reiniciar el worker (esto recarga OPcache y memoria)
+sudo supervisorctl restart los-chavos-worker:*
+
+# 3. Verificar
+sudo supervisorctl status los-chavos-worker:*
+
+# 4. Probar mandando un WhatsApp de prueba
+```
+
+**Configuración óptima del worker para auto-refresh:**
+
+La config actual usa `--max-time=3600` que reinicia el proceso cada hora. Si quieres que se reinicie más frecuentemente (ej. cada 15 min) para evitar stale caches, edita el conf:
+
+```ini
+command=... artisan queue:work ... --max-time=900   # 15 min
+```
+
+## 6. Comandos útiles
 
 ```bash
 # Reiniciar el worker (recomendado tras deploy)
