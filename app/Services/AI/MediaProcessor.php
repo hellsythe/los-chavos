@@ -60,11 +60,34 @@ class MediaProcessor
             }
 
             $fileSize = filesize($localPath);
+            $fileHeader = $this->readFileHeader($localPath, 16);
+            $detectedFormat = $this->detectAudioFormat($fileHeader);
+
             Log::channel('bot')->info('Audio file downloaded for transcription', [
                 'url' => $publicUrl,
                 'local_path' => $localPath,
                 'file_size' => $fileSize,
+                'detected_format' => $detectedFormat,
+                'first_bytes_hex' => strtoupper(bin2hex($fileHeader)),
             ]);
+
+            if ($fileSize < 100) {
+                Log::channel('bot')->warning('Audio file too small, likely empty', [
+                    'url' => $publicUrl,
+                    'file_size' => $fileSize,
+                ]);
+                @unlink($localPath);
+                return null;
+            }
+
+            if ($detectedFormat === null) {
+                Log::channel('bot')->warning('Audio file format not recognized', [
+                    'url' => $publicUrl,
+                    'first_bytes_hex' => strtoupper(bin2hex($fileHeader)),
+                ]);
+                @unlink($localPath);
+                return null;
+            }
 
             $response = Http::withToken($this->apiKey)
                 ->timeout($this->timeout)
@@ -106,10 +129,69 @@ class MediaProcessor
             Log::channel('bot')->error('Audio transcription error', [
                 'url' => $publicUrl,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
             return null;
         }
+    }
+
+    /**
+     * Read the first N bytes of a file, returning null if the file can't be read.
+     */
+    protected function readFileHeader(string $path, int $bytes = 16): string
+    {
+        $handle = @fopen($path, 'rb');
+        if (! $handle) {
+            return '';
+        }
+        $data = @fread($handle, $bytes);
+        @fclose($handle);
+        return $data ?: '';
+    }
+
+    /**
+     * Detect the audio format from the file's magic bytes.
+     * Returns null if the format is unrecognized.
+     */
+    protected function detectAudioFormat(string $header): ?string
+    {
+        if (strlen($header) < 4) {
+            return null;
+        }
+
+        // OGG: starts with "OggS"
+        if (substr($header, 0, 4) === 'OggS') {
+            return 'ogg';
+        }
+
+        // RIFF/WAV: starts with "RIFF" + "WAVE"
+        if (substr($header, 0, 4) === 'RIFF' && substr($header, 8, 4) === 'WAVE') {
+            return 'wav';
+        }
+
+        // FLAC: starts with "fLaC"
+        if (substr($header, 0, 4) === 'fLaC') {
+            return 'flac';
+        }
+
+        // MP3: "ID3" tag or 0xFF 0xFB/0xFA/0xF3/0xF2 sync
+        if (substr($header, 0, 3) === 'ID3') {
+            return 'mp3';
+        }
+        if (ord($header[0]) === 0xFF && in_array(ord($header[1]) & 0xE0, [0xE0], true)) {
+            return 'mp3';
+        }
+
+        // MP4/M4A: ... at offset 4 is "ftyp"
+        if (substr($header, 4, 4) === 'ftyp') {
+            return 'mp4';
+        }
+
+        // WebM: starts with EBML header
+        if (ord($header[0]) === 0x1A && ord($header[1]) === 0x45 && ord($header[2]) === 0xDF && ord($header[3]) === 0xA3) {
+            return 'webm';
+        }
+
+        return null;
     }
 
     protected function describeImage(string $publicUrl): ?string
@@ -156,15 +238,16 @@ class MediaProcessor
     }
 
     /**
-     * Download a public file URL to a local temp file.
+     * Download a public file URL to a local temp file (preserving extension).
      */
     protected function downloadToTemp(string $publicUrl): ?string
     {
         try {
+            $extension = $this->extractExtension($publicUrl);
             $relative = $this->publicUrlToRelativePath($publicUrl);
             if ($relative && Storage::disk('public')->exists($relative)) {
                 $absolute = Storage::disk('public')->path($relative);
-                $tmp = tempnam(sys_get_temp_dir(), 'mc_');
+                $tmp = tempnam(sys_get_temp_dir(), 'mc_') . $extension;
                 if (! copy($absolute, $tmp)) {
                     Log::channel('bot')->error('Failed to copy local file to temp', [
                         'absolute' => $absolute,
@@ -175,7 +258,7 @@ class MediaProcessor
                 return $tmp;
             }
 
-            $tmp = tempnam(sys_get_temp_dir(), 'mc_');
+            $tmp = tempnam(sys_get_temp_dir(), 'mc_') . $extension;
             $response = Http::timeout($this->timeout)->get($publicUrl);
             if ($response->failed()) {
                 Log::channel('bot')->error('HTTP download failed', [
@@ -201,6 +284,19 @@ class MediaProcessor
             ]);
             return null;
         }
+    }
+
+    /**
+     * Extract the file extension from a URL (e.g., ".ogg", ".jpg").
+     */
+    protected function extractExtension(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        if (! $path) {
+            return '';
+        }
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+        return $ext !== '' ? '.' . $ext : '';
     }
 
     protected function publicUrlToRelativePath(string $publicUrl): ?string

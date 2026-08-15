@@ -41,5 +41,9 @@ return [
             'CHAT_BOT_FALLBACK_MESSAGE',
             "Tuve un problema al procesar tu mensaje. Un asesor te contactará en breve. 🙏"
         ),
+        'media_transcription_failed' => env(
+            'CHAT_BOT_MEDIA_TRANSCRIPTION_FAILED',
+            "No pude transcribir tu mensaje. ¿Me lo puedes escribir o grabar de nuevo?"
+        ),
     ],
 ];

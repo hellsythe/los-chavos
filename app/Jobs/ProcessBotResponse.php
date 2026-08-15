@@ -96,7 +96,18 @@ class ProcessBotResponse implements ShouldQueue
 
         if ($query === '') {
             $this->markProcessed($messages);
-            Log::channel('bot')->info('Empty query, marking processed', ['chat_id' => $chat->id]);
+            $hasUnintelligibleMedia = $messages->contains(function ($m) {
+                return in_array($m->type, ['audio', 'image'], true);
+            });
+            if ($hasUnintelligibleMedia) {
+                $this->sendReply(
+                    $chat,
+                    (string) config('openai_llm.chat_bot.media_transcription_failed')
+                );
+                Log::channel('bot')->info('Sent media-transcription-fallback', ['chat_id' => $chat->id]);
+            } else {
+                Log::channel('bot')->info('Empty query, marking processed', ['chat_id' => $chat->id]);
+            }
             return;
         }
 
