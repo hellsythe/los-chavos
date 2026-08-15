@@ -19,6 +19,7 @@ use App\Services\WhatsApp\ReceivedMessage;
 use Illuminate\Support\ServiceProvider;
 use App\Listeners\UserEventSubscriber;
 use Illuminate\Support\Facades\Event;
+use Sdkconsultoria\WhatsappCloudApi\Http\Controllers\ChatController as SdkChatController;
 use Sdkconsultoria\WhatsappCloudApi\Lib\Message\ReceivedMessage as SdkReceivedMessage;
 use Sdkconsultoria\WhatsappCloudApi\Models\Chat;
 
@@ -36,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(BusinessInfoService::class, fn () => new BusinessInfoService());
 
         $this->app->singleton(SdkReceivedMessage::class, fn ($app) => new ReceivedMessage());
+        $this->app->singleton(SdkChatController::class, fn ($app) => new \App\Http\Controllers\Whatsapp\ChatController());
     }
 
     /**

@@ -34,6 +34,7 @@ class DispatchBotResponse
 
         $chat->setAttribute('bot_last_inbound_at', now());
         $chat->setAttribute('bot_pending_response_at', now()->addSeconds($debounce));
+        $chat->setAttribute('last_message', now());
         $chat->save();
 
         Log::channel('bot')->info('Bot dispatch scheduled', [
