@@ -101,8 +101,11 @@ class ProcessBotResponse implements ShouldQueue
         $replyText = null;
         $error = null;
 
+        $history = $this->buildHistory($chat);
+        $searchQuery = $this->enrichQueryWithHistory($query, $history);
+
         try {
-            $contextChunks = $qdrant->search($query, (int) config('openai_llm.chat_bot.context_top_k'));
+            $contextChunks = $qdrant->search($searchQuery, (int) config('openai_llm.chat_bot.context_top_k'));
             Log::channel('bot')->info('Qdrant search', [
                 'chat_id' => $chat->id,
                 'chunks_found' => count($contextChunks),
@@ -122,8 +125,7 @@ class ProcessBotResponse implements ShouldQueue
         $topScore = $this->getTopScore($contextChunks);
         $minScore = (float) config('openai_llm.chat_bot.min_relevance_score', 0.3);
 
-        $isOffTopic = $this->isOffTopic($query, $topScore, $minScore);
-
+        $isOffTopic = $this->isOffTopic($searchQuery, $topScore, $minScore);
         try {
             $messages_payload = $chatService->buildBotPrompt(
                 userQuery: $query,
@@ -311,5 +313,26 @@ class ProcessBotResponse implements ShouldQueue
         }
 
         return false;
+    }
+
+    /**
+     * If the current query is short/ambiguous (e.g., "y el de educación física?"),
+     * enrich it with the most recent user message from history so the search
+     * can find the relevant school.
+     */
+    protected function enrichQueryWithHistory(string $query, array $history): string
+    {
+        $current = mb_strtolower(trim($query));
+        if (mb_strlen($current) < 60 && ! empty($history)) {
+            foreach (array_reverse($history) as $msg) {
+                if (($msg['role'] ?? '') === 'user') {
+                    $userMsg = mb_strtolower(trim($msg['content'] ?? ''));
+                    if (mb_strlen($userMsg) > 10) {
+                        return $userMsg . ' | ' . $query;
+                    }
+                }
+            }
+        }
+        return $query;
     }
 }

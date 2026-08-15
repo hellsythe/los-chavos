@@ -325,7 +325,81 @@ class QdrantService
         $uniforms = $this->searchCollection($this->uniformsCollection, $vector, $topK);
         $services = $this->searchCollection($this->servicesCollection, $vector, $topK);
 
+        $detectedSchoolIds = $this->detectSchoolIds($query, $schools);
+        if (! empty($detectedSchoolIds)) {
+            $schoolUniforms = $this->getUniformsBySchoolIds($detectedSchoolIds);
+            $existingIds = array_column($uniforms, 'id');
+            foreach ($schoolUniforms as $uni) {
+                if (! in_array($uni['id'], $existingIds, true)) {
+                    $uniforms[] = $uni;
+                }
+            }
+        }
+
         return array_merge($schools, $uniforms, $services);
+    }
+
+    /**
+     * Detect school IDs from the query by matching the school name against the query text.
+     * Returns the IDs of schools whose name appears (case-insensitive) in the query.
+     *
+     * @param  array<int, array<string, mixed>>  $schoolsResult
+     * @return array<int, int>
+     */
+    protected function detectSchoolIds(string $query, array $schoolsResult): array
+    {
+        $queryNormalized = mb_strtolower(trim($query));
+        if ($queryNormalized === '') {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($schoolsResult as $school) {
+            $name = mb_strtolower($school['label'] ?? '');
+            if ($name === '' || mb_strlen($name) < 3) {
+                continue;
+            }
+            if (mb_strpos($queryNormalized, $name) !== false) {
+                $payloadId = $school['payload']['id'] ?? null;
+                if ($payloadId !== null) {
+                    $ids[] = (int) $payloadId;
+                }
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
+    /**
+     * Fetch all uniforms for the given school IDs directly from the DB and normalize them
+     * to the same chunk format as Qdrant results.
+     *
+     * @param  array<int, int>  $schoolIds
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getUniformsBySchoolIds(array $schoolIds): array
+    {
+        if (empty($schoolIds)) {
+            return [];
+        }
+
+        $uniforms = \App\Models\Uniform::with('school')
+            ->whereIn('school_id', $schoolIds)
+            ->where('status', \App\Models\Uniform::STATUS_ACTIVE)
+            ->get();
+
+        $out = [];
+        foreach ($uniforms as $uniform) {
+            $out[] = [
+                'type' => 'uniform',
+                'id' => (int) $uniform->id,
+                'label' => (string) $uniform->name,
+                'text' => $this->payloadToText('uniform', $this->uniformPayload($uniform, $uniform->school)),
+                'score' => 1.0,
+                'payload' => $this->uniformPayload($uniform, $uniform->school),
+            ];
+        }
+        return $out;
     }
 
     /**
