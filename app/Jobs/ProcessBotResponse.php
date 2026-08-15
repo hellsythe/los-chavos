@@ -166,9 +166,14 @@ class ProcessBotResponse implements ShouldQueue
             'chat_id' => $chat->id,
             'reply_preview' => mb_substr($replyText, 0, 200),
             'reply_length' => mb_strlen($replyText),
+            'is_off_topic' => $isOffTopic,
         ]);
 
         $this->sendReply($chat, $replyText);
+
+        if (! $isOffTopic) {
+            $this->sendUniformPhotos($chat, $contextChunks);
+        }
 
         $this->markProcessed($messages);
     }
@@ -251,6 +256,94 @@ class ProcessBotResponse implements ShouldQueue
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Send photos of uniforms that were used in the context.
+     * Called after the text response when the bot has uniforms in the context.
+     */
+    protected function sendUniformPhotos(Chat $chat, array $contextChunks, int $maxPhotos = 6): void
+    {
+        $uniformIds = $this->extractUniformIds($contextChunks);
+        if (empty($uniformIds)) {
+            return;
+        }
+
+        $photos = \App\Models\UniformPhoto::query()
+            ->whereIn('uniform_id', $uniformIds)
+            ->where('status', \App\Models\UniformPhoto::STATUS_ACTIVE)
+            ->orderBy('uniform_id')
+            ->orderBy('order')
+            ->limit($maxPhotos)
+            ->get();
+
+        if ($photos->isEmpty()) {
+            return;
+        }
+
+        $uniformCache = \App\Models\Uniform::with('school')
+            ->whereIn('id', $uniformIds)
+            ->get()
+            ->keyBy('id');
+
+        foreach ($photos as $photo) {
+            $uniform = $uniformCache->get($photo->uniform_id);
+            if (! $uniform || empty($photo->photo)) {
+                continue;
+            }
+
+            $caption = sprintf(
+                "%s — %s%s",
+                $uniform->name,
+                $uniform->school ? $uniform->school->name : '',
+                $uniform->description ? "\n" . $uniform->description : ''
+            );
+
+            try {
+                resolve(SendMessage::class)->Send([
+                    'waba_phone_id' => $chat->waba_phone_id,
+                    'to' => $chat->client_phone,
+                    'message' => [
+                        'type' => 'image',
+                        'image' => [
+                            'link' => $photo->photo,
+                            'caption' => mb_substr($caption, 0, 1024),
+                        ],
+                    ],
+                ], 'BOT');
+            } catch (\Throwable $e) {
+                Log::channel('bot')->warning('Failed to send uniform photo', [
+                    'chat_id' => $chat->id,
+                    'photo_id' => $photo->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        Log::channel('bot')->info('Sent uniform photos', [
+            'chat_id' => $chat->id,
+            'count' => $photos->count(),
+            'uniform_ids' => $uniformIds,
+        ]);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $contextChunks
+     * @return array<int, int>
+     */
+    protected function extractUniformIds(array $contextChunks): array
+    {
+        $ids = [];
+        foreach ($contextChunks as $chunk) {
+            if (($chunk['type'] ?? '') !== 'uniform') {
+                continue;
+            }
+            $payloadId = $chunk['payload']['id'] ?? null;
+            if ($payloadId !== null) {
+                $ids[] = (int) $payloadId;
+            }
+        }
+        return array_values(array_unique($ids));
     }
 
     protected function markProcessed($messages): void

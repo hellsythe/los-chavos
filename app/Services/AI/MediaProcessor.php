@@ -33,6 +33,10 @@ class MediaProcessor
     public function extractText(string $type, ?string $mediaUrl, array $rawContent): ?string
     {
         if (! $mediaUrl) {
+            Log::channel('bot')->warning('MediaProcessor: empty media url', [
+                'type' => $type,
+                'rawContent' => $rawContent,
+            ]);
             return null;
         }
 
@@ -49,8 +53,18 @@ class MediaProcessor
         try {
             $localPath = $this->downloadToTemp($publicUrl);
             if (! $localPath) {
+                Log::channel('bot')->warning('Audio transcription: downloadToTemp returned null', [
+                    'url' => $publicUrl,
+                ]);
                 return null;
             }
+
+            $fileSize = filesize($localPath);
+            Log::channel('bot')->info('Audio file downloaded for transcription', [
+                'url' => $publicUrl,
+                'local_path' => $localPath,
+                'file_size' => $fileSize,
+            ]);
 
             $response = Http::withToken($this->apiKey)
                 ->timeout($this->timeout)
@@ -69,7 +83,8 @@ class MediaProcessor
             @unlink($localPath);
 
             if ($response->failed()) {
-                Log::error('Whisper transcription failed', [
+                Log::channel('bot')->error('Whisper transcription failed', [
+                    'url' => $publicUrl,
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
@@ -78,9 +93,21 @@ class MediaProcessor
 
             $body = trim((string) $response->body());
 
-            return $body !== '' ? '[Audio transcrito]: '.$body : null;
+            if ($body === '') {
+                Log::channel('bot')->warning('Whisper returned empty text', [
+                    'url' => $publicUrl,
+                    'file_size' => $fileSize,
+                ]);
+                return null;
+            }
+
+            return '[Audio transcrito]: '.$body;
         } catch (\Throwable $e) {
-            Log::error('Audio transcription error', ['error' => $e->getMessage()]);
+            Log::channel('bot')->error('Audio transcription error', [
+                'url' => $publicUrl,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return null;
         }
     }
@@ -138,21 +165,39 @@ class MediaProcessor
             if ($relative && Storage::disk('public')->exists($relative)) {
                 $absolute = Storage::disk('public')->path($relative);
                 $tmp = tempnam(sys_get_temp_dir(), 'mc_');
-                copy($absolute, $tmp);
+                if (! copy($absolute, $tmp)) {
+                    Log::channel('bot')->error('Failed to copy local file to temp', [
+                        'absolute' => $absolute,
+                        'tmp' => $tmp,
+                    ]);
+                    return null;
+                }
                 return $tmp;
             }
 
             $tmp = tempnam(sys_get_temp_dir(), 'mc_');
-            $content = Http::timeout($this->timeout)->get($publicUrl)->body();
+            $response = Http::timeout($this->timeout)->get($publicUrl);
+            if ($response->failed()) {
+                Log::channel('bot')->error('HTTP download failed', [
+                    'url' => $publicUrl,
+                    'status' => $response->status(),
+                ]);
+                return null;
+            }
+            $content = $response->body();
             if (! $content) {
+                Log::channel('bot')->warning('HTTP download returned empty body', [
+                    'url' => $publicUrl,
+                ]);
                 return null;
             }
             file_put_contents($tmp, $content);
             return $tmp;
         } catch (\Throwable $e) {
-            Log::error('Media download failed', [
+            Log::channel('bot')->error('Media download failed', [
                 'url' => $publicUrl,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             return null;
         }
