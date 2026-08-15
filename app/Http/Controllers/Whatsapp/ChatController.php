@@ -12,11 +12,11 @@ class ChatController extends SdkChatController
     protected function defaultOptions($models, Request $request)
     {
         $lastMessageSubquery = DB::table('messages')
-            ->selectRaw('MAX(timestamp)')
+            ->selectRaw('MAX(CAST(timestamp AS UNSIGNED))')
             ->whereColumn('chat_id', 'chats.id');
 
         return $models
-            ->orderByRaw('COALESCE((' . $lastMessageSubquery->toSql() . '), chats.updated_at, chats.created_at) DESC')
+            ->orderByRaw('COALESCE((' . $lastMessageSubquery->toSql() . '), UNIX_TIMESTAMP(chats.last_message), UNIX_TIMESTAMP(chats.updated_at), UNIX_TIMESTAMP(chats.created_at)) DESC')
             ->orderBy('chats.id', 'DESC');
     }
 }
