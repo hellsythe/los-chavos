@@ -183,18 +183,16 @@ const lastSaved = ref(null)
 const config = reactive(JSON.parse(JSON.stringify(props.initialConfig)))
 
 function ensureHourShape(day) {
-    if (config.business_hours[day] === undefined) {
+    if (!config.business_hours[day]) {
         config.business_hours[day] = { closed: false, open: '09:00', close: '18:00' }
+        return
     }
-    if (config.business_hours[day].closed === undefined) {
-        config.business_hours[day].closed = true
+    const d = config.business_hours[day]
+    if (d.closed === undefined) {
+        d.closed = !(d.open && d.close)
     }
-    if (config.business_hours[day].open === undefined) {
-        config.business_hours[day].open = ''
-    }
-    if (config.business_hours[day].close === undefined) {
-        config.business_hours[day].close = ''
-    }
+    if (!d.open) d.open = ''
+    if (!d.close) d.close = ''
 }
 
 for (const d of Object.keys(dayLabels)) {

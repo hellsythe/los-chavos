@@ -13,21 +13,52 @@ class ChatbotConfigController extends Controller
     {
         $service = app(BusinessInfoService::class);
 
+        $hours = $service->getHours();
+        if ($hours === null) {
+            $hours = $this->defaultHours();
+        }
+        $hours = $this->fillClosedField($hours);
+
+        $holidays = $service->getHolidays() ?? [];
+
+        $info = $service->getBusinessInfo() ?? [
+            'business_name' => '',
+            'address' => '',
+            'phone' => '',
+            'email' => '',
+        ];
+
         return view('back.chatbot-config.index', [
             'config' => [
-                'business_hours' => $service->getHours() ?? $this->defaultHours(),
-                'business_holidays' => $service->getHolidays() ?? [],
-                'business_info' => $service->getBusinessInfo() ?? [
-                    'business_name' => '',
-                    'address' => '',
-                    'phone' => '',
-                    'email' => '',
-                ],
+                'business_hours' => $hours,
+                'business_holidays' => $holidays,
+                'business_info' => $info,
             ],
             'urls' => [
                 'save' => route('chatbot-config.update'),
             ],
         ]);
+    }
+
+    /**
+     * Ensure every day object has a `closed` boolean — Vue toggle depends on it.
+     */
+    protected function fillClosedField(array $hours): array
+    {
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        $out = [];
+        foreach ($days as $day) {
+            $d = $hours[$day] ?? ['closed' => false];
+            if (! isset($d['closed'])) {
+                $d['closed'] = empty($d['open']) || empty($d['close']);
+            }
+            if (empty($d['open']) || empty($d['close'])) {
+                $d['open'] = $d['open'] ?? '09:00';
+                $d['close'] = $d['close'] ?? '18:00';
+            }
+            $out[$day] = $d;
+        }
+        return $out;
     }
 
     public function update(Request $request)
