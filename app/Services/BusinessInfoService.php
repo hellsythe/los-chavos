@@ -94,8 +94,12 @@ class BusinessInfoService
         }
 
         $dayKey = $this->dayKey($now->dayOfWeekIso);
+        $day = $hours[$dayKey] ?? null;
+        if ($day === null) {
+            return null;
+        }
 
-        return $hours[$dayKey] ?? null;
+        return $this->normalizeDay($day);
     }
 
     /**
@@ -162,7 +166,33 @@ class BusinessInfoService
             return null;
         }
 
-        return $decoded;
+        $out = [];
+        foreach ($decoded as $day => $cfg) {
+            $out[$day] = $this->normalizeDay($cfg);
+        }
+        return $out;
+    }
+
+    /**
+     * Normalize a day config to always have `closed` (bool) and optionally `open`/`close`.
+     * A day is considered closed if `closed === true` OR if `open`/`close` are missing.
+     */
+    protected function normalizeDay(mixed $cfg): array
+    {
+        if (! is_array($cfg)) {
+            return ['closed' => true];
+        }
+
+        $hasOpen = ! empty($cfg['open']);
+        $hasClose = ! empty($cfg['close']);
+        $isClosed = (bool) ($cfg['closed'] ?? false) || ! $hasOpen || ! $hasClose;
+
+        $out = ['closed' => $isClosed];
+        if (! $isClosed) {
+            $out['open'] = (string) $cfg['open'];
+            $out['close'] = (string) $cfg['close'];
+        }
+        return $out;
     }
 
     /**
@@ -220,8 +250,8 @@ class BusinessInfoService
             return false;
         }
 
-        $open = CarbonImmutable::parse($hours['open'], $at->getTimezone());
-        $close = CarbonImmutable::parse($hours['close'], $at->getTimezone());
+        $open = $at->copy()->setTimeFromTimeString($hours['open']);
+        $close = $at->copy()->setTimeFromTimeString($hours['close']);
 
         return $at->between($open, $close);
     }
