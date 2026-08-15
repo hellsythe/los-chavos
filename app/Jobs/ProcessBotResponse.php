@@ -75,9 +75,11 @@ class ProcessBotResponse implements ShouldQueue
         }
 
         $queryParts = [];
+        $messageTypes = [];
 
         foreach ($messages as $message) {
             $text = $this->extractMessageText($message, $media);
+            $messageTypes[] = $message->type . ($text ? '' : '(no_text)');
             if ($text !== null && trim($text) !== '') {
                 $queryParts[] = $text;
             }
@@ -88,6 +90,7 @@ class ProcessBotResponse implements ShouldQueue
         Log::channel('bot')->info('Bot processing started', [
             'chat_id' => $chat->id,
             'messages_count' => $messages->count(),
+            'message_types' => $messageTypes,
             'query_preview' => mb_substr($query, 0, 200),
         ]);
 
