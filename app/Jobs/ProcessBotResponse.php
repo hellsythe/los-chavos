@@ -119,6 +119,11 @@ class ProcessBotResponse implements ShouldQueue
 
         $businessContext = $businessInfo->getBusinessContext();
 
+        $topScore = $this->getTopScore($contextChunks);
+        $minScore = (float) config('openai_llm.chat_bot.min_relevance_score', 0.3);
+
+        $isOffTopic = $this->isOffTopic($query, $topScore, $minScore);
+
         try {
             $messages_payload = $chatService->buildBotPrompt(
                 userQuery: $query,
@@ -127,7 +132,14 @@ class ProcessBotResponse implements ShouldQueue
                 businessContext: $businessContext,
             );
 
-            if (empty($contextChunks)) {
+            if ($isOffTopic) {
+                $replyText = (string) config('openai_llm.chat_bot.off_topic_message');
+                Log::channel('bot')->info('Off-topic detected, using off-topic message', [
+                    'chat_id' => $chat->id,
+                    'top_score' => $topScore,
+                    'query' => mb_substr($query, 0, 100),
+                ]);
+            } elseif (empty($contextChunks)) {
                 $replyText = (string) config('openai_llm.chat_bot.no_context_message');
                 Log::channel('bot')->info('No context, using fallback message', ['chat_id' => $chat->id]);
             } else {
@@ -241,5 +253,63 @@ class ProcessBotResponse implements ShouldQueue
         $now = now();
         $ids = $messages->pluck('id')->all();
         Message::query()->whereIn('id', $ids)->update(['processed_by_bot_at' => $now]);
+    }
+
+    protected function getTopScore(array $contextChunks): ?float
+    {
+        if (empty($contextChunks)) {
+            return null;
+        }
+        $scores = array_map(fn ($c) => $c['score'] ?? null, $contextChunks);
+        $scores = array_filter($scores, fn ($s) => $s !== null);
+        if (empty($scores)) {
+            return null;
+        }
+        return max($scores);
+    }
+
+    /**
+     * Detect off-topic queries using two signals:
+     * 1. Heuristic: common Spanish question words about unrelated topics.
+     * 2. Semantic: top Qdrant score below threshold (means the query is not about our data).
+     */
+    protected function isOffTopic(string $query, ?float $topScore, float $minScore): bool
+    {
+        $normalized = mb_strtolower(trim($query));
+        if ($normalized === '') {
+            return true;
+        }
+
+        $offTopicPatterns = [
+            '/\bcapital de\b/iu',
+            '/\bpor qu[eé]\b/iu',
+            '/\bqu[eé]\s+es\b/iu',
+            '/\bqu[eé]\s+son\b/iu',
+            '/\bcu[aá]ndo\s+(naci[oó]|se fund[oó]|empez[oó]|termin[oó]|fue descubierto)\b/iu',
+            '/\bqui[eé]n\s+(descubri[oó]|invent[oó]|fue|cre[oó])\b/iu',
+            '/\bc[oó]mo\s+(se hace|funciona|se prepara|se hace un)\b/iu',
+            '/\bdime\s+(un chiste|algo de|qu[eé] sabes de)\b/iu',
+            '/\bcu[eé]ntame\s+(un|algo|sobre)\b/iu',
+            '/\bqu[eé]\s+(d[ií]a es|hora es|tiempo hace|pasó)\b/iu',
+            '/\bqu[eé]\s+(planetas?|idiomas?|continentes?|pa[ií]ses?|animales?)\b/iu',
+            '/\bprogramaci[oó]n\b/iu',
+            '/\bmatem[aá]ticas?\b/iu',
+            '/\bhistoria\s+de\b/iu',
+            '/\breceta\s+de\b/iu',
+            '/\bel\s+tiempo\b/iu',
+            '/\bel\s+clima\b/iu',
+        ];
+
+        foreach ($offTopicPatterns as $pattern) {
+            if (preg_match($pattern, $normalized)) {
+                return true;
+            }
+        }
+
+        if ($topScore !== null && $topScore < $minScore) {
+            return true;
+        }
+
+        return false;
     }
 }
