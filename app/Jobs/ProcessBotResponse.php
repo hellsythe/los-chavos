@@ -297,6 +297,7 @@ class ProcessBotResponse implements ShouldQueue
             ->get()
             ->keyBy('id');
 
+        $sent = 0;
         foreach ($photos as $photo) {
             $uniform = $uniformCache->get($photo->uniform_id);
             if (! $uniform || empty($photo->photo)) {
@@ -310,32 +311,67 @@ class ProcessBotResponse implements ShouldQueue
                 $uniform->description ? "\n" . $uniform->description : ''
             );
 
-            try {
-                resolve(SendMessage::class)->Send([
-                    'waba_phone_id' => $chat->waba_phone_id,
-                    'to' => $chat->client_phone,
-                    'message' => [
-                        'type' => 'image',
-                        'image' => [
-                            'link' => $photo->photo,
-                            'caption' => mb_substr($caption, 0, 1024),
-                        ],
-                    ],
-                ], 'BOT');
-            } catch (\Throwable $e) {
-                Log::channel('bot')->warning('Failed to send uniform photo', [
-                    'chat_id' => $chat->id,
-                    'photo_id' => $photo->id,
-                    'error' => $e->getMessage(),
-                ]);
+            if ($this->sendImageDirect($chat, $photo->photo, $caption)) {
+                $sent++;
             }
         }
 
         Log::channel('bot')->info('Sent uniform photos', [
             'chat_id' => $chat->id,
-            'count' => $photos->count(),
+            'count' => $sent,
+            'attempted' => $photos->count(),
             'uniform_ids' => $uniformIds,
         ]);
+    }
+
+    /**
+     * Send an image to WhatsApp using MessageService directly,
+     * bypassing the SDK's SendMessage which fails for already-public URLs.
+     */
+    protected function sendImageDirect(Chat $chat, string $imageUrl, string $caption): bool
+    {
+        try {
+            $messageService = resolve(\Sdkconsultoria\WhatsappCloudApi\Services\MessageService::class);
+            $response = $messageService->sendMessage(
+                $chat->wabaPhone->phone_id,
+                $chat->client_phone,
+                [
+                    'type' => 'image',
+                    'image' => [
+                        'link' => $imageUrl,
+                        'caption' => mb_substr($caption, 0, 1024),
+                    ],
+                ]
+            );
+
+            $messageId = $response['messages'][0]['id'] ?? null;
+
+            $messageModel = new Message();
+            $messageModel->chat_id = $chat->id;
+            $messageModel->message_id = $messageId;
+            $messageModel->timestamp = time();
+            $messageModel->status = Message::STATUS_SEND;
+            $messageModel->type = 'image';
+            $messageModel->body = json_encode([
+                'type' => 'image',
+                'image' => [
+                    'link' => $imageUrl,
+                    'caption' => $caption,
+                ],
+            ]);
+            $messageModel->direction = 'toClient';
+            $messageModel->sended_by = 'BOT';
+            $messageModel->save();
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::channel('bot')->warning('Failed to send image', [
+                'chat_id' => $chat->id,
+                'url' => $imageUrl,
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
     }
 
     /**
