@@ -11,7 +11,6 @@ class ChatController extends SdkChatController
     protected function defaultOptions($models, Request $request)
     {
         return $models
-            ->orderByRaw('COALESCE(last_message, updated_at) DESC')
             ->orderBy('id', 'DESC');
     }
 }
