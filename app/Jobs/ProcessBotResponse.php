@@ -120,9 +120,11 @@ class ProcessBotResponse implements ShouldQueue
 
         try {
             $contextChunks = $qdrant->search($searchQuery, (int) config('openai_llm.chat_bot.context_top_k'));
+            $relevantSchoolIds = $this->detectSchoolIdsFromContext($contextChunks);
             Log::channel('bot')->info('Qdrant search', [
                 'chat_id' => $chat->id,
                 'chunks_found' => count($contextChunks),
+                'relevant_school_ids' => $relevantSchoolIds,
                 'top_scores' => array_map(fn ($c) => $c['score'] ?? null, array_slice($contextChunks, 0, 3)),
             ]);
         } catch (\Throwable $e) {
@@ -183,7 +185,7 @@ class ProcessBotResponse implements ShouldQueue
         $this->sendReply($chat, $replyText);
 
         if (! $isOffTopic) {
-            $this->sendUniformPhotos($chat, $contextChunks);
+            $this->sendUniformPhotos($chat, $contextChunks, $relevantSchoolIds);
         }
 
         $this->markProcessed($messages);
@@ -272,12 +274,43 @@ class ProcessBotResponse implements ShouldQueue
     /**
      * Send photos of uniforms that were used in the context.
      * Called after the text response when the bot has uniforms in the context.
+     * Only sends photos for uniforms belonging to the detected schools
+     * (if any school was detected in the query).
      */
-    protected function sendUniformPhotos(Chat $chat, array $contextChunks, int $maxPhotos = 6): void
+    protected function sendUniformPhotos(Chat $chat, array $contextChunks, array $relevantSchoolIds = [], int $maxPhotos = 6): void
     {
         $uniformIds = $this->extractUniformIds($contextChunks);
         if (empty($uniformIds)) {
             return;
+        }
+
+        // Build per-uniform school map so we can filter by relevant school
+        $uniformSchoolById = [];
+        foreach ($contextChunks as $chunk) {
+            if (($chunk['type'] ?? '') !== 'uniform') {
+                continue;
+            }
+            $payloadId = $chunk['payload']['id'] ?? null;
+            $schoolId = $chunk['payload']['school_id'] ?? null;
+            if ($payloadId !== null && $schoolId !== null) {
+                $uniformSchoolById[(int) $payloadId] = (int) $schoolId;
+            }
+        }
+
+        // If we detected relevant schools, only send photos for uniforms of those schools
+        if (! empty($relevantSchoolIds)) {
+            $uniformIds = array_filter($uniformIds, function ($uid) use ($uniformSchoolById, $relevantSchoolIds) {
+                $schoolId = $uniformSchoolById[$uid] ?? null;
+                return $schoolId !== null && in_array($schoolId, $relevantSchoolIds, true);
+            });
+            $uniformIds = array_values($uniformIds);
+            if (empty($uniformIds)) {
+                Log::channel('bot')->info('No uniforms match relevant schools', [
+                    'chat_id' => $chat->id,
+                    'relevant_school_ids' => $relevantSchoolIds,
+                ]);
+                return;
+            }
         }
 
         $photos = \App\Models\UniformPhoto::query()
@@ -383,6 +416,28 @@ class ProcessBotResponse implements ShouldQueue
         $ids = [];
         foreach ($contextChunks as $chunk) {
             if (($chunk['type'] ?? '') !== 'uniform') {
+                continue;
+            }
+            $payloadId = $chunk['payload']['id'] ?? null;
+            if ($payloadId !== null) {
+                $ids[] = (int) $payloadId;
+            }
+        }
+        return array_values(array_unique($ids));
+    }
+
+    /**
+     * Detect school IDs from the context chunks by looking at the school records.
+     * Used to filter photos to only the relevant school's uniforms.
+     *
+     * @param  array<int, array<string, mixed>>  $contextChunks
+     * @return array<int, int>
+     */
+    protected function detectSchoolIdsFromContext(array $contextChunks): array
+    {
+        $ids = [];
+        foreach ($contextChunks as $chunk) {
+            if (($chunk['type'] ?? '') !== 'school') {
                 continue;
             }
             $payloadId = $chunk['payload']['id'] ?? null;
