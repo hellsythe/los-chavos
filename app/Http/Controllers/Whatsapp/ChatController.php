@@ -15,8 +15,14 @@ class ChatController extends SdkChatController
             ->selectRaw('MAX(CAST(timestamp AS UNSIGNED))')
             ->whereColumn('chat_id', 'chats.id');
 
-        return $models
+        $query = $models
             ->orderByRaw('COALESCE((' . $lastMessageSubquery->toSql() . '), UNIX_TIMESTAMP(chats.last_message), UNIX_TIMESTAMP(chats.updated_at), UNIX_TIMESTAMP(chats.created_at)) DESC')
             ->orderBy('chats.id', 'DESC');
+
+        if ($request->boolean('unread')) {
+            $query->where('chats.unread_messages', '>', 0);
+        }
+
+        return $query;
     }
 }

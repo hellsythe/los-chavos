@@ -51,6 +51,16 @@ window.Echo.channel(`new_whatsapp_message`)
 
     });
 
+    window.addEventListener('chat:unread-updated', (e) => {
+        messages = e.detail;
+        if (messages > 0) {
+            loadMessages();
+        } else {
+            const existing = menu.getElementsByClassName('badge')[0];
+            if (existing) existing.remove();
+        }
+    });
+
     fetch('/admin/unread').then(response => response.json()).then(data => {
         messages = data;
         if(messages > 0){
