@@ -2,21 +2,36 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\School;
-use Illuminate\Http\Request;
 use Sdkconsultoria\Core\Controllers\ResourceController;
 
 class SchoolController extends ResourceController
 {
     protected $model = \App\Models\School::class;
 
-    public function show(Request $request, $id)
+    protected function customFilters($query, $request)
     {
-        $model = $this->model::findModel($id);
-        $model->isAuthorize('view');
+        $id = $request->input('id');
+        if ($id !== null && $id !== '') {
+            $query->where('id', $id);
+            return $query;
+        }
 
-        return view('back.school.show', [
-            'model' => $model,
-        ]);
+        $name = $request->input('name');
+        if ($name !== null && $name !== '') {
+            $term = '%' . $name . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)
+                  ->orWhere('location', 'like', $term)
+                  ->orWhere('city', 'like', $term)
+                  ->orWhere('colonia', 'like', $term);
+            });
+        }
+
+        $pagination = (int) $request->input('pagination', 0);
+        if ($pagination > 0 && $pagination <= 100) {
+            $this->pagination = $pagination;
+        }
+
+        return $query;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Sdkconsultoria\Base\Fields\CustomField;
+use App\Fields\TypeaheadFormField;
 use Sdkconsultoria\Core\Fields\FileField;
 use Sdkconsultoria\Core\Fields\TextField;
 use Sdkconsultoria\Core\Models\Model as BaseModel;
@@ -30,11 +30,10 @@ class Uniform extends BaseModel
     {
         return [
             TextField::make('name')->label('Nombre')->rules(['required'])->searchable(true),
-            CustomField::make('school_id')
+            TypeaheadFormField::make('school_id')
                 ->rules(['required'])
                 ->label('Escuela')
-                ->loadOptionsFromUrl('/admin/school/api')
-                ->setComponent('SelectedField')
+                ->loadOptionsFromUrl('/admin/school/api?name={search}&page=1')
                 ->addExtra('valueName', 'id'),
             TextField::make('description')->label('Descripción')->rules(['nullable'])->searchable(true),
             FileField::make('preview')->setDisk('uniform/')->label('Imagen principal')->rules(['nullable', 'mimes:jpg,jpeg,png,webp'])->rulesUpdate(['nullable', 'mimes:jpg,jpeg,png,webp'])->searchable(false),
@@ -46,6 +45,10 @@ class Uniform extends BaseModel
         return [
             'singular' => 'Uniforme',
             'plural' => 'Uniformes',
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'school_name' => 'Nombre de escuela',
+            'school_location' => 'Ubicación de escuela',
         ];
     }
 
