@@ -12,7 +12,7 @@ return [
     'chat_bot' => [
         'debounce_seconds' => (int) env('CHAT_BOT_DEBOUNCE_SECONDS', 5),
         'context_top_k' => (int) env('CHAT_BOT_CONTEXT_TOP_K', 5),
-        'max_history' => (int) env('CHAT_BOT_MAX_HISTORY', 5),
+        'max_history' => (int) env('CHAT_BOT_MAX_HISTORY', 6),
         'system_prompt' => env(
             'CHAT_BOT_SYSTEM_PROMPT',
             "Eres el asistente virtual de \"Los Chavos\", un negocio de uniformes escolares en México.\n"

@@ -29,17 +29,24 @@ class OpenAiChatService
      * Send a chat completion request.
      *
      * @param  array<int, array{role:string, content:string|array<int, array<string, mixed>>}>  $messages
+     * @param  bool  $jsonMode  Force the model to return a JSON object (response_format=json_object).
      */
-    public function chat(array $messages, ?float $temperature = 0.3): string
+    public function chat(array $messages, ?float $temperature = 0.3, bool $jsonMode = false): string
     {
+        $payload = [
+            'model' => $this->model,
+            'messages' => $messages,
+            'temperature' => $temperature,
+        ];
+
+        if ($jsonMode) {
+            $payload['response_format'] = ['type' => 'json_object'];
+        }
+
         $response = Http::withToken($this->apiKey)
             ->timeout($this->timeout)
             ->acceptJson()
-            ->post(rtrim($this->apiBase, '/').'/chat/completions', [
-                'model' => $this->model,
-                'messages' => $messages,
-                'temperature' => $temperature,
-            ]);
+            ->post(rtrim($this->apiBase, '/').'/chat/completions', $payload);
 
         if ($response->failed()) {
             Log::error('OpenAI chat failed', [
@@ -97,6 +104,20 @@ class OpenAiChatService
                 'content' => 'No se encontró contexto en la base de conocimiento. Responde indicando que necesitas más información (escuela, nivel educativo, tipo de uniforme).',
             ];
         }
+
+        $messages[] = [
+            'role' => 'system',
+            'content' => "FORMATO DE RESPUESTA (OBLIGATORIO): Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta:\n"
+            . "{\n"
+            . "  \"reply\": \"<tu respuesta al cliente en español, breve y cordial>\",\n"
+            . "  \"send_photos\": <true o false>\n"
+            . "}\n"
+            . "Reglas para 'send_photos':\n"
+            . "- true SOLO si el cliente pidió explícitamente ver fotos, imágenes, modelos, catálogo o ejemplos visuales de uniformes.\n"
+            . "- true también si el cliente dice frases como: 'muéstrame', 'mándame', 'envíame', 'quiero ver', 'ver modelos', 'cómo se ve', 'cómo queda', 'tienes fotos', 'hay imágenes', 'enséñame', 'me puedes mostrar'.\n"
+            . "- false si el cliente solo pregunta por precio, horarios, ubicación, disponibilidad textual, tallas, contacto, o cualquier cosa donde las fotos NO le ayudarían.\n"
+            . "- false por defecto cuando tengas duda. Es preferible NO enviar fotos a enviar fotos no deseadas."
+        ];
 
         foreach ($history as $entry) {
             $messages[] = [

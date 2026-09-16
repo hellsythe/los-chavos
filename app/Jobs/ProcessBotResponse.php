@@ -113,6 +113,7 @@ class ProcessBotResponse implements ShouldQueue
 
         $contextChunks = [];
         $replyText = null;
+        $llmWantsPhotos = false;
         $error = null;
 
         $history = $this->buildHistory($chat);
@@ -152,6 +153,7 @@ class ProcessBotResponse implements ShouldQueue
 
             if ($isOffTopic) {
                 $replyText = (string) config('openai_llm.chat_bot.off_topic_message');
+                $llmWantsPhotos = false;
                 Log::channel('bot')->info('Off-topic detected, using off-topic message', [
                     'chat_id' => $chat->id,
                     'top_score' => $topScore,
@@ -159,9 +161,22 @@ class ProcessBotResponse implements ShouldQueue
                 ]);
             } elseif (empty($contextChunks)) {
                 $replyText = (string) config('openai_llm.chat_bot.no_context_message');
+                $llmWantsPhotos = false;
                 Log::channel('bot')->info('No context, using fallback message', ['chat_id' => $chat->id]);
             } else {
-                $replyText = $chatService->chat($messages_payload);
+                $raw = $chatService->chat($messages_payload, 0.3, true);
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded) && array_key_exists('reply', $decoded)) {
+                    $replyText = (string) ($decoded['reply'] ?? '');
+                    $llmWantsPhotos = (bool) ($decoded['send_photos'] ?? false);
+                } else {
+                    Log::channel('bot')->warning('LLM did not return expected JSON, treating as plain text', [
+                        'chat_id' => $chat->id,
+                        'raw_preview' => mb_substr($raw, 0, 200),
+                    ]);
+                    $replyText = $raw;
+                    $llmWantsPhotos = false;
+                }
             }
         } catch (\Throwable $e) {
             Log::channel('bot')->error('OpenAI chat failed', [
@@ -173,6 +188,7 @@ class ProcessBotResponse implements ShouldQueue
 
         if ($error !== null) {
             $replyText = (string) config('openai_llm.chat_bot.fallback_message');
+            $llmWantsPhotos = false;
         }
 
         Log::channel('bot')->info('Bot reply generated', [
@@ -180,11 +196,12 @@ class ProcessBotResponse implements ShouldQueue
             'reply_preview' => mb_substr($replyText, 0, 200),
             'reply_length' => mb_strlen($replyText),
             'is_off_topic' => $isOffTopic,
+            'llm_wants_photos' => $llmWantsPhotos,
         ]);
 
         $this->sendReply($chat, $replyText);
 
-        if (! $isOffTopic) {
+        if (! $isOffTopic && $llmWantsPhotos) {
             $this->sendUniformPhotos($chat, $contextChunks, $relevantSchoolIds);
         }
 
@@ -214,7 +231,7 @@ class ProcessBotResponse implements ShouldQueue
 
     protected function buildHistory(Chat $chat): array
     {
-        $limit = (int) config('openai_llm.chat_bot.max_history', 5);
+        $limit = (int) config('openai_llm.chat_bot.max_history', 6);
         if ($limit <= 0) {
             return [];
         }
