@@ -16,9 +16,13 @@ return [
     | Supported: "file", "cookie", "database", "apc",
     |            "memcached", "redis", "dynamodb", "array"
     |
+    | The default is "database" because the application runs in containers:
+    | with the "file" driver the session is lost every time the container is
+    | recreated (deploy) or when more than one instance is running.
+    |
     */
 
-    'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'database'),
 
     /*
     |--------------------------------------------------------------------------
@@ -153,6 +157,9 @@ return [
     | in your application. This will determine which domains the cookie is
     | available to in your application. A sensible default has been set.
     |
+    | Leave it empty (null) so the cookie is only sent to the exact host of
+    | the application. A wrong value makes the browser reject the cookie.
+    |
     */
 
     'domain' => env('SESSION_DOMAIN'),
@@ -163,8 +170,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | By setting this option to true, session cookies will only be sent back
-    | to the server if the browser has a HTTPS connection. This will keep
-    | the cookie from being sent to you when it can't be done securely.
+    | to the server if the browser has a HTTPS connection. This will keep the
+    | cookie from being sent to you when it can't be done securely.
+    |
+    | Leave it unset (null) to let the application detect it from the request
+    | itself (see SetSessionCookieSecure middleware). Setting it to "true"
+    | while the site is served over plain HTTP makes the browser discard the
+    | cookie and the session is lost on every request.
     |
     */
 

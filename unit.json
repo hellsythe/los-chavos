@@ -13,6 +13,14 @@
     "routes": [
         {
             "match": {
+                "uri": "/index.php"
+            },
+            "action": {
+                "pass": "applications/laravel"
+            }
+        },
+        {
+            "match": {
                 "uri": "!/index.php"
             },
             "action": {
@@ -27,7 +35,9 @@
         "laravel": {
             "type": "php",
             "root": "/var/www/html/public/",
-            "script": "index.php"
+            "script": "index.php",
+            "user": "unit",
+            "group": "unit"
         }
     }
 }
