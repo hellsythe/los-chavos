@@ -1,7 +1,11 @@
 FROM unit:1.34.1-php8.3
 
+# supervisor administra unitd + el worker de colas + el scheduler del contenedor
+# acl (setfacl) mantiene los ficheros de storage escribibles por el usuario
+# "unit" aunque los cree un proceso root (artisan, supervisor).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl unzip git libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev \
+    supervisor acl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" pcntl opcache pdo_mysql intl zip gd exif ftp bcmath \
     && pecl install redis \
@@ -33,7 +37,7 @@ RUN { \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Las dependencias se instalan antes de copiar el codigo para no invalidar la
 # capa de cache en cada deploy.
@@ -57,9 +61,16 @@ RUN composer dump-autoload --optimize --no-dev --no-interaction \
 COPY docker/entrypoint.sh /usr/local/bin/laravel-entrypoint.sh
 RUN chmod +x /usr/local/bin/laravel-entrypoint.sh
 
+COPY docker/supervisord.conf /etc/supervisor/supervisord.conf
+
 COPY unit.json /docker-entrypoint.d/unit.json
 
 EXPOSE 8000
 
+# El worker de colas y el scheduler arrancan junto con el contenedor. Se pueden
+# apagar por variable de entorno (RUN_QUEUE_WORKER / RUN_SCHEDULER).
+ENV RUN_QUEUE_WORKER=true \
+    RUN_SCHEDULER=true
+
 ENTRYPOINT ["/usr/local/bin/laravel-entrypoint.sh"]
-CMD ["unitd", "--no-daemon"]
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]

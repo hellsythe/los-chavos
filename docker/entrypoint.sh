@@ -7,7 +7,13 @@
 
 set -e
 
-cd /var/www/html
+# Los ficheros que crea root (artisan, supervisor) deben quedar escribibles por
+# el usuario "unit" que corre la app y el worker de colas. Con umask 002 los
+# ficheros nuevos se crean 664 y con el bit setgid los directorios heredan el
+# grupo "unit", asi el worker nunca se queda sin poder escribir en los logs.
+umask 002
+
+cd /app
 
 mkdir -p storage/framework/cache/data \
          storage/framework/sessions \
@@ -16,10 +22,24 @@ mkdir -p storage/framework/cache/data \
          bootstrap/cache
 
 # Los volumenes persistentes se montan propiedad de root, hay que devolver los
-# permisos al usuario "unit" que es el que ejecuta PHP. Si no, el driver de
-# sesion "file" y los logs no se pueden escribir.
-chown -R unit:unit storage bootstrap/cache 2>/dev/null || true
-chmod -R u+rwX,g+rwX storage bootstrap/cache 2>/dev/null || true
+# permisos al usuario "unit" que es el que ejecuta PHP (la app y el worker de
+# colas). Si no, el driver de sesion "file" y los logs no se pueden escribir.
+#
+# - chown/chmod: el grupo "unit" puede leer y escribir todo storage.
+# - setgid: los ficheros nuevos heredan el grupo "unit".
+# - ACL por defecto (setfacl): los ficheros nuevos se crean 664 aunque los cree
+#   un proceso root con umask 022 (por ejemplo "docker exec php artisan ...").
+#   Asi el worker nunca se queda sin poder escribir en los logs.
+fix_permissions() {
+    chown -R unit:unit storage bootstrap/cache 2>/dev/null || true
+    chmod -R u+rwX,g+rwX storage bootstrap/cache 2>/dev/null || true
+    chmod 2775 storage storage/logs storage/framework storage/framework/cache \
+        storage/framework/sessions storage/framework/views bootstrap/cache 2>/dev/null || true
+    setfacl -R -m g::rwX storage bootstrap/cache 2>/dev/null || true
+    find storage bootstrap/cache -type d -exec setfacl -d -m g::rwX {} + 2>/dev/null || true
+}
+
+fix_permissions
 
 echo "[laravel] cacheando configuracion..."
 php artisan config:cache --no-interaction || echo "[laravel] config:cache fallo, se continua sin cache"
@@ -45,6 +65,6 @@ if [ "$RUN_MIGRATIONS" != "false" ]; then
     done
 fi
 
-chown -R unit:unit storage bootstrap/cache 2>/dev/null || true
+fix_permissions
 
 exec /usr/local/bin/docker-entrypoint.sh "$@"

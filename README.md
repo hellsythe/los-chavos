@@ -7,6 +7,20 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Cola de trabajos (queue worker)
+
+La app usa `QUEUE_CONNECTION=database` y despacha jobs (por ejemplo
+`app/Jobs/ProcessBotResponse.php`), asi que **hace falta un worker corriendo**:
+
+| Despliegue            | Worker                                                        |
+|-----------------------|---------------------------------------------------------------|
+| Docker / Coolify      | `docker/supervisord.conf` -> `php artisan queue:work`         |
+| Nixpacks              | `nixpacks.toml` -> `worker-laravel.conf`                       |
+| Plesk                 | `stubs/plesk-supervisor-worker.conf` (guia en `stubs/`)       |
+| Local (Sail)          | `docker compose exec laravel.test php artisan queue:work`     |
+
+Detalles del contenedor de produccion en [`docker/README.md`](docker/README.md).
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
