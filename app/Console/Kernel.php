@@ -13,7 +13,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call('app:load-statistics-embrodeiry')->dailyAt('23:00');
+        // OJO: con ->call() el string se resuelve como una funcion de PHP y
+        // falla con "Call to undefined function". Para un comando artisan hay
+        // que usar ->command().
+        $schedule->command('app:load-statistics-embrodeiry')->dailyAt('23:00');
     }
 
     /**

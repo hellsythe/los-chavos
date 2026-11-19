@@ -29,15 +29,21 @@ es necesario: se leen al arrancar el contenedor.
 
 En `app/Console/Kernel.php` hay una tarea diaria
 (`app:load-statistics-embrodeiry` a las 23:00). Para que corra, crea en Coolify
-un **cron** para el recurso con esta configuración:
+una **Scheduled Task** para el recurso:
 
-- Comando: `php artisan schedule:run`
-- Working directory: `/app`
-- Frecuencia: cada minuto (`* * * * *`)
+- **Schedule**: `every_minute` (o `* * * * *`)
+- **Command**: `php artisan schedule:run`
+- **Run in a shell**: activado (se ejecuta con `sh -c` dentro del contenedor, en
+  el `WORKDIR` `/app`)
+- **Timeout**: 300 s (por defecto)
+- **Container**: vacío (el recurso tiene un solo contenedor)
 
 Laravel evalúa las tareas programadas en cada ejecución y solo lanza las que
 tocan. Es la alternativa recomendada a dejar `schedule:work` corriendo (ahorra
 ~30 MB de RAM en el contenedor).
+
+Ojo: si el comando falla 10 veces seguidas, Coolify desactiva la task
+automáticamente y te avisa por notificación.
 
 ## Ver logs y estado
 
