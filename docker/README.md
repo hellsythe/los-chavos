@@ -1,13 +1,16 @@
 # Contenedor de producción (Docker / Coolify)
 
-La imagen `Dockerfile` (base `unit:1.34.1-php8.3`) corre tres procesos, todos
+La imagen `Dockerfile` (base `unit:1.34.1-php8.3`) corre estos procesos, todos
 administrados por **supervisor** (`docker/supervisord.conf`):
 
-| Proceso           | Que hace                                                        |
-|-------------------|-----------------------------------------------------------------|
-| `unitd`           | Servidor web (NGINX Unit) + PHP-FPM                            |
-| `laravel-queue`   | `php artisan queue:work` — procesa los jobs de la cola          |
-| `laravel-schedule`| `php artisan schedule:work` — comandos programados de `Kernel.php` |
+| Proceso         | Que hace                                              |
+|-----------------|-------------------------------------------------------|
+| `unitd`         | Servidor web (NGINX Unit) + PHP-FPM                  |
+| `laravel-queue` | `php artisan queue:work` — procesa los jobs de la cola |
+
+El **scheduler** (`php artisan schedule:work`) viene comentado a propósito:
+arranca un segundo proceso PHP con la app completa en memoria (~30 MB) para
+ejecutar una sola tarea diaria. Se dispara mejor con un cron (ver abajo).
 
 Antes de arrancar, `docker/entrypoint.sh` cachea la configuración, compila las
 vistas, enlaza `storage` y aplica las migraciones.
@@ -17,11 +20,24 @@ vistas, enlaza `storage` y aplica las migraciones.
 | Variable           | Default | Descripción                                       |
 |--------------------|---------|---------------------------------------------------|
 | `RUN_QUEUE_WORKER` | `true`  | Arranca (`true`) o no (`false`) el worker de colas |
-| `RUN_SCHEDULER`    | `true`  | Arranca (`true`) o no (`false`) el scheduler        |
 | `RUN_MIGRATIONS`   | `true`  | Ejecuta `php artisan migrate` al arrancar          |
 
 Se pueden cambiar en Coolify (Environment Variables) y reconstruir la imagen no
 es necesario: se leen al arrancar el contenedor.
+
+## Tareas programadas (scheduler)
+
+En `app/Console/Kernel.php` hay una tarea diaria
+(`app:load-statistics-embrodeiry` a las 23:00). Para que corra, crea en Coolify
+un **cron** para el recurso con esta configuración:
+
+- Comando: `php artisan schedule:run`
+- Working directory: `/app`
+- Frecuencia: cada minuto (`* * * * *`)
+
+Laravel evalúa las tareas programadas en cada ejecución y solo lanza las que
+tocan. Es la alternativa recomendada a dejar `schedule:work` corriendo (ahorra
+~30 MB de RAM en el contenedor).
 
 ## Ver logs y estado
 
@@ -66,8 +82,8 @@ deploy.
   el proceso se reinicie cada hora para no acumular memoria.
 - Los ficheros de `storage/` quedan con ACL para que el worker pueda escribir
   aunque los cree un proceso root (por ejemplo `docker exec php artisan ...`).
-- El scheduler es lo que hace que corran los comandos de `app/Console/Kernel.php`
-  (por ejemplo `app:load-statistics-embrodeiry`, diario a las 23:00).
+- El worker reinicia solo el proceso cada hora (`--max-time=3600`); si se
+  cuelga o muere, supervisor lo vuelve a levantar.
 
 ## Otros despliegues
 

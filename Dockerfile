@@ -67,10 +67,10 @@ COPY unit.json /docker-entrypoint.d/unit.json
 
 EXPOSE 8000
 
-# El worker de colas y el scheduler arrancan junto con el contenedor. Se pueden
-# apagar por variable de entorno (RUN_QUEUE_WORKER / RUN_SCHEDULER).
-ENV RUN_QUEUE_WORKER=true \
-    RUN_SCHEDULER=true
+# El worker de colas arranca junto con el contenedor. Se puede apagar por
+# variable de entorno (RUN_QUEUE_WORKER). El scheduler va comentado en
+# docker/supervisord.conf: se dispara mejor con un cron.
+ENV RUN_QUEUE_WORKER=true
 
 ENTRYPOINT ["/usr/local/bin/laravel-entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
